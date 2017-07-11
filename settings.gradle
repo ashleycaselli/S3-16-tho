@@ -1,2 +1,3 @@
 rootProject.name = 'THO'
-
+include 'core'
+include 'th-organizer'
