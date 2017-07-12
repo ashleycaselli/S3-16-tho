@@ -1,0 +1,7 @@
+language: scala
+dist: trusty
+script:
+  - './gradlew clean build'
+jdk:
+  - oraclejdk8
+  - openjdk8
