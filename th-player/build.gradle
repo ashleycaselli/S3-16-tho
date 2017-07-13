@@ -11,3 +11,7 @@ sass {
         minify = true
     }
 }
+
+task cordovaBuild(type: Exec) {
+    commandLine 'cordova', 'build', 'android'
+}
