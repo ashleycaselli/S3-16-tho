@@ -1,7 +1,12 @@
 language: scala
 dist: trusty
+
+before_install:
+  - npm install -g cordova
+
 script:
   - './gradlew'
+
 jdk:
   - oraclejdk8
   - openjdk8
