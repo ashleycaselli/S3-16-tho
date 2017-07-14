@@ -3,6 +3,7 @@ dist: trusty
 
 before_install:
   - npm install -g cordova
+  - cordova platform add android
 
 script:
   - './gradlew'
