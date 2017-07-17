@@ -15,5 +15,5 @@ subprojects {
 }
 
 defaultTasks(
-        'clean', 'build', 'scalaDoc', 'mainSass', 'cordovaBuild'
+        'clean', 'build', 'scalaDoc', 'mainSass'
 )
