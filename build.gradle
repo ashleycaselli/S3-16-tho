@@ -11,7 +11,7 @@ subprojects {
 
     dependencies {
         compile 'org.scala-lang:scala-library:2.12.2'
-        testCompile group: 'org.scalatest', name: 'scalatest_2.10', version: '3.0.0'
+        testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: '3.0.1'
     }
 }
 
