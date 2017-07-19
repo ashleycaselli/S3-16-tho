@@ -8,7 +8,8 @@ trait Poi extends Positionable{
 
 
 
-/**
+/** A point of interest on the map
+  *
   * @constructor create a new POI with a position
   * @param position the position of the point
   */

@@ -15,8 +15,9 @@ trait Player extends Positionable{
 
 
 
-
-
+/** A player of the treasure hunt
+  *
+  */
 class PlayerImpl extends Player{
 
   var position : Option[Position] = Option.empty[Position]
