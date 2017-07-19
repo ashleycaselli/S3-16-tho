@@ -12,6 +12,9 @@ trait Player extends Positionable{
 
 }
 
+
+
+
 /** A player of the treasure hunt
   *
   */
