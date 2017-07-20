@@ -35,16 +35,29 @@
     <meta name="viewport"
           content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
     <link rel="stylesheet" type="text/css" href="css/index.css">
-    <title>Hello World</title>
 </head>
 <body>
-<div class="app">
-    <h1>Apache Cordova</h1>
+<div data-role="page" class="container">
+    <div id="first">
+        <h1 class="tit">THO</h1>
+        <h2 class="subtit">treasure hunt organizer</h2>
+        <h3 class="subtit2">NEAR TREASURE HUNT?</h3>
+
+        <input type="button" onclick="scanqr()" class="button" value="SCAN A QR-CODE">
+        <input type="button" onclick="writec()" class="button" value="WRITE CODE">
+        <input type="button" class="buttonloc" value="YOU ARE PLAYING 'CESENA 2017' HUNT">
+        <div class="divbut">
+            <input type="button" class="button1" value="RESUME">
+            <input type="button" class="button1" value="LEAVE">
+    </div>
+    <div id="second">
+        <h1>seconda pagina</h1>
+    </div>
     <div id="deviceready" class="blink">
-        <p class="event listening">Connecting to Device</p>
-        <p class="event received">Device is Ready</p>
+
     </div>
 </div>
+
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 </body>
