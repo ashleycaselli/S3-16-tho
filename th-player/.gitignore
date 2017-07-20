@@ -5,6 +5,8 @@ bin/*
 !/plugins/fetch.json
 plugins/*
 platforms/*
+config.xml
+package.json
 
 ### Node.js ###
 node_modules/
@@ -12,3 +14,4 @@ node_modules/
 ### Sass ###
 .sass-cache/
 *.css.map
+*.css
