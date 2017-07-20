@@ -9,7 +9,7 @@ trait Poi extends Positionable {
 /** A point of interest on the map
   *
   */
-class PoiImpl(position: Position) extends Positionable {
+class PoiImpl(position: Position) extends Poi {
 
     /** Returns the position of the point of interest
       *
