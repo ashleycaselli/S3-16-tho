@@ -1,16 +1,15 @@
-# IntelliJ
+### IntelliJ ###
 out
 target/
-
-# User-specific stuff:
+*.iml
 .idea/
 
-# macOS
+### macOS ###
 *.DS_Store
 .AppleDouble
 .LSOverride
 
-# Windows
+### Windows ###
 Thumbs.db
 Desktop.ini
 *.cab
@@ -18,11 +17,11 @@ Desktop.ini
 *.msm
 *.msp
 
-# Gradle:
+### Gradle ###
 .gradle/
 build/
 
-# Latex
+### Latex ###
 *.aux
 *.log
 *.out
