@@ -17,32 +17,52 @@
  * under the License.
  */
 var app = {
-        // Application Constructor
-        initialize: function () {
-            document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-            document.getElementById("second").style.display="none";
-        },
+    // Application Constructor
+    initialize: function () {
+        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+        document.getElementById("second").style.display = "none";
+        document.getElementById("third").style.display = "none";
+    },
 
-        // deviceready Event Handler
-        //
-        // Bind any cordova events here. Common events are:
-        // 'pause', 'resume', etc.
-        onDeviceReady: function () {
-            this.receivedEvent('deviceready');
-        },
+    // deviceready Event Handler
+    //
+    // Bind any cordova events here. Common events are:
+    // 'pause', 'resume', etc.
+    onDeviceReady: function () {
+        //this.receivedEvent('deviceready');
+        this.qrcode();
+        this.writeCode();
+    },
 
-        // Update DOM on a Received Event
-        receivedEvent: function (id) {
+    // Update DOM on a Received Event
+    /*receivedEvent: function (id) {
+        var listeningElement = parentElement.querySelector('.listening');
+        var receivedElement = parentElement.querySelector('.received');
 
-            var parentElement = document.getElementById(id);
-            var listeningElement = parentElement.querySelector('.listening');
-            var receivedElement = parentElement.querySelector('.received');
+        listeningElement.setAttribute('style', 'display:none;');
+        receivedElement.setAttribute('style', 'display:block;');
 
-            listeningElement.setAttribute('style', 'display:none;');
-            receivedElement.setAttribute('style', 'display:block;');
+        console.log('Received Event: ' + id);
+        document.getElementById("first").style.display = "none";
+        document.getElementById("second").style.display = "block";
 
-            console.log('Received Event: ' + id);
+
+    },*/
+    qrcode: function () {
+        document.getElementById("scanqr").onclick = function () {
+            document.getElementById("first").style.display = "none";
+            document.getElementById("second").style.display = "block";
+
         }
+    },
+    writeCode: function () {
+        document.getElementById("writec").onclick = function () {
+            document.getElementById("first").style.display = "none";
+            document.getElementById("second").style.display = "none";
+            document.getElementById("third").style.display = "block";
+
+        }
+    }
 };
 
 app.initialize();
