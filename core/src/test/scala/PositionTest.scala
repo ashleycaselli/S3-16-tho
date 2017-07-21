@@ -1,13 +1,10 @@
-/**
-  * Created by CarmineVattimo on 18/07/2017.
-  */
 import org.scalatest.FunSuite
 
 class PositionTest extends FunSuite {
 
     val latitude = 45.467255
     val longitude = 9.1896145
-    val position: PositionImpl = new PositionImpl(latitude,longitude)
+    val position: PositionImpl = new PositionImpl(latitude, longitude)
 
     test("method getLatitude must return a Double") {
         assert(position.getLatitude.isInstanceOf[Double])

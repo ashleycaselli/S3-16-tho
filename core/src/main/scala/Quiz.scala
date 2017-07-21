@@ -1,8 +1,4 @@
-import play.api.libs.json.{JsArray, JsValue, Json}
-
-/**
-  * Created by CarmineVattimo on 19/07/2017.
-  */
+import play.api.libs.json.{JsValue, Json}
 
 /** An Entity that contains Question and Answer
   *
@@ -10,12 +6,14 @@ import play.api.libs.json.{JsArray, JsValue, Json}
 trait Quiz extends Serializable {
     /**
       * getter of the Question
+      *
       * @return the text of the Question
       */
     def getQuestion: String
 
     /**
       * getter of the Answer
+      *
       * @return the text of the Answer
       */
     def getAnswer: String

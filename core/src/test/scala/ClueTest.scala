@@ -1,6 +1,3 @@
-/**
-  * Created by CarmineVattimo on 19/07/2017.
-  */
 import org.scalatest.FunSuite
 
 class ClueTest extends FunSuite {
