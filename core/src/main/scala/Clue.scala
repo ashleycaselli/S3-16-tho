@@ -26,11 +26,11 @@ class ClueImpl(clue: String) extends Clue {
     }
 
     /**
-      * getter of the representation
+      * Property for getting an entity's String representation.
       *
       * @return a String containing the representation
       */
-    override def getDefaultRepresentation: String = {
+    override def defaultRepresentation: String = {
         return clue
     }
 }

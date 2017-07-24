@@ -1,11 +1,14 @@
-/** A Trait that allow some entity to be transfered (in a String or Json Representation)
+
+
+/** A Trait that allow some entity to be transferred (in a String or Json Representation).
   *
   */
 trait Serializable {
     /**
-      * getter of the representation
+      * Property for getting an entity's String representation.
       *
       * @return a String containing the representation
       */
-    def getDefaultRepresentation: String
+    def defaultRepresentation: String
+
 }

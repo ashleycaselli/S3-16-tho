@@ -15,12 +15,12 @@ class PositionableTest extends FunSuite {
     test("getPosition of a player when position is already set") {
         player.setPosition(new PositionImpl(latitude, longitude))
         assert(player.getPosition.isDefined)
-        assert(player.getPosition.get.getLatitude == latitude && player.getPosition.get.getLongitude == longitude)
+        assert(player.getPosition.get.latitude == latitude && player.getPosition.get.longitude == longitude)
     }
 
     test("getPosition of a POI") {
         assert(poi.getPosition.isDefined)
-        assert(poi.getPosition.get.getLatitude == latitude && poi.getPosition.get.getLongitude == longitude)
+        assert(poi.getPosition.get.latitude == latitude && poi.getPosition.get.longitude == longitude)
     }
 
 }

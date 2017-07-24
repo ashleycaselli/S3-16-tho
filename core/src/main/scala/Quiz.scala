@@ -40,11 +40,11 @@ class QuizImpl(question: String, answer: String) extends Quiz {
     }
 
     /**
-      * getter of the representation
+      * Property for getting an entity's String representation.
       *
       * @return a String containing the representation
       */
-    override def getDefaultRepresentation: String = {
+    override def defaultRepresentation: String = {
         val jsonRepresentation: JsValue = Json.obj("Question" -> question, "Answer" -> answer)
         return jsonRepresentation.toString()
     }
