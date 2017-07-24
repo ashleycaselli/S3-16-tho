@@ -7,7 +7,7 @@ trait Path {
       *
       * @return an immutable List
       */
-    def getPois: scala.collection.immutable.List[POI]
+    def POIs: scala.collection.immutable.List[POI]
 
 }
 
@@ -22,7 +22,5 @@ class PathImpl(pois: scala.collection.immutable.List[POI]) extends Path {
       *
       * @return an immutable List
       */
-    override def getPois: List[POI] = {
-        this.pois
-    }
+    override def POIs: List[POI] = pois
 }

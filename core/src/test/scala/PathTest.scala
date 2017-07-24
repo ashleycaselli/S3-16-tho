@@ -9,9 +9,9 @@ class PathTest extends FunSuite {
     val path: Path = new PathImpl(List(poi1, poi2, poi3))
 
     test("getPath of a team") {
-        assert(path.getPois == List(poi1, poi2, poi3))
+        assert(path.POIs == List(poi1, poi2, poi3))
         assertThrows[IndexOutOfBoundsException] {
-            path.getPois(3)
+            path.POIs(3)
         }
     }
 
