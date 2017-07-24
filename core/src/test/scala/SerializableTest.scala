@@ -15,7 +15,7 @@ class SerializableTest extends FunSuite {
         val jsonQuestion = (jsonRepresentation \ "Question").get toString
         val jsonAnswer = (jsonRepresentation \ "Answer").get toString
 
-        assert(jsonQuestion.substring(1, jsonQuestion.length - 1) == quiz.getQuestion)
-        assert(jsonAnswer.substring(1, jsonAnswer.length - 1) == quiz.getAnswer)
+        assert(jsonQuestion.substring(1, jsonQuestion.length - 1) == quiz.question)
+        assert(jsonAnswer.substring(1, jsonAnswer.length - 1) == quiz.answer)
     }
 }
