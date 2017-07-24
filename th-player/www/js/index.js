@@ -20,8 +20,6 @@ var app = {
     // Application Constructor
     initialize: function () {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-        document.getElementById("second").style.display = "none";
-        document.getElementById("third").style.display = "none";
     },
 
     // deviceready Event Handler
@@ -32,6 +30,8 @@ var app = {
         //this.receivedEvent('deviceready');
         this.qrcode();
         this.writeCode();
+        this.back();
+        this.save();
     },
 
     // Update DOM on a Received Event
@@ -52,17 +52,44 @@ var app = {
         document.getElementById("scanqr").onclick = function () {
             document.getElementById("first").style.display = "none";
             document.getElementById("second").style.display = "block";
+            cordova.plugins.barcodeScanner.scan(
+                function (result) {
+                    alert("We got a barcode\n" +
+                        "Result: " + result.text + "\n" +
+                        "Format: " + result.format + "\n" +
+                        "Cancelled: " + result.cancelled);
+                },
+                function (error) {
+                    alert("Scanning failed: " + error);
+                })
 
         }
     },
     writeCode: function () {
-        document.getElementById("writec").onclick = function () {
+        document.getElementById("writecode").onclick = function () {
             document.getElementById("first").style.display = "none";
-            document.getElementById("second").style.display = "none";
             document.getElementById("third").style.display = "block";
-
+        }
+    },
+    back: function () {
+        var back = document.getElementsByClassName("back");
+        back[0].onclick = function () {
+            document.getElementById("first").style.display = "block";
+            document.getElementById("third").style.display = "none";
+        }
+    },
+    save: function () {
+        var save = document.getElementsByClassName("save");
+        save[0].onclick = function () {
+            var codeSave = document.getElementById("insertCode").value;
+            alert("Saved treasure hunt");
+            document.getElementById("hunt").innerHTML= codeSave;
+            document.getElementById("first").style.display = "block";
+            document.getElementById("third").style.display = "none";
+            document.getElementById("description").style.display = "block";
         }
     }
+
 };
 
 app.initialize();
