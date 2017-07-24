@@ -1,36 +1,39 @@
-/**
-  * Created by CarmineVattimo on 18/07/2017.
-  */
-
-/** An Entity that contains the coordinates of a Position
+/** An entity that represents a Position
   *
   */
 trait Position {
     /**
-      * getter of Latitude
+      * Property to get the latitude value.
+      *
       * @return a Double containing latitude value
       */
-    def getLatitude: Double
+    def latitude: Double
 
     /**
-      * getter of Longitude
+      * Property to set the latitude value.
+      *
+      * @param lat latitude value
+      */
+    def latitude_=(lat: Double): Unit
+
+    /**
+      * Property to get the longitude value.
+      *
       * @return a Double containing longitude
       */
-    def getLongitude: Double
+    def longitude: Double
+
+    /**
+      * Property to set the longitude value.
+      *
+      * @param lon longitude value
+      */
+    def longitude_=(lon: Double): Unit
+
 }
 
 /**
-  * @constructor create a new position with latitude and longitude
-  * @param latitude the position's latitude
+  * @param latitude  the position's latitude
   * @param longitude the position's longitude
   */
-class PositionImpl(latitude: Double, longitude: Double) extends Position {
-
-    override def getLatitude: Double = {
-        return latitude
-    }
-
-    override def getLongitude: Double = {
-        return longitude
-    }
-}
+case class PositionImpl(override var latitude: Double, override var longitude: Double) extends Position
