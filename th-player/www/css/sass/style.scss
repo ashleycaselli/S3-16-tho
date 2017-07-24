@@ -1,6 +1,6 @@
-body{
-  background-color: white;
-  font-family: "AndrewScript_1.6";
+body {
+    background-color: white;
+    font-family: "AndrewScript_1.6";
 }
 #first{
   display: block;
@@ -19,18 +19,20 @@ body{
   display: block;
   width: 50%;
   padding:6%;
+ 
+}
+
+.subtit {
+    font-size: 200%;
+    text-align: center;
+    margin-top: 1%;
 
 }
-.subtit{
-  font-size: 200%;
-  text-align: center;
-  margin-top: 1%;
 
-}
-.subtit2{
-  font-size: 200%;
-  text-align: center;
-  margin-top:6%;
+.subtit2 {
+    font-size: 200%;
+    text-align: center;
+    margin-top: 6%;
 
 }
 h1{
@@ -102,13 +104,14 @@ p{
 .descButton{
   text-align: center;
 }
-.button1{
-  font-size: 90%;
-  font-family: "AndrewScript_1.6";
-  background-color: white;
-  margin-top: 2%;
-  padding: 0.5%;
-  width: 125px;
-  border-radius: 5px 5px 5px 5px;
+
+.button1 {
+    font-size: 90%;
+    font-family: "AndrewScript_1.6";
+    background-color: white;
+    margin-top: 2%;
+    padding: 0.5%;
+    width: 125px;
+    border-radius: 5px 5px 5px 5px;
 }
 

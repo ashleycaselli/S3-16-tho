@@ -1,38 +1,34 @@
-/**
-  * Created by CarmineVattimo on 19/07/2017.
-  */
-
-/** An Entity that contains a clue to reach the next POI in a Treasure Hunt
+/** An Entity that contains a Clue.
   *
   */
 trait Clue extends Serializable {
     /**
-      * getter of the Clue
+      * Property to get the clue value.
+      *
       * @return a String containing the Clue
       */
-    def getClue: String
+    def clue: String
+
+    /**
+      * Property to set the clue value.
+      *
+      * @param clue the value for the Clue.
+      */
+    def clue_=(clue: String): Unit
+
 }
 
 /**
   * An Entity that contains a clue to reach the next POI in a Treasure Hunt
+  *
   * @param clue a string that contains the clue
   */
-class ClueImpl(clue: String) extends Clue {
-    /**
-      * getter of the Clue
-      *
-      * @return a String containing the Clue
-      */
-    override def getClue: String = {
-        return clue
-    }
+case class ClueImpl(override var clue: String) extends Clue {
 
     /**
-      * getter of the representation
+      * Property for getting an entity's String representation.
       *
       * @return a String containing the representation
       */
-    override def getDefaultRepresentation: String = {
-        return clue
-    }
+    override def defaultRepresentation: String = clue
 }
