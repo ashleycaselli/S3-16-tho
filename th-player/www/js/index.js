@@ -16,10 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+var save;
+var codeSave;
 var app = {
     // Application Constructor
     initialize: function () {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+        if (codeSave != null) {
+            document.getElementById("description").style.display = "block";
+        }
     },
 
     // deviceready Event Handler
@@ -32,7 +37,10 @@ var app = {
         this.writeCode();
         this.back();
         this.save();
+        this.leave();
+
     },
+
 
     // Update DOM on a Received Event
     /*receivedEvent: function (id) {
@@ -50,8 +58,6 @@ var app = {
     },*/
     qrcode: function () {
         document.getElementById("scanqr").onclick = function () {
-            document.getElementById("first").style.display = "none";
-            document.getElementById("second").style.display = "block";
             cordova.plugins.barcodeScanner.scan(
                 function (result) {
                     alert("We got a barcode\n" +
@@ -79,14 +85,22 @@ var app = {
         }
     },
     save: function () {
-        var save = document.getElementsByClassName("save");
+        save = document.getElementsByClassName("save");
         save[0].onclick = function () {
-            var codeSave = document.getElementById("insertCode").value;
+            codeSave = document.getElementById("insertCode").value;
             alert("Saved treasure hunt");
-            document.getElementById("hunt").innerHTML= codeSave;
+            document.getElementById("hunt").innerHTML = codeSave;
             document.getElementById("first").style.display = "block";
             document.getElementById("third").style.display = "none";
             document.getElementById("description").style.display = "block";
+        }
+    },
+    leave: function () {
+        var leave = document.getElementsByClassName("buttonLeave");
+        leave[0].onclick = function () {
+            document.getElementById("first").style.display = "block";
+            document.getElementById("description").style.display = "none";
+            delete codeSave;
         }
     }
 
