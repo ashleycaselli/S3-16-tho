@@ -12,6 +12,12 @@ sass {
     }
 }
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 task cordovaBuild(type: Exec) {
-    commandLine 'cordova', 'build', 'android'
+    executable = 'cordova'
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        executable = 'cordova.cmd'
+    }
+    args = ['build', 'android']
 }
