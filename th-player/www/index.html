@@ -28,13 +28,12 @@
         * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
             * Enable inline JS: add 'unsafe-inline' to default-src
     -->
-    <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport"
           content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
     <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="stylesheet" type="text/css" href="css/animate.css">
     <title>THO</title>
 </head>
 <body>
@@ -57,6 +56,19 @@
             <input type="button" class="button1" value="RESUME">
             <input type="button" class="buttonLeave" value="LEAVE">
         </div>
+    </div>
+    <div id="second">
+        <div class="map-page-map"></div>
+        <div class="map-page-title animated bounceInDown">TITOLO</div>
+        <div class="map-page-menu">
+            <div class="map-page-menu-button-container left-button animated bounceInLeft" id="show-last-clue-button"><span onclick="showLastClue()">Show last clue</span></div>
+            <div class="map-page-menu-button-container left-button animated bounceInLeft" id="close-clue-button"><span>Close clue</span></div>
+            <div class="map-page-menu-button-container right-button animated bounceInRight"><span onclick='settings()'>Settings</span></div>
+            <div class="map-page-menu-button-container left-button animated bounceInLeft"><span onclick="contactManager()">Contact manager</span></div>
+            <div class="map-page-menu-button-container right-button animated bounceInRight"><span onClick='exit()' >Exit</span></div>
+        </div>
+        <div id="map-page-clue" class="animated tada"></div>
+        <div id="map-page-quiz" class="animated tada"></div>
     </div>
     <div id="third">
         <h1 class="insert">Inserisci il codice: </h1>

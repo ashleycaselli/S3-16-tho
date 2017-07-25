@@ -16,6 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+//--------------------------GLOBAL-VARIABLES--------------------------------
+var lastClueText="text text text text text text text text text text text text text text text text text text ";
 var save;
 var codeSave;
 var app = {
@@ -68,6 +70,8 @@ var app = {
                 function (error) {
                     alert("Scanning failed: " + error);
                 })
+            document.getElementById("second").style.display="block";
+            document.getElementById("first").style.display = "none";
 
         }
     },
@@ -105,5 +109,45 @@ var app = {
     }
 
 };
+//-------------------------------CLUE----------------------------------------
+
+function showLastClue(){
+    showClue(lastClueText);
+}
+function showNewClue(text){
+    showClue(text);
+    setLastClueText(text);
+}
+function setLastClueText(text){
+    var lastClueText=text;
+}
+function showClue(clueText){
+    var container = document.getElementById("map-page-clue");
+    var content = '<h1>CLUE</h1>';
+    content += '<p>'+ clueText +'</p>';
+    content += '<div onClick="closeClue()" class="clue-quiz-button"><span>HIDE</span></div>';
+    container.innerHTML=content;
+    container.style.display="block";
+}
+function closeClue(){
+    document.getElementById("map-page-clue").style.display="none";
+}
+
+//---------------------------------QUIZ------------------------------------
+
+function showQuiz(question, answer){
+    var container = document.getElementById("map-page-quiz");
+    var content = '<h1>QUIZ</h1>';
+    content += '<p>'+question+'</p>';
+    content+= '<input class="quizInput" id="quizInput" type="text" />'
+    content += '<div onClick="checkQuiz(\''+answer+'\')" class="clue-quiz-button"><span>CHECK</span></div>';
+    container.innerHTML=content;
+    container.style.display="block";
+}
+function checkQuiz(answer){
+    if(document.getElementById("quizInput").value.trim()==answer){
+        document.getElementById("map-page-quiz").style.display="none";
+    }
+}
 
 app.initialize();
