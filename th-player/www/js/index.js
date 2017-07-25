@@ -16,53 +16,63 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-var app = {
-    // Application Constructor
-    initialize: function () {
-        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-        document.getElementById("second").style.display = "none";
-        document.getElementById("third").style.display = "none";
-    },
+//--------------------------GLOBAL-VARIABLES--------------------------------
+var lastClueText="text text text text text text text text text text text text text text text text text text ";
 
-    // deviceready Event Handler
-    //
-    // Bind any cordova events here. Common events are:
-    // 'pause', 'resume', etc.
-    onDeviceReady: function () {
-        //this.receivedEvent('deviceready');
-        this.qrcode();
-        this.writeCode();
-    },
+document.addEventListener('deviceready', init(), false);
 
-    // Update DOM on a Received Event
-    /*receivedEvent: function (id) {
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
-        document.getElementById("first").style.display = "none";
-        document.getElementById("second").style.display = "block";
-
-
-    },*/
-    qrcode: function () {
-        document.getElementById("scanqr").onclick = function () {
+function init(){
+    document.getElementById("second").style.display = "none";
+    document.getElementById("third").style.display = "none";
+    document.getElementById("scanqr").onclick = function () {
             document.getElementById("first").style.display = "none";
             document.getElementById("second").style.display = "block";
 
-        }
-    },
-    writeCode: function () {
-        document.getElementById("writec").onclick = function () {
-            document.getElementById("first").style.display = "none";
-            document.getElementById("second").style.display = "none";
-            document.getElementById("third").style.display = "block";
-
-        }
     }
-};
+    document.getElementById("writec").onclick = function () {
+                document.getElementById("first").style.display = "none";
+                document.getElementById("second").style.display = "none";
+                document.getElementById("third").style.display = "block";
+    }
+}
 
-app.initialize();
+//-------------------------------CLUE----------------------------------------
+
+function showLastClue(){
+    showClue(lastClueText);
+}
+function showNewClue(text){
+    showClue(text);
+    setLastClueText(text);
+}
+function setLastClueText(text){
+    var lastClueText=text;
+}
+function showClue(clueText){
+    var container = document.getElementById("map-page-clue");
+    var content = '<h1>CLUE</h1>';
+    content += '<p>'+ clueText +'</p>';
+    content += '<div onClick="closeClue()" class="clue-quiz-button"><span>HIDE</span></div>';
+    container.innerHTML=content;
+    container.style.display="block";
+}
+function closeClue(){
+    document.getElementById("map-page-clue").style.display="none";
+}
+
+//---------------------------------QUIZ------------------------------------
+
+function showQuiz(question, answer){
+    var container = document.getElementById("map-page-quiz");
+    var content = '<h1>QUIZ</h1>';
+    content += '<p>'+question+'</p>';
+    content+= '<input class="quizInput" id="quizInput" type="text" />'
+    content += '<div onClick="checkQuiz(\''+answer+'\')" class="clue-quiz-button"><span>CHECK</span></div>';
+    container.innerHTML=content;
+    container.style.display="block";
+}
+function checkQuiz(answer){
+    if(document.getElementById("quizInput").value.trim()==answer){
+        document.getElementById("map-page-quiz").style.display="none";
+    }
+}
