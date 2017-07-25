@@ -18,24 +18,97 @@
  */
 //--------------------------GLOBAL-VARIABLES--------------------------------
 var lastClueText="text text text text text text text text text text text text text text text text text text ";
+var save;
+var codeSave;
+var app = {
+    // Application Constructor
+    initialize: function () {
+        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+        if (codeSave != null) {
+            document.getElementById("description").style.display = "block";
+        }
+    },
 
-document.addEventListener('deviceready', init(), false);
+    // deviceready Event Handler
+    //
+    // Bind any cordova events here. Common events are:
+    // 'pause', 'resume', etc.
+    onDeviceReady: function () {
+        //this.receivedEvent('deviceready');
+        this.qrcode();
+        this.writeCode();
+        this.back();
+        this.save();
+        this.leave();
 
-function init(){
-    document.getElementById("second").style.display = "none";
-    document.getElementById("third").style.display = "none";
-    document.getElementById("scanqr").onclick = function () {
+    },
+
+
+    // Update DOM on a Received Event
+    /*receivedEvent: function (id) {
+        var listeningElement = parentElement.querySelector('.listening');
+        var receivedElement = parentElement.querySelector('.received');
+
+        listeningElement.setAttribute('style', 'display:none;');
+        receivedElement.setAttribute('style', 'display:block;');
+
+        console.log('Received Event: ' + id);
+        document.getElementById("first").style.display = "none";
+        document.getElementById("second").style.display = "block";
+
+
+    },*/
+    qrcode: function () {
+        document.getElementById("scanqr").onclick = function () {
+            cordova.plugins.barcodeScanner.scan(
+                function (result) {
+                    alert("We got a barcode\n" +
+                        "Result: " + result.text + "\n" +
+                        "Format: " + result.format + "\n" +
+                        "Cancelled: " + result.cancelled);
+                },
+                function (error) {
+                    alert("Scanning failed: " + error);
+                })
+            document.getElementById("second").style.display="block";
             document.getElementById("first").style.display = "none";
-            document.getElementById("second").style.display = "block";
 
+        }
+    },
+    writeCode: function () {
+        document.getElementById("writecode").onclick = function () {
+            document.getElementById("first").style.display = "none";
+            document.getElementById("third").style.display = "block";
+        }
+    },
+    back: function () {
+        var back = document.getElementsByClassName("back");
+        back[0].onclick = function () {
+            document.getElementById("first").style.display = "block";
+            document.getElementById("third").style.display = "none";
+        }
+    },
+    save: function () {
+        save = document.getElementsByClassName("save");
+        save[0].onclick = function () {
+            codeSave = document.getElementById("insertCode").value;
+            alert("Saved treasure hunt");
+            document.getElementById("hunt").innerHTML = codeSave;
+            document.getElementById("first").style.display = "block";
+            document.getElementById("third").style.display = "none";
+            document.getElementById("description").style.display = "block";
+        }
+    },
+    leave: function () {
+        var leave = document.getElementsByClassName("buttonLeave");
+        leave[0].onclick = function () {
+            document.getElementById("first").style.display = "block";
+            document.getElementById("description").style.display = "none";
+            delete codeSave;
+        }
     }
-    document.getElementById("writec").onclick = function () {
-                document.getElementById("first").style.display = "none";
-                document.getElementById("second").style.display = "none";
-                document.getElementById("third").style.display = "block";
-    }
-}
 
+};
 //-------------------------------CLUE----------------------------------------
 
 function showLastClue(){
@@ -76,3 +149,5 @@ function checkQuiz(answer){
         document.getElementById("map-page-quiz").style.display="none";
     }
 }
+
+app.initialize();
