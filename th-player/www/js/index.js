@@ -72,6 +72,7 @@ var app = {
                 })
             document.getElementById("second").style.display="block";
             document.getElementById("first").style.display = "none";
+            loadSecondPage();
 
         }
     },
@@ -110,7 +111,30 @@ var app = {
 
 };
 //-------------------------------CLUE----------------------------------------
+function loadSecondPage(){
+    var mapScript = document.createElement('script');
 
+    mapScript.setAttribute('src','https://maps.googleapis.com/maps/api/js?key=AIzaSyBNQr4YcrvttSMIgWOX68kJnigaI0Cir9c&callback=myMap');
+
+    document.head.appendChild(mapScript);
+}
+function myMap() {
+    var mapProp = {
+        center: new google.maps.LatLng(44.13972, 12.24286),
+        zoom: 15,
+    };
+    var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+    var marker = new google.maps.Marker({
+        position: {lat: 44.13972, lng: 12.24286},
+        map: map,
+        title: "Prova"
+    });
+    setInterval(function(){
+    map.setCenter(new google.maps.LatLng( 44.13972, 12.24286 ) );
+    marker.setPosition({lat: 44.13972, lng: 12.24286});
+    }, 3000);
+}
 function showLastClue(){
     showClue(lastClueText);
 }
