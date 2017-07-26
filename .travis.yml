@@ -25,3 +25,11 @@ install:
 
 script:
   - ./gradlew
+
+deploy:
+  - provider: releases
+    api_key: "072a767db621bbc5b85578c13b7195879092b8d0"
+    file: "th-player/platforms/android/build/outputs/apk/th-player.apk"
+    skip_cleanup: true
+    on:
+      tags: true
