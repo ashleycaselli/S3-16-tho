@@ -110,31 +110,44 @@ var app = {
     }
 
 };
-//-------------------------------CLUE----------------------------------------
+//-------------------------------MAP----------------------------------------
 function loadSecondPage(){
     var mapScript = document.createElement('script');
-
-    mapScript.setAttribute('src','https://maps.googleapis.com/maps/api/js?key=AIzaSyBNQr4YcrvttSMIgWOX68kJnigaI0Cir9c&callback=myMap');
-
+    mapScript.setAttribute('src','https://maps.googleapis.com/maps/api/js?key=AIzaSyBNQr4YcrvttSMIgWOX68kJnigaI0Cir9c&callback=mapLoadedCallback');
     document.head.appendChild(mapScript);
 }
-function myMap() {
-    var mapProp = {
-        center: new google.maps.LatLng(44.13972, 12.24286),
-        zoom: 15,
-    };
-    var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+function mapLoadedCallback() {
+    getLocation(function(firstLatitude,firstLongitude){
+        var mapProp = {
+            center: new google.maps.LatLng(firstLatitude,firstLongitude),
+            zoom: 15,
+        };
+        var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+        var marker = new google.maps.Marker({
+            position: {lat: firstLatitude, lng: firstLongitude},
+            map: map,
+            title: "player-position"
+        });
+        setInterval(function(){
+            getLocation(function(latitude,longitude){
+                map.setCenter(new google.maps.LatLng( latitude, longitude ) );
+                marker.setPosition({lat: latitude, lng: longitude});
+            })
+        }, 3000);
+    })
 
-    var marker = new google.maps.Marker({
-        position: {lat: 44.13972, lng: 12.24286},
-        map: map,
-        title: "Prova"
-    });
-    setInterval(function(){
-    map.setCenter(new google.maps.LatLng( 44.13972, 12.24286 ) );
-    marker.setPosition({lat: 44.13972, lng: 12.24286});
-    }, 3000);
 }
+function getLocation(callback){
+    var onSuccess = function(position) {
+        callback(position.coords.latitude,position.coords.longitude)
+    };
+    function onError(error) {
+        alert('code: '    + error.code    + '\n' +
+              'message: ' + error.message + '\n');
+    }
+    navigator.geolocation.getCurrentPosition(onSuccess, onError);
+}
+//-------------------------------CLUE----------------------------------------
 function showLastClue(){
     showClue(lastClueText);
 }
@@ -173,5 +186,23 @@ function checkQuiz(answer){
         document.getElementById("map-page-quiz").style.display="none";
     }
 }
-
+//---------------------------------PROGRESS---------------------------------
+function viewProgress(){
+    getProgress(function(totalPOI,reachedPOI){
+        var div = document.getElementById("map-page-progress");
+        var content="";
+        var value=totalPOI/reachedPOI*10+20;
+        content += '<div class="closeProgress" onclick="closeProgress()">X</div><div class="progressPercent">'+Math.round(value)+'%</div><div class="outOfProgress">'+reachedPOI+'</br>POI</br>reached</br>out of</br>'+totalPOI+'</div><div class="progressBar"><div class="progressBarContent animated bounceInDown" style="height:'+value+'%;"></div></div>';
+        div.innerHTML=content;
+        div.style.display="block";
+    });
+}
+function getProgress(callback){
+    var totalPOI=10;
+    var reachedPOI=3;
+    callback(totalPOI,reachedPOI);
+}
+function closeProgress(){
+    document.getElementById("map-page-progress").style.display="none";
+}
 app.initialize();

@@ -176,14 +176,6 @@ p {
     background-color: rgba(255,255,255,0.9);
     font-size:13px;
 }
-#googleMap{
-    position:absolute;
-    top:0;
-    left:0;
-    z-index:0;
-    width:100%;
-    height:100%;
-}
 
 #second .map-page-title {
     position:absolute;
@@ -254,8 +246,61 @@ p {
     font-size: 20px;
 }
 #googleMap{
-    position:fixed;
+    position:absolute;
     top:0;
     left:0;
     z-index:0;
-}
+    width:100%;
+    height:100%;
+    pointer-events: none;
+ }
+ #map-page-progress{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color:rgba(0,0,0,0.8);
+    display:none;
+    z-index:20;
+ }
+  .progressBar{
+     width:10px;
+     position:absolute;
+     top:10%;
+     left:20%;
+     height:80%;
+     background-color:gray;
+     border-radius:5px;
+     overflow:hidden;
+  }
+  .progressBarContent{
+     position:relative;
+     top:-20%;
+     background-color:skyblue;
+     border-radius:5px;
+  }
+  .progressPercent{
+      font-size:100px;
+      color:white;
+      width:100%;
+      text-align:center;
+      position:absolute;
+      top:20%;
+
+  }
+  .outOfProgress{
+      font-size:50px;
+      color:white;
+      width:100%;
+      text-align:center;
+      position:absolute;
+      top:41%;
+  }
+  .closeProgress{
+      position:absolute;
+       top:30px;
+       left:22px;
+       color:white;
+       font-size:60px;
+  }
