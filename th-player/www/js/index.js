@@ -18,15 +18,23 @@
  */
 //--------------------------GLOBAL-VARIABLES--------------------------------
 var lastClueText="text text text text text text text text text text text text text text text text text text ";
+var loggedTeam;
 var save;
 var codeSave;
 var app = {
     // Application Constructor
     initialize: function () {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+        loggedTeam=localStorage.getItem('loggedTeam');
+        if (loggedTeam!=null){
+            showLoggedTeamName();
+        }else{
+            showNotLoggedUser();
+        }
         if (codeSave != null) {
             document.getElementById("description").style.display = "block";
         }
+
     },
 
     // deviceready Event Handler
@@ -204,5 +212,44 @@ function getProgress(callback){
 }
 function closeProgress(){
     document.getElementById("map-page-progress").style.display="none";
+}
+//---------------------------------LOGIN---------------------------------
+function showLoggedTeamName(){
+    userInfo=document.getElementById("userInfo");
+    userInfo.innerHTML='<span>Team: '+loggedTeam+'</span>';
+    userInfo.style.display="block";
+}
+function showNotLoggedUser(){
+    document.getElementById("notLoggedUser").style.display="block";
+    document.getElementById("createOrLogin").style.display="block";
+    document.getElementById("loginTeam").style.display="none";
+    document.getElementById("createTeam").style.display="none";
+}
+function showCreateTeamPage(){
+    document.getElementById("createOrLogin").style.display="none";
+    document.getElementById("createTeam").style.display="block";
+    document.getElementById("createTeamNameInput").focus();
+}
+function createTeam(){
+    document.getElementById("notLoggedUser").style.display="none";
+    loggedTeam = document.getElementById("createTeamNameInput").value;
+    if(document.getElementById("createTeamPass1Input").value==document.getElementById("createTeamPass2Input").value){
+    //TODO create team
+    }
+    showLoggedTeamName()
+}
+function showLoginTeamPage(){
+    document.getElementById("createOrLogin").style.display="none";
+    document.getElementById("loginTeam").style.display="block";
+    document.getElementById("loginTeamNameInput").focus();
+}
+function loginTeam(){
+    document.getElementById("notLoggedUser").style.display="none";
+    //TODO check correct data
+    loggedTeam = document.getElementById("loginTeamNameInput").value;
+    showLoggedTeamName()
+}
+function logoutTeam(){
+    document.getElementById("createOrLogin").style.display="block";
 }
 app.initialize();
