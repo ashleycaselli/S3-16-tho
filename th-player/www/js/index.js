@@ -40,6 +40,7 @@ var app = {
         this.back();
         this.save();
         this.leave();
+        this.ok();
 
     },
 
@@ -72,6 +73,7 @@ var app = {
                 })
             document.getElementById("second").style.display="block";
             document.getElementById("first").style.display = "none";
+            document.getElementById("load").style.display = "none";
             loadSecondPage();
 
         }
@@ -80,6 +82,7 @@ var app = {
         document.getElementById("writecode").onclick = function () {
             document.getElementById("first").style.display = "none";
             document.getElementById("third").style.display = "block";
+            document.getElementById("load").style.display = "none";
         }
     },
     back: function () {
@@ -87,6 +90,7 @@ var app = {
         back[0].onclick = function () {
             document.getElementById("first").style.display = "block";
             document.getElementById("third").style.display = "none";
+            document.getElementById("load").style.display = "none";
         }
     },
     save: function () {
@@ -98,6 +102,7 @@ var app = {
             document.getElementById("first").style.display = "block";
             document.getElementById("third").style.display = "none";
             document.getElementById("description").style.display = "block";
+            document.getElementById("load").style.display = "none";
         }
     },
     leave: function () {
@@ -107,6 +112,13 @@ var app = {
             document.getElementById("description").style.display = "none";
             delete codeSave;
         }
+    },
+    ok:function () {
+        document.getElementById("ok").onclick = function () {
+            document.getElementById("first").style.display = "block";
+            document.getElementById("load").style.display = "none";
+        }
+
     }
 
 };
@@ -167,6 +179,8 @@ function showQuiz(question, answer){
     content += '<div onClick="checkQuiz(\''+answer+'\')" class="clue-quiz-button"><span>CHECK</span></div>';
     container.innerHTML=content;
     container.style.display="block";
+    document.getElementById("description").style.display="none";
+    document.getElementById("load").style.display = "none";
 }
 function checkQuiz(answer){
     if(document.getElementById("quizInput").value.trim()==answer){

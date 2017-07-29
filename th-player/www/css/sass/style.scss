@@ -2,10 +2,40 @@ body {
     background-color: white;
     font-family: "AndrewScript_1.6";
 }
-
-#first {
+.container{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+#load{
+    position: absolute;
+    top: 150px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+ol{
+    border-color: #A7A7A7;
+    border: solid;
+    border-width: 2px;
+    height: 100px;
+    border-radius: 5px 5px 5px 5px;
+    text-align: center;
+    width: 250px;
+    margin: 0px auto;
     display: block;
 }
+
+#first {
+    position: absolute;
+    top: 150px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: none;
+}
+
 
 #second {
     display: none;
@@ -13,18 +43,28 @@ body {
 
 #third {
     display: none;
+    position: absolute;
+    top: 180px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
 }
 
 #description {
+    position: absolute;
+    bottom: 200px;
+    top: 350px;
+    left: 0;
+    right: 0;
     display: none;
 }
 
 .logo {
-    margin: 0px auto;
+    width:50%;
+    height:auto;
     display: block;
-    width: 50%;
-    padding: 6%;
-
+    margin:0px auto;
 }
 
 .subtit {
@@ -58,7 +98,7 @@ p {
     margin-top: 2%;
     padding: 0.5%;
     width: 250px;
-    border-radius: 5px 5px 5px 5px
+    border-radius: 5px 5px 5px 5px;
 }
 
 .back {
@@ -71,7 +111,7 @@ p {
     right: 0;
     bottom: 0;
     width: 100px;
-    border-radius: 5px 5px 5px 5px
+    border-radius: 5px 5px 5px 5px;
 }
 
 #insertCode {
@@ -85,17 +125,36 @@ p {
     width: 250px;
     border-radius: 5px 5px 5px 5px;
 }
-
-.button {
+.ok{
+    font-family: "AndrewScript_1.6";
+    background-color: white;
+    font-size: 90%;
+    margin: 2px auto;
+    display: block;
+    border-radius: 5px 5px 5px 5px;
+    padding: 0.5%;
+    width: 250px;
+}
+.buttonscanqr {
     font-family: "AndrewScript_1.6";
     background-color: white;
     font-size: 90%;
     margin: 0px auto;
     display: block;
-    margin-top: 2%;
+    border-radius: 5px 5px 5px 5px;
     padding: 0.5%;
     width: 250px;
+}
+
+.buttonwritecode {
+    font-family: "AndrewScript_1.6";
+    background-color: white;
+    font-size: 90%;
+    margin: 0px auto;
+    display: block;
     border-radius: 5px 5px 5px 5px;
+    padding: 0.5%;
+    width: 250px;
 }
 
 .location {
