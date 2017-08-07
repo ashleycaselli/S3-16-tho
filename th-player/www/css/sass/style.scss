@@ -173,13 +173,13 @@ p {
     width: 60%;
     padding: 17px 20px 10px;
     border: 2px solid skyblue;
-    background-color: rgba(255,255,255,0.9);
-    font-size:13px;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
 }
 
 #second .map-page-title {
-    position:absolute;
-    top:3%;
+    position: absolute;
+    top: 3%;
     margin-left: 22%;
     width: 56%;
     text-align: center;
@@ -187,32 +187,34 @@ p {
     padding-top: 20px;
     border: 2px black solid;
     border-radius: 5px;
-    background-color:rgba(255,255,255,0.9);
-    z-index:10;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 10;
 }
+
 #map-page-clue, #map-page-quiz {
     display: none;
     position: absolute;
-    top:25%;
+    top: 25%;
     margin-left: 22%;
     width: 56%;
     border: solid 2px black;
     font-size: 15px;
-    background-color: rgba(255,255,255,0.9);
+    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 5px;
 }
+
 .left-button span {
     text-align: right;
     border-radius: 0 5px 5px 0;
     margin-left: 0;
-    border-left:none;
+    border-left: none;
 }
 
 .right-button span {
     border-radius: 5px 0 0 5px;
     text-align: left;
     margin-left: calc(40% - 44px);
-    border-right:none;
+    border-right: none;
 }
 
 #close-clue-button, #close-quiz-button {
@@ -222,6 +224,7 @@ p {
 #map-page-clue p, #map-page-quiz p {
     padding: 15px;
 }
+
 .clue-quiz-button {
     position: relative;
     bottom: 10%;
@@ -232,123 +235,139 @@ p {
     text-align: center;
     padding: 15px 0 6px;
 }
+
 .insert {
     margin-top: 10px;
 }
+
 #map-page-clue h1, #map-page-quiz h1 {
     margin: 25px auto 10px;
     text-align: center;
     font-size: 32px;
 }
+
 .quizInput {
     width: 80%;
     margin-left: 9%;
     font-size: 20px;
 }
-#googleMap{
-    position:absolute;
-    top:0;
-    left:0;
-    z-index:0;
-    width:100%;
-    height:100%;
-    pointer-events: none;
- }
-   #map-page-progress{
-       position:absolute;
-       top:0;
-       left:0;
-       width:100%;
-       height:100%;
-       background-color:rgba(0,0,0,0.8);
-       display:none;
-       z-index:20;
-   }
-   .progressBar{
-       width:10px;
-       position:absolute;
-       top:10%;
-       left:20%;
-       height:80%;
-       background-color:gray;
-       overflow:hidden;
-   }
-   .progressBarContent{
-       position:relative;
-       top:-20%;
-       background-color:skyblue;
-       border-radius:5px;
-   }
-   .progressPercent{
-       font-size:100px;
-       color:white;
-       width:100%;
-       text-align:center;
-       position:absolute;
-       top:20%;
 
-   }
-   .outOfProgress{
-       font-size:50px;
-       color:white;
-       width:100%;
-       text-align:center;
-       position:absolute;
-       top:41%;
-   }
-   .closeProgress{
-       position:absolute;
-       top:30px;
-       left:22px;
-       color:white;
-       font-size:60px;
-   }
-   .notLoggedUser{
-       background-image: url("../img/backgroundRainbow.jpg");
-       background-position:bottom center;
-       background-size:cover;
-       position:absolute;
-       top:0;
-       left:0;
-       width:100%;
-       height:100%;
-       display:none;
-       z-index:100;
-       text-align:center;
-   }
-   .notLoggedUser .loginButton{
-       width:280px;
-       height:40px;
-       font-size:30px;
-       text-align:center;
-       border: 2px skyblue solid;
-       border-radius:6px;
-       padding:20px 0 0;
-       margin:10px auto 20px;
-   }
-   .loginLogo{
-       width:40%;
-       margin:105px auto 30px;
-   }
-   #createTeam, #loginTeam{
-       display:none;
-       width:290px;
-       margin:auto;
-       text-align:right;
-   }
-   .loginInput{
-       width:160px;
-       border-radius:5px;
-       height:25px;
-       margin: 5px;
-   }
-   #userInfo{
-       color:white;
-       background-color:#444444;
-       position:absolute;
-       bottom:0;
-       width:100%;
-       z-index:15;
-       padding:16px 0 7px;
-       text-align:center;
-   }
+#googleMap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#map-page-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    z-index: 20;
+}
+
+.progressBar {
+    width: 10px;
+    position: absolute;
+    top: 10%;
+    left: 20%;
+    height: 80%;
+    background-color: gray;
+    overflow: hidden;
+}
+
+.progressBarContent {
+    position: relative;
+    top: -20%;
+    background-color: skyblue;
+    border-radius: 5px;
+}
+
+.progressPercent {
+    font-size: 100px;
+    color: white;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 20%;
+
+}
+
+.outOfProgress {
+    font-size: 50px;
+    color: white;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 41%;
+}
+
+.closeProgress {
+    position: absolute;
+    top: 30px;
+    left: 22px;
+    color: white;
+    font-size: 60px;
+}
+
+.notLoggedUser {
+    background-image: url("../img/backgroundRainbow.jpg");
+    background-position: bottom center;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 100;
+    text-align: center;
+}
+
+.notLoggedUser .loginButton {
+    width: 280px;
+    height: 40px;
+    font-size: 30px;
+    text-align: center;
+    border: 2px skyblue solid;
+    border-radius: 6px;
+    padding: 20px 0 0;
+    margin: 10px auto 20px;
+}
+
+.loginLogo {
+    width: 40%;
+    margin: 105px auto 30px;
+}
+
+#createTeam, #loginTeam {
+    display: none;
+    width: 290px;
+    margin: auto;
+    text-align: right;
+}
+
+.loginInput {
+    width: 160px;
+    border-radius: 5px;
+    height: 25px;
+    margin: 5px;
+}
+
+#userInfo {
+    color: white;
+    background-color: #444444;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index: 15;
+    padding: 16px 0 7px;
+    text-align: center;
+}

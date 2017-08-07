@@ -53,7 +53,7 @@
             <div onclick="showNotLoggedUser()" class="loginButton"><span>Back</span></div>
         </div>
         <div id="loginTeam">
-            <span>TEAM NAME:<input class="loginInput" id="loginTeamNameInput" /></span></br>
+            <span>TEAM NAME:<input class="loginInput" id="loginTeamNameInput"/></span></br>
             <span>PASSWORD:<input class="loginInput" id="loginTeamPassInput"/></span>
             <div onclick="loginTeam()" class="loginButton"><span>Login</span></div>
             <div onclick="showNotLoggedUser()" class="loginButton"><span>Back</span></div>
@@ -83,11 +83,16 @@
         <div class="map-page-title animated bounceInDown">TITOLO</div>
         <div id="googleMap"></div>
         <div class="map-page-menu">
-            <div class="map-page-menu-button-container left-button animated bounceInLeft" id="show-last-clue-button"><span onclick="showLastClue()">Show last clue</span></div>
-            <div class="map-page-menu-button-container left-button animated bounceInLeft" id="close-clue-button"><span>Close clue</span></div>
-            <div class="map-page-menu-button-container right-button animated bounceInRight"><span onclick='viewProgress()'>Progress</span></div>
-            <div class="map-page-menu-button-container left-button animated bounceInLeft"><span onclick="contactManager()">Contact manager</span></div>
-            <div class="map-page-menu-button-container right-button animated bounceInRight"><span onClick='exit()' >Exit</span></div>
+            <div class="map-page-menu-button-container left-button animated bounceInLeft" id="show-last-clue-button">
+                <span onclick="showLastClue()">Show last clue</span></div>
+            <div class="map-page-menu-button-container left-button animated bounceInLeft" id="close-clue-button"><span>Close clue</span>
+            </div>
+            <div class="map-page-menu-button-container right-button animated bounceInRight"><span
+                    onclick='viewProgress()'>Progress</span></div>
+            <div class="map-page-menu-button-container left-button animated bounceInLeft"><span
+                    onclick="contactManager()">Contact manager</span></div>
+            <div class="map-page-menu-button-container right-button animated bounceInRight"><span
+                    onClick='exit()'>Exit</span></div>
         </div>
         <div id="map-page-clue" class="animated tada"></div>
         <div id="map-page-quiz" class="animated tada"></div>
