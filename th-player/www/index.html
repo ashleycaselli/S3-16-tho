@@ -38,6 +38,27 @@
 </head>
 <body>
 <div data-role="page" class="container">
+    <div id="notLoggedUser" class="notLoggedUser">
+        <img class="loginLogo" src="img/logo.png"/>
+        <div id="createOrLogin">
+            <div onclick="showCreateTeamPage()" class="loginButton"><span>Create new Team</span></div>
+            OR
+            <div onclick="showLoginTeamPage()" class="loginButton"><span>Login</span></div>
+        </div>
+        <div id="createTeam">
+            <span>CHOSE A NAME:<input class="loginInput" id="createTeamNameInput"/></span></br>
+            <span>PASSWORD:<input class="loginInput" id="createTeamPass1Input"/></span></br>
+            <span>CONFIRM PASS:<input class="loginInput" id="createTeamPass2Input"/></span>
+            <div onclick="createTeam()" class="loginButton"><span>Create Team</span></div>
+            <div onclick="showNotLoggedUser()" class="loginButton"><span>Back</span></div>
+        </div>
+        <div id="loginTeam">
+            <span>TEAM NAME:<input class="loginInput" id="loginTeamNameInput" /></span></br>
+            <span>PASSWORD:<input class="loginInput" id="loginTeamPassInput"/></span>
+            <div onclick="loginTeam()" class="loginButton"><span>Login</span></div>
+            <div onclick="showNotLoggedUser()" class="loginButton"><span>Back</span></div>
+        </div>
+    </div>
     <div id="first">
 
         <img class="logo" src="img/logo.png"/>
@@ -55,6 +76,7 @@
         <div class="descButton">
             <input type="button" class="button1" value="RESUME">
             <input type="button" class="buttonLeave" value="LEAVE">
+
         </div>
     </div>
     <div id="second">
@@ -63,12 +85,13 @@
         <div class="map-page-menu">
             <div class="map-page-menu-button-container left-button animated bounceInLeft" id="show-last-clue-button"><span onclick="showLastClue()">Show last clue</span></div>
             <div class="map-page-menu-button-container left-button animated bounceInLeft" id="close-clue-button"><span>Close clue</span></div>
-            <div class="map-page-menu-button-container right-button animated bounceInRight"><span onclick='settings()'>Settings</span></div>
+            <div class="map-page-menu-button-container right-button animated bounceInRight"><span onclick='viewProgress()'>Progress</span></div>
             <div class="map-page-menu-button-container left-button animated bounceInLeft"><span onclick="contactManager()">Contact manager</span></div>
             <div class="map-page-menu-button-container right-button animated bounceInRight"><span onClick='exit()' >Exit</span></div>
         </div>
         <div id="map-page-clue" class="animated tada"></div>
         <div id="map-page-quiz" class="animated tada"></div>
+        <div id="map-page-progress"></div>
     </div>
     <div id="third">
         <h1 class="insert">Inserisci il codice: </h1>
@@ -76,6 +99,7 @@
         <input type="button" class="save" value="SAVE">
         <input type="button" class="back" value="EXIT">
     </div>
+    <div id="userInfo"></div>
 </div>
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
