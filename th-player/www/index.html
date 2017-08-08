@@ -8,7 +8,6 @@
     <link rel="stylesheet" type="text/css" href="css/index.css">
     <link rel="stylesheet" type="text/css" href="css/animate.css">
     <title>THO</title>
-
 </head>
 <body>
 <div data-role="page" class="container">
@@ -32,63 +31,55 @@
             <div onclick="loginTeam()" class="loginButton"><span>Login</span></div>
             <div onclick="showNotLoggedUser()" class="loginButton"><span>Back</span></div>
         </div>
-        <div id="load">
-            <img class="logo" src="img/logo.png"/>
-            <ol>
-                ciao
-            </ol>
-            <input type="button" id="ok" class="ok" value="OK">
-        </div>
-        <div id="first">
-
-            <img class="logo" src="img/logo.png"/>
-
-            <input type="button" id="scanqr" class="buttonscanqr" value="SCAN A QR-CODE">
-            <input type="button" id="writecode" class="buttonwritecode" value="INSERT CODE">
-            <div id="deviceready" class="blink"></div>
-        </div>
-        <div id="description">
-            <div class="location">
-                <p>YOU ARE PLAYING '</p>
-                <p id="hunt"></p>
-                <p>' HUNT</p>
-            </div>
-            <div class="descButton">
-                <input type="button" class="button1" value="RESUME">
-                <input type="button" class="buttonLeave" value="LEAVE">
-
-            </div>
-        </div>
-        <div id="second">
-            <div class="map-page-title animated bounceInDown">TITOLO</div>
-            <div id="googleMap"></div>
-            <div class="map-page-menu">
-                <div class="map-page-menu-button-container left-button animated bounceInLeft"
-                     id="show-last-clue-button">
-                    <span onclick="showLastClue()">Show last clue</span></div>
-                <div class="map-page-menu-button-container left-button animated bounceInLeft" id="close-clue-button">
-                    <span>Close clue</span>
-                </div>
-                <div class="map-page-menu-button-container right-button animated bounceInRight"><span
-                        onclick='viewProgress()'>Progress</span></div>
-                <div class="map-page-menu-button-container left-button animated bounceInLeft"><span
-                        onclick="contactManager()">Contact manager</span></div>
-                <div class="map-page-menu-button-container right-button animated bounceInRight"><span
-                        onClick='exit()'>Exit</span></div>
-            </div>
-            <div id="map-page-clue" class="animated tada"></div>
-            <div id="map-page-quiz" class="animated tada"></div>
-            <div id="map-page-progress"></div>
-        </div>
-        <div id="third">
-            <h1 class="insert">Inserisci il codice: </h1>
-            <input type="text" id="insertCode">
-            <input type="button" class="save" value="SAVE">
-            <input type="button" class="back" value="EXIT">
-        </div>
-        <div id="userInfo"></div>
     </div>
-    <script type="text/javascript" src="cordova.js"></script>
-    <script type="text/javascript" src="js/index.js"></script>
+    <div id="first">
+
+        <img class="logo" src="img/logo.png"/>
+
+        <input type="button" id="scanqr" class="button" value="SCAN A QR-CODE">
+        <input type="button" id="writecode" class="button" value="INSERT CODE">
+        <div id="deviceready" class="blink"></div>
+    </div>
+    <div id="description">
+        <div class="location">
+            <p>YOU ARE PLAYING '</p>
+            <p id="hunt"></p>
+            <p>' HUNT</p>
+        </div>
+        <div class="descButton">
+            <input type="button" class="button1" value="RESUME">
+            <input type="button" class="buttonLeave" value="LEAVE">
+
+        </div>
+    </div>
+    <div id="second">
+        <div class="map-page-title animated bounceInDown">TITOLO</div>
+        <div id="googleMap"></div>
+        <div class="map-page-menu">
+            <div class="map-page-menu-button-container left-button animated bounceInLeft" id="show-last-clue-button">
+                <span onclick="showLastClue()">Show last clue</span></div>
+            <div class="map-page-menu-button-container left-button animated bounceInLeft" id="close-clue-button"><span>Close clue</span>
+            </div>
+            <div class="map-page-menu-button-container right-button animated bounceInRight"><span
+                    onclick='viewProgress()'>Progress</span></div>
+            <div class="map-page-menu-button-container left-button animated bounceInLeft"><span
+                    onclick="contactManager()">Contact manager</span></div>
+            <div class="map-page-menu-button-container right-button animated bounceInRight"><span
+                    onClick='exit()'>Exit</span></div>
+        </div>
+        <div id="map-page-clue" class="animated tada"></div>
+        <div id="map-page-quiz" class="animated tada"></div>
+        <div id="map-page-progress"></div>
+    </div>
+    <div id="third">
+        <h1 class="insert">Inserisci il codice: </h1>
+        <input type="text" id="insertCode">
+        <input type="button" class="save" value="SAVE">
+        <input type="button" class="back" value="EXIT">
+    </div>
+    <div id="userInfo"></div>
+</div>
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
 </body>
 </html>

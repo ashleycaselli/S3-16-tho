@@ -1,21 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 //--------------------------GLOBAL-VARIABLES--------------------------------
 var lastClueText = "text text text text text text text text text text text text text text text text text text ";
 var loggedTeam;
@@ -48,7 +30,6 @@ var app = {
         this.back();
         this.save();
         this.leave();
-        this.ok();
 
     },
 
@@ -57,15 +38,11 @@ var app = {
     /*receivedEvent: function (id) {
         var listeningElement = parentElement.querySelector('.listening');
         var receivedElement = parentElement.querySelector('.received');
-
         listeningElement.setAttribute('style', 'display:none;');
         receivedElement.setAttribute('style', 'display:block;');
-
         console.log('Received Event: ' + id);
         document.getElementById("first").style.display = "none";
         document.getElementById("second").style.display = "block";
-
-
     },*/
     qrcode: function () {
         document.getElementById("scanqr").onclick = function () {
@@ -81,7 +58,6 @@ var app = {
                 })
             document.getElementById("second").style.display = "block";
             document.getElementById("first").style.display = "none";
-            document.getElementById("load").style.display = "none";
             loadSecondPage();
 
         }
@@ -90,7 +66,6 @@ var app = {
         document.getElementById("writecode").onclick = function () {
             document.getElementById("first").style.display = "none";
             document.getElementById("third").style.display = "block";
-            document.getElementById("load").style.display = "none";
         }
     },
     back: function () {
@@ -98,7 +73,6 @@ var app = {
         back[0].onclick = function () {
             document.getElementById("first").style.display = "block";
             document.getElementById("third").style.display = "none";
-            document.getElementById("load").style.display = "none";
         }
     },
     save: function () {
@@ -110,7 +84,6 @@ var app = {
             document.getElementById("first").style.display = "block";
             document.getElementById("third").style.display = "none";
             document.getElementById("description").style.display = "block";
-            document.getElementById("load").style.display = "none";
         }
     },
     leave: function () {
@@ -120,13 +93,6 @@ var app = {
             document.getElementById("description").style.display = "none";
             delete codeSave;
         }
-    },
-    ok:function () {
-        document.getElementById("ok").onclick = function () {
-            document.getElementById("first").style.display = "block";
-            document.getElementById("load").style.display = "none";
-        }
-
     }
 
 };
@@ -205,7 +171,6 @@ function closeClue() {
 function showQuiz(question, answer) {
     var container = document.getElementById("map-page-quiz");
     var content = '<h1>QUIZ</h1>';
-<<<<<<< HEAD
     content += '<p>' + question + '</p>';
     content += '<input class="quizInput" id="quizInput" type="text" />'
     content += '<div onClick="checkQuiz(\'' + answer + '\')" class="clue-quiz-button"><span>CHECK</span></div>';
@@ -216,19 +181,6 @@ function showQuiz(question, answer) {
 function checkQuiz(answer) {
     if (document.getElementById("quizInput").value.trim() == answer) {
         document.getElementById("map-page-quiz").style.display = "none";
-=======
-    content += '<p>'+question+'</p>';
-    content+= '<input class="quizInput" id="quizInput" type="text" />'
-    content += '<div onClick="checkQuiz(\''+answer+'\')" class="clue-quiz-button"><span>CHECK</span></div>';
-    container.innerHTML=content;
-    container.style.display="block";
-    document.getElementById("description").style.display="none";
-    document.getElementById("load").style.display = "none";
-}
-function checkQuiz(answer){
-    if(document.getElementById("quizInput").value.trim()==answer){
-        document.getElementById("map-page-quiz").style.display="none";
->>>>>>> 9a2ed5f9f387fe79b94def0e6a5105f170c7bae9
     }
 }
 
