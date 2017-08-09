@@ -1,9 +1,10 @@
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 
 /** An Entity that contains a Question and an Answer
   *
   */
 trait Quiz extends Serializable {
+
     /**
       * Property to get Question.
       *
@@ -37,14 +38,13 @@ trait Quiz extends Serializable {
 
 case class QuizImpl(override var question: String, override var answer: String) extends Quiz {
 
+    implicit val quizWrites = Json.writes[QuizImpl]
+
     /**
       * Property for getting an entity's String representation.
       *
       * @return a String containing the representation
       */
-    override def defaultRepresentation: String = {
-        val jsonRepresentation: JsValue = Json obj("Question" -> question, "Answer" -> answer)
-        jsonRepresentation toString
-    }
+    override def defaultRepresentation: String = Json toJson this toString
 
 }
