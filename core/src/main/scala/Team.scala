@@ -43,7 +43,7 @@ trait Team {
 case class TeamImpl(override val name: String, override val path: Path, private val ps: Seq[Player] = ListBuffer.empty[Player]) extends Team {
 
     private var _players: Seq[Player] = ps
-    private val logger = Logger[TeamImpl]
+    private val logger = Logger[Team]
 
     /** Returns a list of team's elements.
       *
