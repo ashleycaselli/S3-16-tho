@@ -5,6 +5,7 @@ bin/*
 !/plugins/fetch.json
 plugins/*
 platforms/*
+package.json
 
 ### Node.js ###
 node_modules/
