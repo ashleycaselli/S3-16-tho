@@ -38,21 +38,27 @@ trait POI extends Positionable {
     def clue_=(clue: Clue): Unit
 }
 
-/** A point of interest on the map
+/**
+  * A point of interest on the map
   *
+  * @param position the POI's position
+  * @param name     the POI's name
+  * @param _quiz    a Quiz for POI. null if not specified
+  * @param _clue    a Clue for POI. null if not specified
   */
-case class POIImpl(override val position: Position, override val name: String, private var _quiz: Quiz = null, private var _clue: Clue = null) extends POI {
+case class POIImpl(override var position: Position, override val name: String, private var _quiz: Quiz = null, private var _clue: Clue = null) extends POI {
+
     /**
       * Property to get the POI's quiz
       *
-      * @return
+      * @return the POI's quiz
       */
     override def quiz: Quiz = _quiz
 
     /**
       * Property to set the POI's quiz
       *
-      * @param quiz
+      * @param quiz the Quiz to be setted
       */
     override def quiz_=(quiz: Quiz): Unit = {
         require(quiz != null)
@@ -62,7 +68,7 @@ case class POIImpl(override val position: Position, override val name: String, p
     /**
       * Property to get the POI's clue
       *
-      * @return
+      * @return the POI's clue
       */
     override def clue: Clue = _clue
 
