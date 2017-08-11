@@ -1,5 +1,5 @@
 //--------------------------GLOBAL-VARIABLES--------------------------------
-var lastClueText = "text text text text text text text text text text text text text text text text text text ";
+var lastClueText = "text text text text text text text text text text text text text text text text text text";
 var loggedTeam;
 var save;
 var codeSave;
@@ -16,7 +16,6 @@ var app = {
         if (codeSave != null) {
             document.getElementById("description").style.display = "block";
         }
-
     },
 
     // deviceready Event Handler
@@ -24,26 +23,13 @@ var app = {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function () {
-        //this.receivedEvent('deviceready');
         this.qrcode();
         this.writeCode();
         this.back();
         this.save();
         this.leave();
-
     },
 
-
-    // Update DOM on a Received Event
-    /*receivedEvent: function (id) {
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-        console.log('Received Event: ' + id);
-        document.getElementById("first").style.display = "none";
-        document.getElementById("second").style.display = "block";
-    },*/
     qrcode: function () {
         document.getElementById("scanqr").onclick = function () {
             cordova.plugins.barcodeScanner.scan(
@@ -59,15 +45,16 @@ var app = {
             document.getElementById("second").style.display = "block";
             document.getElementById("first").style.display = "none";
             loadSecondPage();
-
         }
     },
+
     writeCode: function () {
         document.getElementById("writecode").onclick = function () {
             document.getElementById("first").style.display = "none";
             document.getElementById("third").style.display = "block";
         }
     },
+
     back: function () {
         var back = document.getElementsByClassName("back");
         back[0].onclick = function () {
@@ -75,6 +62,7 @@ var app = {
             document.getElementById("third").style.display = "none";
         }
     },
+
     save: function () {
         save = document.getElementsByClassName("save");
         save[0].onclick = function () {
@@ -86,6 +74,7 @@ var app = {
             document.getElementById("description").style.display = "block";
         }
     },
+
     leave: function () {
         var leave = document.getElementsByClassName("buttonLeave");
         leave[0].onclick = function () {
