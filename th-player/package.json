@@ -11,6 +11,8 @@
     "license": "Apache-2.0",
     "dependencies": {
         "cordova-android": "^6.2.3",
+        "cordova-browser": "^4.1.0",
+        "phonegap-plugin-barcodescanner": "~6.0.8",
         "whitelist": "^1.0.2"
     },
     "cordova": {
@@ -18,7 +20,8 @@
             "phonegap-plugin-barcodescanner": {}
         },
         "platforms": [
-            "android"
+            "android",
+            "browser"
         ]
     }
 }

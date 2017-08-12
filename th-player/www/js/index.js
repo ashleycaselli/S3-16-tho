@@ -14,7 +14,7 @@ var app = {
             showNotLoggedUser();
         }
         if (codeSave != null) {
-            document.getElementById("description").style.display = "block";
+            document.getElementById("currentTreasureHunt").style.display = "block";
         }
 
     },
@@ -29,21 +29,13 @@ var app = {
         this.writeCode();
         this.back();
         this.save();
+        this.resume();
         this.leave();
 
     },
 
 
     // Update DOM on a Received Event
-    /*receivedEvent: function (id) {
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-        console.log('Received Event: ' + id);
-        document.getElementById("first").style.display = "none";
-        document.getElementById("second").style.display = "block";
-    },*/
     qrcode: function () {
         document.getElementById("scanqr").onclick = function () {
             cordova.plugins.barcodeScanner.scan(
@@ -56,41 +48,52 @@ var app = {
                 function (error) {
                     alert("Scanning failed: " + error);
                 })
-            document.getElementById("second").style.display = "block";
-            document.getElementById("first").style.display = "none";
-            loadSecondPage();
+            document.getElementById("mapPage").style.display = "block";
+            document.getElementById("insertCodePage").style.display = "none";
+            loadMapPage();
 
         }
     },
     writeCode: function () {
         document.getElementById("writecode").onclick = function () {
-            document.getElementById("first").style.display = "none";
-            document.getElementById("third").style.display = "block";
+            document.getElementById("insertCodePage").style.display = "none";
+            document.getElementById("insertCodeManuallyPage").style.display = "block";
+            document.getElementById("currentTreasureHunt").style.display = "none";
         }
     },
     back: function () {
-        var back = document.getElementsByClassName("back");
-        back[0].onclick = function () {
-            document.getElementById("first").style.display = "block";
-            document.getElementById("third").style.display = "none";
+        var cancelButton = document.getElementById("cancelCodeButton");
+        cancelButton.onclick = function () {
+            document.getElementById("insertCodePage").style.display = "block";
+            document.getElementById("insertCodeManuallyPage").style.display = "none";
         }
     },
     save: function () {
-        save = document.getElementsByClassName("save");
-        save[0].onclick = function () {
-            codeSave = document.getElementById("insertCode").value;
+        var saveButton = document.getElementById("saveCodeButton");
+        saveButton.onclick = function () {
+            codeSave = document.getElementById("insertCodeInput").value;
             alert("Saved treasure hunt");
             document.getElementById("hunt").innerHTML = codeSave;
-            document.getElementById("first").style.display = "block";
-            document.getElementById("third").style.display = "none";
-            document.getElementById("description").style.display = "block";
+            document.getElementById("insertCodePage").style.display = "block";
+            document.getElementById("insertCodeManuallyPage").style.display = "none";
+            document.getElementById("currentTreasureHunt").style.display = "block";
+        }
+    },
+    resume: function () {
+        var resume = document.getElementById("resumeButton");
+        resume.onclick = function () {
+            document.getElementById("insertCodePage").style.display = "none";
+            document.getElementById("mapPage").style.display = "block";
+            document.getElementById("currentTreasureHunt").style.display = "none";
+            //set title of current treasure hunt
+            document.getElementById("mapPageTitle").innerText = document.getElementById("hunt").innerText;
         }
     },
     leave: function () {
-        var leave = document.getElementsByClassName("buttonLeave");
-        leave[0].onclick = function () {
-            document.getElementById("first").style.display = "block";
-            document.getElementById("description").style.display = "none";
+        var leave = document.getElementById("leaveButton");
+        leave.onclick = function () {
+            document.getElementById("insertCodePage").style.display = "block";
+            document.getElementById("currentTreasureHunt").style.display = "none";
             delete codeSave;
         }
     }
@@ -98,7 +101,7 @@ var app = {
 };
 
 //-------------------------------MAP----------------------------------------
-function loadSecondPage() {
+function loadMapPage() {
     var mapScript = document.createElement('script');
     mapScript.setAttribute('src', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBNQr4YcrvttSMIgWOX68kJnigaI0Cir9c&callback=mapLoadedCallback');
     document.head.appendChild(mapScript);
@@ -137,6 +140,15 @@ function getLocation(callback) {
     }
 
     navigator.geolocation.getCurrentPosition(onSuccess, onError);
+}
+
+function exitFromMap() {
+    document.getElementById("mapPage").style.display = "none";
+    document.getElementById("insertCodePage").style.display = "block";
+    var huntName = document.getElementById("hunt").innerText;
+    if (huntName != "") {
+        document.getElementById("currentTreasureHunt").style.display = "block";
+    }
 }
 
 //-------------------------------CLUE----------------------------------------
@@ -214,7 +226,7 @@ function showLoggedTeamName() {
 }
 
 function showNotLoggedUser() {
-    document.getElementById("notLoggedUser").style.display = "block";
+    document.getElementById("notLoggedUserPage").style.display = "block";
     document.getElementById("createOrLogin").style.display = "block";
     document.getElementById("loginTeam").style.display = "none";
     document.getElementById("createTeam").style.display = "none";
@@ -227,7 +239,7 @@ function showCreateTeamPage() {
 }
 
 function createTeam() {
-    document.getElementById("notLoggedUser").style.display = "none";
+    document.getElementById("notLoggedUserPage").style.display = "none";
     loggedTeam = document.getElementById("createTeamNameInput").value;
     if (document.getElementById("createTeamPass1Input").value == document.getElementById("createTeamPass2Input").value) {
         //TODO create team
@@ -242,7 +254,7 @@ function showLoginTeamPage() {
 }
 
 function loginTeam() {
-    document.getElementById("notLoggedUser").style.display = "none";
+    document.getElementById("notLoggedUserPage").style.display = "none";
     //TODO check correct data
     loggedTeam = document.getElementById("loginTeamNameInput").value;
     showLoggedTeamName()

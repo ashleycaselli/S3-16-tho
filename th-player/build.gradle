@@ -9,6 +9,9 @@ sass {
         srcDir = file("$projectDir/www/css/sass/loader")
         outDir = file("$projectDir/www/css")
         minify = true
+        outputs.upToDateWhen {
+            false
+        }
     }
 }
 

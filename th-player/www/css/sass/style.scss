@@ -1,44 +1,16 @@
+@import url('https://fonts.googleapis.com/css?family=Chewy|Indie+Flower|Pangolin|Permanent+Marker|Sedgwick+Ave');
+
+// Font Variables
+$chewy: Chewy;
+$indie_flower: Indie Flower;
+$pangolin: Pangolin;
+$permanent_marker: Permanent Marker;
+
+/*------------Generic CSS-------------*/
+
 body {
     background-color: white;
-    font-family: "AndrewScript_1.6";
-}
-
-#first {
-    display: block;
-}
-
-#second {
-    display: none;
-}
-
-#third {
-    display: none;
-}
-
-#description {
-    display: none;
-}
-
-.logo {
-    margin: 0px auto;
-    display: block;
-    width: 50%;
-    padding: 6%;
-
-}
-
-.subtit {
-    font-size: 200%;
-    text-align: center;
-    margin-top: 1%;
-
-}
-
-.subtit2 {
-    font-size: 200%;
-    text-align: center;
-    margin-top: 6%;
-
+    font-family: $chewy;
 }
 
 h1 {
@@ -49,111 +21,151 @@ p {
     display: inline;
 }
 
-.save {
-    font-family: "AndrewScript_1.6";
-    background-color: white;
-    font-size: 90%;
-    margin: 0px auto;
-    display: block;
-    margin-top: 2%;
-    padding: 0.5%;
-    width: 250px;
-    border-radius: 5px 5px 5px 5px;
+.generic-subtitle {
+    font-size: 200%;
+    text-align: center;
 }
 
-.back {
-    font-family: "AndrewScript_1.6";
-    background-color: white;
-    font-size: 90%;
-    margin: 3%;
-    padding: 0.5%;
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    width: 100px;
-    border-radius: 5px 5px 5px 5px;
+.subtitle1 {
+    @extend .generic-subtitle;
+    margin-top: 1%;
 }
 
-#insertCode {
-    font-family: "AndrewScript_1.6";
-    background-color: white;
-    font-size: 90%;
-    margin: 0px auto;
-    display: block;
-    margin-top: 2%;
-    padding: 0.5%;
-    width: 250px;
-    border-radius: 5px 5px 5px 5px;
+.subtitle2 {
+    @extend .generic-subtitle;
+    margin-top: 6%;
 }
 
-.button {
-    font-family: "AndrewScript_1.6";
-    background-color: white;
-    font-size: 90%;
-    margin: 0px auto;
+.logo {
+    margin: 30% auto 10%;
     display: block;
-    margin-top: 2%;
+    width: 50%;
+    padding: 6%;
+}
+
+.buttonContainer {
+    font-size: 80%;
+    text-align: center;
+}
+
+.halfButton button {
+    width: 125px;
+}
+
+button {
+    font: 200% $chewy;
+    background-color: white;
+    margin: 2% auto;
+    display: inline-block;
     padding: 0.5%;
     width: 250px;
-    border-radius: 5px 5px 5px 5px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+label {
+    font: 85% $chewy;
+}
+
+.textInput {
+    margin: 2%;
+    padding: 5px;
+    height: 25px;
+    text-align: center;
+    font-size: 90%;
+    border-radius: 5px;
+}
+
+/*-------------Gestione Visibilità Pagine--------------*/
+
+#insertCodePage {
+    display: block;
+}
+
+#mapPage {
+    display: none;
+}
+
+#insertCodeManuallyPage {
+    display: none;
+}
+
+#currentTreasureHunt {
+    display: none;
+}
+
+/*--------1st Page: notLoggedUser-----------*/
+
+.notLoggedUserPage {
+    background-image: url("../img/backgroundRainbow.jpg");
+    background-position: bottom center;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 100;
+    text-align: center;
+}
+
+/*---------2nd Page: CreateNewTeam or Login---------*/
+
+#createTeam, #loginTeam {
+    display: none;
+    width: 290px;
+    margin: auto;
+    text-align: center;
+}
+
+.loginInput {
+    width: 250px;
+}
+
+/*----------------3rd Page: Insert Code Page-------------------*/
+
+#insertCodePage {
+    margin-top: 30%;
 }
 
 .location {
     font-size: 70%;
-    font-family: "AndrewScript_1.6";
     text-align: center;
-    margin: 0px auto;
+    margin: 2% auto;
     display: block;
-    margin-top: 5%;
-    margin-bottom: 1%;
-    padding: 0.8%;
+    padding: 1%;
     width: 250px;
-    border: solid;
-    border-color: aqua;
-    border-width: 5px;
-    border-radius: 5px 5px 5px 5px;
+    border: 5px solid aqua;
+    border-radius: 5px;
 }
 
-.descButton {
-    text-align: center;
+#currentTreasureHunt {
+    margin-top: 5%;
 }
 
-.button1 {
-    font-size: 90%;
-    font-family: "AndrewScript_1.6";
-    background-color: white;
-    margin-top: 2%;
-    padding: 0.5%;
-    width: 125px;
-    border-radius: 5px 5px 5px 5px;
+/*-------------------4th Page: Insert Code Manually------------------------*/
+
+#insertCodeInput {
+    display: block;
+    width: 250px;
+    margin: 2% auto;
 }
 
-.buttonLeave {
-    font-size: 90%;
-    font-family: "AndrewScript_1.6";
-    background-color: white;
-    margin-top: 2%;
-    padding: 0.5%;
-    width: 125px;
-    border-radius: 5px 5px 5px 5px;
-}
+/*--------------------------5th Page: Map Page------------------------*/
 
-/*------SECOND-PAGE----------*/
-#second {
+.reset-page {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
 }
 
-#second .map-page-map {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
+.map-page, .map-page-map {
+    @extend .reset-page;
 }
 
-#second .map-page-menu {
+.map-page-menu {
     position: fixed;
     bottom: 9%;
     width: 100%;
@@ -162,33 +174,34 @@ p {
     text-transform: uppercase;
 }
 
-#second .map-page-menu .map-page-menu-button-container {
+.map-page-menu-button-container {
     flex: 0 0 50%;
     box-sizing: border-box;
     margin: 10px 0;
 }
 
-#second .map-page-menu .map-page-menu-button-container span {
+.map-page-menu-button-container span {
     display: block;
     width: 60%;
-    padding: 17px 20px 10px;
+    padding: 10px 20px;
     border: 2px solid skyblue;
     background-color: rgba(255, 255, 255, 0.9);
-    font-size: 13px;
+    font-size: 80%;
 }
 
-#second .map-page-title {
+.map-page-title {
     position: absolute;
     top: 3%;
     margin-left: 22%;
     width: 56%;
     text-align: center;
     font-size: 40px;
-    padding-top: 20px;
+    padding: 10px;
     border: 2px black solid;
     border-radius: 5px;
     background-color: rgba(255, 255, 255, 0.9);
     z-index: 10;
+    word-wrap: break-word;
 }
 
 #map-page-clue, #map-page-quiz {
@@ -196,6 +209,7 @@ p {
     position: absolute;
     top: 25%;
     margin-left: 22%;
+    padding: 5px;
     width: 56%;
     border: solid 2px black;
     font-size: 15px;
@@ -213,8 +227,8 @@ p {
 .right-button span {
     border-radius: 5px 0 0 5px;
     text-align: left;
-    margin-left: calc(40% - 44px);
     border-right: none;
+    margin-left: calc(40% - 42px);
 }
 
 #close-clue-button, #close-quiz-button {
@@ -232,8 +246,7 @@ p {
     margin: 10px 0px 10px -80px;
     background-color: #efefef;
     width: 60px;
-    text-align: center;
-    padding: 15px 0 6px;
+    padding: 10px;
 }
 
 .insert {
@@ -277,10 +290,11 @@ p {
     width: 10px;
     position: absolute;
     top: 10%;
-    left: 20%;
+    left: 10%;
     height: 80%;
     background-color: gray;
     overflow: hidden;
+    border-radius: 5px;
 }
 
 .progressBarContent {
@@ -312,54 +326,15 @@ p {
 .closeProgress {
     position: absolute;
     top: 30px;
-    left: 22px;
+    right: 34px;
     color: white;
-    font-size: 60px;
+    font-size: 35px;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
-.notLoggedUser {
-    background-image: url("../img/backgroundRainbow.jpg");
-    background-position: bottom center;
-    background-size: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-    z-index: 100;
-    text-align: center;
-}
-
-.notLoggedUser .loginButton {
-    width: 280px;
-    height: 40px;
-    font-size: 30px;
-    text-align: center;
-    border: 2px skyblue solid;
-    border-radius: 6px;
-    padding: 20px 0 0;
-    margin: 10px auto 20px;
-}
-
-.loginLogo {
-    width: 40%;
-    margin: 105px auto 30px;
-}
-
-#createTeam, #loginTeam {
-    display: none;
-    width: 290px;
-    margin: auto;
-    text-align: right;
-}
-
-.loginInput {
-    width: 160px;
-    border-radius: 5px;
-    height: 25px;
-    margin: 5px;
-}
+/*-------Footer-----*/
 
 #userInfo {
     color: white;
@@ -368,6 +343,6 @@ p {
     bottom: 0;
     width: 100%;
     z-index: 15;
-    padding: 16px 0 7px;
+    padding: 2%;
     text-align: center;
 }
