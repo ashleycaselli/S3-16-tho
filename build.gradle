@@ -2,6 +2,7 @@ group 'S3-16'
 version '1.0'
 
 subprojects {
+
     apply plugin: 'java'
     apply plugin: 'scala'
 
@@ -13,6 +14,13 @@ subprojects {
 
     dependencies {
         compile 'org.scala-lang:scala-library:2.12.2'
+    }
+
+}
+
+configure([project('core'), project('th-organizer')]) {
+
+    dependencies {
         testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: '3.0.1'
         compile group: 'com.typesafe.play', name: 'play-json_2.12', version: '2.6.0'
         testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
@@ -24,6 +32,7 @@ subprojects {
         args = ['-R', 'build/classes/test', '-o']
         classpath = sourceSets.test.runtimeClasspath
     }
+
 }
 
 defaultTasks(
