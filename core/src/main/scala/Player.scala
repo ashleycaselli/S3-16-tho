@@ -3,34 +3,37 @@
   */
 trait Player extends Positionable {
 
-    /** Sets a new position of the player
+    /**
+      * Property to get the Player's name
       *
-      * @param newPosition the new player position
+      * @return the Player's name
       */
-    def setPosition(newPosition: Position)
+    def name: String
 
 }
 
-/** A player of the treasure hunt
+/**
+  * A player of the treasure hunt
   *
+  * @param name      the player's name
+  * @param _position the player's position
   */
-class PlayerImpl extends Player {
+case class PlayerImpl(override val name: String, private var _position: Position = null) extends Player {
 
-    var position: Option[Position] = Option.empty[Position]
-
-    /** Sets a new position of the player
+    /** Returns the position of the entity
       *
-      * @param newPosition the new player position
+      * @return an option of entity position
       */
-    override def setPosition(newPosition: Position) = {
-        position = Some(newPosition)
+    override def position: Position = _position
+
+    /**
+      * Property to set the entity Position
+      *
+      * @param position new position to set
+      */
+    override def position_=(position: Position): Unit = {
+        require(position != null)
+        _position = position
     }
 
-    /** Returns the position of the player
-      *
-      * @return an option of position
-      */
-    override def getPosition: Option[Position] = {
-        position
-    }
 }

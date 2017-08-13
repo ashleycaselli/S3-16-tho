@@ -1,4 +1,6 @@
-/** A path (POI sequence) for a hunt
+import com.typesafe.scalalogging.Logger
+
+/** A Path for a treasure hunt
   *
   */
 trait Path {
@@ -7,20 +9,38 @@ trait Path {
       *
       * @return an immutable List
       */
-    def POIs: scala.collection.immutable.List[POI]
+    def POIs: List[POI]
+
+    /**
+      * Property to add a POI to the Path
+      *
+      * @param poi a POI to add to the Path
+      */
+    def addPOI(poi: POI): Unit
 
 }
 
-/** A path (POI sequence) for a hunt
+/**
+  * A Path for a treasure hunt
   *
-  * @constructor create new Path from a list of Pois
-  * @param pois immutable List of Pois
+  * @param _pois a sequence of POI (must be not empty)
   */
-class PathImpl(pois: scala.collection.immutable.List[POI]) extends Path {
+class PathImpl(private var _pois: Seq[POI]) extends Path {
 
-    /** Returns the list of POIs
+    require(!_pois.isEmpty && _pois != null)
+
+    private val logger = Logger[Path]
+
+    override def POIs: List[POI] = _pois.toList
+
+    /**
+      * Property to add a POI to the Path
       *
-      * @return an immutable List
+      * @param poi a POI to add to the Path
       */
-    override def POIs: List[POI] = pois
+    override def addPOI(poi: POI): Unit = {
+        _pois = _pois :+ poi
+        logger.info(s"${poi.name} added to the path")
+    }
+
 }

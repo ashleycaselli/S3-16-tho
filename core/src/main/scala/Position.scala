@@ -10,25 +10,11 @@ trait Position {
     def latitude: Double
 
     /**
-      * Property to set the latitude value.
-      *
-      * @param lat latitude value
-      */
-    def latitude_=(lat: Double): Unit
-
-    /**
       * Property to get the longitude value.
       *
       * @return a Double containing longitude
       */
     def longitude: Double
-
-    /**
-      * Property to set the longitude value.
-      *
-      * @param lon longitude value
-      */
-    def longitude_=(lon: Double): Unit
 
 }
 
@@ -36,4 +22,4 @@ trait Position {
   * @param latitude  the position's latitude
   * @param longitude the position's longitude
   */
-case class PositionImpl(override var latitude: Double, override var longitude: Double) extends Position
+case class PositionImpl(override val latitude: Double, override val longitude: Double) extends Position

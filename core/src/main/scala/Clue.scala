@@ -1,3 +1,5 @@
+import play.api.libs.json.Json
+
 /** An Entity that contains a Clue.
   *
   */
@@ -7,28 +9,31 @@ trait Clue extends Serializable {
       *
       * @return a String containing the Clue
       */
-    def clue: String
+    def content: String
 
     /**
       * Property to set the clue value.
       *
-      * @param clue the value for the Clue.
+      * @param content the value for the Clue
       */
-    def clue_=(clue: String): Unit
+    def content_=(content: String): Unit
 
 }
 
 /**
   * An Entity that contains a clue to reach the next POI in a Treasure Hunt
   *
-  * @param clue a string that contains the clue
+  * @param content a string that contains the clue
   */
-case class ClueImpl(override var clue: String) extends Clue {
+case class ClueImpl(override var content: String) extends Clue {
+
+    implicit val clueWrites = Json.writes[ClueImpl]
 
     /**
       * Property for getting an entity's String representation.
       *
       * @return a String containing the representation
       */
-    override def defaultRepresentation: String = clue
+    override def defaultRepresentation: String = Json toJson this toString
+
 }

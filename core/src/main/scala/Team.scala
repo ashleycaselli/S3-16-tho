@@ -1,4 +1,8 @@
-/** A group of players.
+import com.typesafe.scalalogging.Logger
+
+import scala.collection.mutable.ListBuffer
+
+/** A Team of the treasure hunt.
   *
   */
 trait Team {
@@ -13,7 +17,7 @@ trait Team {
       *
       * @return an immutable list of Player
       */
-    def getPlayers: scala.collection.immutable.List[Player]
+    def players: List[Player]
 
     /** Property to get the team's path.
       *
@@ -22,34 +26,39 @@ trait Team {
     def path: Path
 
     /**
-      * Property to set the team's path.
+      * Property to add a player to the team
       *
-      * @param path
+      * @param player
       */
-    def path_=(path: Path): Unit
+    def addPlayer(player: Player): Unit
 }
 
-/** A group of players.
+/**
+  * A concrete Team representation.
   *
-  * @constructor create a new team with name members and a path
-  * @param name       the name of the team
-  * @param playerList the list of the members of the team
-  * @param path       the path assigned to the team
+  * @param name team's name
+  * @param path team's path
+  * @param ps   team's players (empty if not specified)
   */
-case class TeamImpl(override val name: String, playerList: List[Player], override var path: Path) extends Team {
+case class TeamImpl(override val name: String, override val path: Path, private val ps: Seq[Player] = ListBuffer.empty[Player]) extends Team {
 
-    var players = playerList
+    private var _players: Seq[Player] = ps
+    private val logger = Logger[Team]
 
     /** Returns a list of team's elements.
       *
       * @return an immutable list of Player
       */
-    override def getPlayers: List[Player] = players
+    override def players: List[Player] = _players toList
 
-    /** Adds a player in this team.
+    /**
+      * Property to add a player to the team
       *
-      * @param player the new player
+      * @param player
       */
-    def addPlayer(player: Player): Unit = players = players :+ player
+    override def addPlayer(player: Player): Unit = {
+        _players = _players :+ player
+        logger.info(s"${player.name} added to $name")
+    }
 
 }
