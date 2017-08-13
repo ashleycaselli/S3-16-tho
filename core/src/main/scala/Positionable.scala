@@ -5,8 +5,15 @@ trait Positionable {
 
     /** Returns the position of the entity
       *
-      * @return an option of entity position
+      * @return a position
       */
-    def getPosition: Option[Position]
+    def position: Position
+
+    /**
+      * Property to set the entity Position
+      *
+      * @param position new position to set
+      */
+    def position_=(position: Position): Unit
 
 }

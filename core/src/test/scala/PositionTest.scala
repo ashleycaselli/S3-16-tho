@@ -27,23 +27,11 @@ class PositionTest extends FunSuite with BeforeAndAfter {
     }
 
     test("Latitude value checking") {
-        assert(position.latitude equals latitude)
+        assert(position.latitude === latitude)
     }
 
     test("Longitude value checking") {
-        assert(position.longitude equals longitude)
-    }
-
-    test("Latitude value checking after a new value has been set up") {
-        val newLat = 3.434567
-        position.latitude = newLat
-        assert(position.latitude equals newLat)
-    }
-
-    test("Longitude value checking after a new value has been set up") {
-        val newLon = -90.355678
-        position.longitude = newLon
-        assert(position.longitude equals newLon)
+        assert(position.longitude === longitude)
     }
 
 }
