@@ -1,3 +1,5 @@
+package domain
+
 /** An entity that have got a position
   *
   */

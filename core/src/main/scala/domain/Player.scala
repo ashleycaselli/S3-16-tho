@@ -1,3 +1,5 @@
+package domain
+
 /** A player of the treasure hunt
   *
   */

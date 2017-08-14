@@ -1,3 +1,5 @@
+package domain
+
 import org.scalatest.FunSuite
 
 class PathTest extends FunSuite {
@@ -26,7 +28,7 @@ class PathTest extends FunSuite {
         }
     }
 
-    test("Checking the POI addition to an existing Path") {
+    test("Checking the domain.POI addition to an existing Path") {
         val path = new PathImpl(Seq(poi1, poi2, poi3))
         val newPOI = POIImpl(PositionImpl(-10.163056, 72.5426), "Pool")
         assert(path.POIs.length === 3)

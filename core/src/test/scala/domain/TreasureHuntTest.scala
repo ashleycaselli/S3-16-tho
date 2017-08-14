@@ -1,3 +1,5 @@
+package domain
+
 import org.scalatest.FunSuite;
 
 class TreasureHuntTest extends FunSuite {

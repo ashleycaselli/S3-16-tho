@@ -1,3 +1,5 @@
+package domain
+
 /** A point of interest on the map
   *
   */
