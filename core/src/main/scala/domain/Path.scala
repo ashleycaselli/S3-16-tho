@@ -1,3 +1,5 @@
+package domain
+
 import com.typesafe.scalalogging.Logger
 
 /** A Path for a treasure hunt

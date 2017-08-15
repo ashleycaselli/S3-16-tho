@@ -1,3 +1,5 @@
+package domain
+
 import org.scalatest.{BeforeAndAfter, FunSuite}
 
 class PositionTest extends FunSuite with BeforeAndAfter {

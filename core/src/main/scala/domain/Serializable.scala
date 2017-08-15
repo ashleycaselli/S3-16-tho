@@ -1,4 +1,4 @@
-
+package domain
 
 /** A Trait that allow some entity to be transferred (in a String or Json Representation).
   *

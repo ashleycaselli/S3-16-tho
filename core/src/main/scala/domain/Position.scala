@@ -1,3 +1,5 @@
+package domain
+
 /** An entity that represents a Position
   *
   */

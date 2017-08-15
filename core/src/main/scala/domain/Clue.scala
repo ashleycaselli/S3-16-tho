@@ -1,3 +1,5 @@
+package domain
+
 import play.api.libs.json.Json
 
 /** An Entity that contains a Clue.

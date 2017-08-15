@@ -1,3 +1,5 @@
+package domain
+
 import com.typesafe.scalalogging.Logger
 import org.scalatest.FunSuite
 import org.slf4j.LoggerFactory

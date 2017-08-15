@@ -1,3 +1,5 @@
+package domain
+
 import com.typesafe.scalalogging.Logger
 
 import scala.collection.mutable.ListBuffer
