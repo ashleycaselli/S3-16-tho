@@ -37,23 +37,26 @@
     </div>
     <div id="insertCodePage">
         <img class="logo" src="img/logo.png"/>
-        <div class="buttonContainer">
+        <div id="codeButtons" class="buttonContainer">
             <button id="scanqr">Scan a QR Code</button>
             <button id="writecode">Insert Code</button>
         </div>
-        <div id="deviceready" class="blink"></div>
-    </div>
-    <div id="currentTreasureHunt">
-        <div class="location">
-            <p>YOU ARE PLAYING '</p>
-            <p id="hunt"></p>
-            <p>' HUNT</p>
+        <div id="currentTreasureHunt">
+            <div class="location">
+                <p>YOU ARE PLAYING '</p>
+                <p id="hunt"></p>
+                <p>' HUNT</p>
+            </div>
+            <div class="buttonContainer halfButton">
+                <button id="resumeButton">Resume</button>
+                <button id="leaveButton">Leave</button>
+            </div>
         </div>
-        <div class="buttonContainer halfButton">
-            <button id="resumeButton">Resume</button>
-            <button id="leaveButton">Leave</button>
+        <div id="nearTreasureHunt">
+
         </div>
     </div>
+
     <div id="insertCodeManuallyPage">
         <img class="logo" src="img/logo.png"/>
         <input id="insertCodeInput" class="textInput" placeholder="Insert Code">
@@ -63,7 +66,7 @@
         </div>
     </div>
     <div id="mapPage" class="map-page">
-        <div id="mapPageTitle" class="map-page-title animated bounceInDown">TITOLO</div>
+        <div id="mapPageTitle" class="map-page-title animated bounceInDown"></div>
         <div id="googleMap"></div>
         <div class="map-page-menu">
             <div class="map-page-menu-button-container left-button animated bounceInLeft" id="show-last-clue-button">
