@@ -1,22 +1,30 @@
 //--------------------------GLOBAL-VARIABLES--------------------------------
 var lastClueText = "text text text text text text text text text text text text text text text text text text ";
 var loggedTeam;
+var currentHunt;
 var save;
-var codeSave;
 var app = {
     // Application Constructor
     initialize: function () {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+
+        //load saved data
         loggedTeam = localStorage.getItem('loggedTeam');
+        currentHunt = localStorage.getItem('currentHunt');
+
+        //check if logged team exists
         if (loggedTeam != null) {
             showLoggedTeamName();
         } else {
             showNotLoggedUser();
         }
-        if (codeSave != null) {
-            document.getElementById("currentTreasureHunt").style.display = "block";
-        }
 
+        //check if a TH is running
+        if (currentHunt != null) {
+            showCurrentTreasureHunt();
+        } else {
+            showNearTreasureHunt()
+        }
     },
 
     // deviceready Event Handler
@@ -38,20 +46,6 @@ var app = {
     // Update DOM on a Received Event
     qrcode: function () {
         document.getElementById("scanqr").onclick = function () {
-            cordova.plugins.barcodeScanner.scan(
-                function (result) {
-                    alert("We got a barcode\n" +
-                        "Result: " + result.text + "\n" +
-                        "Format: " + result.format + "\n" +
-                        "Cancelled: " + result.cancelled);
-                },
-                function (error) {
-                    alert("Scanning failed: " + error);
-                })
-            document.getElementById("mapPage").style.display = "block";
-            document.getElementById("insertCodePage").style.display = "none";
-            loadMapPage();
-
         }
     },
     writeCode: function () {
@@ -86,25 +80,61 @@ var app = {
             document.getElementById("mapPage").style.display = "block";
             document.getElementById("currentTreasureHunt").style.display = "none";
             //set title of current treasure hunt
-            document.getElementById("mapPageTitle").innerText = document.getElementById("hunt").innerText;
         }
     },
     leave: function () {
         var leave = document.getElementById("leaveButton");
         leave.onclick = function () {
-            document.getElementById("insertCodePage").style.display = "block";
+            localStorage.removeItem('currentHunt');
+            currentHunt="";
             document.getElementById("currentTreasureHunt").style.display = "none";
-            delete codeSave;
+            showNearTreasureHunt();
         }
     }
 
 };
+//-----------------------------select-tho-----------------------------------
+function showCurrentTreasureHunt(){
+    document.getElementById("currentTreasureHunt").style.display = "block";
+    document.getElementById("hunt").innerHTML = currentHunt;
+}
+function showNearTreasureHunt(){
+    var div = document.getElementById("nearTreasureHunt");
+    var content="<ul>";
+    content+='<li onclick=\'showScanButtons("available")\' >available</li>';
+    content+='<li onclick=\'showScanButtons("hunt")\' >hunt</li>';
+    content+='<li onclick=\'showScanButtons("list")\' >list</li>';
+    div.innerHTML=content+"</ul>";
+    div.style.display = "block";
+}
+function showScanButtons(selectedTH){
+    document.getElementById("nearTreasureHunt").style.display = "none";
+    document.getElementById("scanqr").onClick=scanQrCode(""+selectedTH);
+    document.getElementById("codeButtons").style.display = "block";
+}
+function scanQrCode(selectedTH){
+    cordova.plugins.barcodeScanner.scan(
+        function (result) {
+            if (true){//TODO check if result is valid
+                currentHunt=selectedTH;
+                localStorage.setItem("currentHunt", selectedTH)
+                document.getElementById("insertCodePage").style.display = "none";
+                loadMapPage();
+            }
+        },
+        function (error) {
+            alert("Scanning failed: " + error);
+        }
+    );
+}
 
 //-------------------------------MAP----------------------------------------
 function loadMapPage() {
     var mapScript = document.createElement('script');
     mapScript.setAttribute('src', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBNQr4YcrvttSMIgWOX68kJnigaI0Cir9c&callback=mapLoadedCallback');
     document.head.appendChild(mapScript);
+    document.getElementById("mapPageTitle").innerText = currentHunt;
+    document.getElementById("mapPage").style.display = "block";
 }
 
 function mapLoadedCallback() {
@@ -126,7 +156,6 @@ function mapLoadedCallback() {
             })
         }, 3000);
     })
-
 }
 
 function getLocation(callback) {
@@ -145,6 +174,7 @@ function getLocation(callback) {
 function exitFromMap() {
     document.getElementById("mapPage").style.display = "none";
     document.getElementById("insertCodePage").style.display = "block";
+    document.getElementById("codeButtons").style.display = "none";
     var huntName = document.getElementById("hunt").innerText;
     if (huntName != "") {
         document.getElementById("currentTreasureHunt").style.display = "block";

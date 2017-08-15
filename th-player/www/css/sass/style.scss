@@ -43,11 +43,6 @@ p {
     padding: 6%;
 }
 
-.buttonContainer {
-    font-size: 80%;
-    text-align: center;
-}
-
 .halfButton button {
     width: 125px;
 }
@@ -123,7 +118,7 @@ label {
     width: 250px;
 }
 
-/*----------------3rd Page: Insert Code Page-------------------*/
+/*----------------3rd Page: select TH-------------------*/
 
 #insertCodePage {
     margin-top: 30%;
@@ -144,12 +139,38 @@ label {
     margin-top: 5%;
 }
 
-/*-------------------4th Page: Insert Code Manually------------------------*/
+#codeButtons{
+    display:none;
+}
+
+.buttonContainer{
+    font-size: 80%;
+    text-align: center;
+}
 
 #insertCodeInput {
     display: block;
     width: 250px;
     margin: 2% auto;
+}
+
+#nearTreasureHunt ul{
+    border:2px solid #cccccc;
+    border-radius:5px;
+    margin:35px;
+}
+
+#nearTreasureHunt li{
+    padding:10px;
+    border-bottom:1px solid gray;
+}
+
+#nearTreasureHunt li:nth-child(2n) {
+     background-color: #eee;
+}
+
+#nearTreasureHunt li:last-child{
+    border-bottom: 0;
 }
 
 /*--------------------------5th Page: Map Page------------------------*/
