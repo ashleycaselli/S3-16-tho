@@ -48,7 +48,8 @@ var app = {
                 function (error) {
                     alert("Scanning failed: " + error);
                 })
-            document.getElementById("mapPage").style.display = "block";
+
+            //open map
             document.getElementById("insertCodePage").style.display = "none";
             loadMapPage();
 
@@ -87,6 +88,10 @@ var app = {
             document.getElementById("currentTreasureHunt").style.display = "none";
             //set title of current treasure hunt
             document.getElementById("mapPageTitle").innerText = document.getElementById("hunt").innerText;
+
+            //open map
+            document.getElementById("insertCodePage").style.display = "none";
+            loadMapPage();
         }
     },
     leave: function () {
@@ -105,6 +110,7 @@ function loadMapPage() {
     var mapScript = document.createElement('script');
     mapScript.setAttribute('src', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBNQr4YcrvttSMIgWOX68kJnigaI0Cir9c&callback=mapLoadedCallback');
     document.head.appendChild(mapScript);
+    document.getElementById("mapPage").style.display = "block";
 }
 
 function mapLoadedCallback() {
@@ -121,7 +127,7 @@ function mapLoadedCallback() {
         });
         setInterval(function () {
             getLocation(function (latitude, longitude) {
-                map.setCenter(new google.maps.LatLng(latitude, longitude));
+                //map.setCenter(new google.maps.LatLng(latitude, longitude));
                 marker.setPosition({lat: latitude, lng: longitude});
             })
         }, 3000);
