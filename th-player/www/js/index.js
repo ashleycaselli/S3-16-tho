@@ -33,91 +33,94 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function () {
         //this.receivedEvent('deviceready');
-        this.qrcode();
-        this.writeCode();
-        this.back();
-        this.save();
-        this.resume();
-        this.leave();
-
+        this.scanQRCodeButton();
+        this.insertCodeManuallyPageButton();
+        this.backButton();
+        this.saveCodeButton();
+        this.resumeTreasureHuntButton();
+        this.leaveTreasureHuntButton();
     },
 
 
     // Update DOM on a Received Event
-    qrcode: function () {
-        document.getElementById("scanqr").onclick = function () {
+    scanQRCodeButton: function () {
+        document.getElementById("scanQR").onclick = function () {
         }
     },
-    writeCode: function () {
-        document.getElementById("writecode").onclick = function () {
-            document.getElementById("insertCodePage").style.display = "none";
+    insertCodeManuallyPageButton: function () {
+        document.getElementById("writeCode").onclick = function () {
+            document.getElementById("selectTreasureHuntPage").style.display = "none";
             document.getElementById("insertCodeManuallyPage").style.display = "block";
             document.getElementById("currentTreasureHunt").style.display = "none";
         }
     },
-    back: function () {
+    backButton: function () {
         var cancelButton = document.getElementById("cancelCodeButton");
         cancelButton.onclick = function () {
-            document.getElementById("insertCodePage").style.display = "block";
+            document.getElementById("selectTreasureHuntPage").style.display = "block";
             document.getElementById("insertCodeManuallyPage").style.display = "none";
         }
     },
-    save: function () {
+    saveCodeButton: function () {
         var saveButton = document.getElementById("saveCodeButton");
         saveButton.onclick = function () {
             codeSave = document.getElementById("insertCodeInput").value;
             alert("Saved treasure hunt");
-            document.getElementById("hunt").innerHTML = codeSave;
-            document.getElementById("insertCodePage").style.display = "block";
+            document.getElementById("treasureHuntName").innerHTML = codeSave;
+            document.getElementById("selectTreasureHuntPage").style.display = "block";
             document.getElementById("insertCodeManuallyPage").style.display = "none";
             document.getElementById("currentTreasureHunt").style.display = "block";
         }
     },
-    resume: function () {
+    resumeTreasureHuntButton: function () {
         var resume = document.getElementById("resumeButton");
         resume.onclick = function () {
-            document.getElementById("insertCodePage").style.display = "none";
+            document.getElementById("selectTreasureHuntPage").style.display = "none";
             document.getElementById("mapPage").style.display = "block";
             document.getElementById("currentTreasureHunt").style.display = "none";
         }
     },
-    leave: function () {
+    leaveTreasureHuntButton: function () {
         var leave = document.getElementById("leaveButton");
         leave.onclick = function () {
             localStorage.removeItem('currentHunt');
-            currentHunt="";
+            currentHunt = "";
             document.getElementById("currentTreasureHunt").style.display = "none";
             showNearTreasureHunt();
         }
     }
 
 };
+
 //-----------------------------select-tho-----------------------------------
-function showCurrentTreasureHunt(){
+function showCurrentTreasureHunt() {
     document.getElementById("currentTreasureHunt").style.display = "block";
-    document.getElementById("hunt").innerHTML = currentHunt;
+    document.getElementById("treasureHuntName").innerHTML = currentHunt;
 }
-function showNearTreasureHunt(){
+
+function showNearTreasureHunt() {
     var div = document.getElementById("nearTreasureHunt");
-    var content="<ul>";
-    content+='<li onclick=\'showScanButtons("available")\' >available</li>';
-    content+='<li onclick=\'showScanButtons("hunt")\' >hunt</li>';
-    content+='<li onclick=\'showScanButtons("list")\' >list</li>';
-    div.innerHTML=content+"</ul>";
+    var content = "<ul>";
+    content += '<li onclick=\'showScanButtons("Available")\' >Available</li>';
+    content += '<li onclick=\'showScanButtons("Hunt")\' >Hunt</li>';
+    content += '<li onclick=\'showScanButtons("List")\' >List</li>';
+    div.innerHTML = content + "</ul>";
     div.style.display = "block";
 }
-function showScanButtons(selectedTH){
+
+function showScanButtons(selectedTH) {
     document.getElementById("nearTreasureHunt").style.display = "none";
-    document.getElementById("scanqr").onClick=scanQrCode(""+selectedTH);
+    document.getElementById("scanQR").onClick = scanQRCode("" + selectedTH);
     document.getElementById("codeButtons").style.display = "block";
 }
-function scanQrCode(selectedTH){
+
+function scanQRCode(selectedTH) {
     cordova.plugins.barcodeScanner.scan(
         function (result) {
-            if (true){//TODO check if result is valid
-                currentHunt=selectedTH;
+            if (true) {//TODO check if result is valid
+                currentHunt = selectedTH;
                 localStorage.setItem("currentHunt", selectedTH)
-                document.getElementById("insertCodePage").style.display = "none";
+                document.getElementById("selectTreasureHuntPage").style.display = "none";
                 loadMapPage();
             }
         },
@@ -171,9 +174,9 @@ function getLocation(callback) {
 
 function exitFromMap() {
     document.getElementById("mapPage").style.display = "none";
-    document.getElementById("insertCodePage").style.display = "block";
+    document.getElementById("selectTreasureHuntPage").style.display = "block";
     document.getElementById("codeButtons").style.display = "none";
-    var huntName = document.getElementById("hunt").innerText;
+    var huntName = document.getElementById("treasureHuntName").innerText;
     if (huntName != "") {
         document.getElementById("currentTreasureHunt").style.display = "block";
     }
@@ -194,7 +197,7 @@ function setLastClueText(text) {
 }
 
 function showClue(clueText) {
-    var container = document.getElementById("map-page-clue");
+    var container = document.getElementById("mapPageClue");
     var content = '<h1>CLUE</h1>';
     content += '<p>' + clueText + '</p>';
     content += '<div onClick="closeClue()" class="clue-quiz-button"><span>HIDE</span></div>';
@@ -203,34 +206,34 @@ function showClue(clueText) {
 }
 
 function closeClue() {
-    document.getElementById("map-page-clue").style.display = "none";
+    document.getElementById("mapPageClue").style.display = "none";
 }
 
 //---------------------------------QUIZ------------------------------------
 
 function showQuiz(question, answer) {
-    var container = document.getElementById("map-page-quiz");
+    var container = document.getElementById("mapPageQuiz");
     var content = '<h1>QUIZ</h1>';
     content += '<p>' + question + '</p>';
-    content += '<input class="quizInput" id="quizInput" type="text" />'
+    content += '<input class="quiz-input" id="quizInput" type="text" />'
     content += '<div onClick="checkQuiz(\'' + answer + '\')" class="clue-quiz-button"><span>CHECK</span></div>';
     container.innerHTML = content;
     container.style.display = "block";
 }
 
 function checkQuiz(answer) {
-    if (document.getElementById("quizInput").value.trim() == answer) {
-        document.getElementById("map-page-quiz").style.display = "none";
+    if (document.getElementById("quizInput").value.trim() === answer) {
+        document.getElementById("mapPageQuiz").style.display = "none";
     }
 }
 
 //---------------------------------PROGRESS---------------------------------
 function viewProgress() {
     getProgress(function (totalPOI, reachedPOI) {
-        var div = document.getElementById("map-page-progress");
+        var div = document.getElementById("mapPageProgress");
         var content = "";
         var value = totalPOI / reachedPOI * 10 + 20;
-        content += '<div class="closeProgress" onclick="closeProgress()">X</div><div class="progressPercent">' + Math.round(value) + '%</div><div class="outOfProgress">' + reachedPOI + '</br>POI</br>reached</br>out of</br>' + totalPOI + '</div><div class="progressBar"><div class="progressBarContent animated bounceInDown" style="height:' + value + '%;"></div></div>';
+        content += '<div class="close-progress" onclick="closeProgress()">X</div><div class="progress-percent">' + Math.round(value) + '%</div><div class="out-of-progress">' + reachedPOI + '</br>POI</br>reached</br>out of</br>' + totalPOI + '</div><div class="progress-bar"><div class="progress-bar-content animated bounceInDown" style="height:' + value + '%;"></div></div>';
         div.innerHTML = content;
         div.style.display = "block";
     });
@@ -238,12 +241,12 @@ function viewProgress() {
 
 function getProgress(callback) {
     var totalPOI = 10;
-    var reachedPOI = 3;
+    var reachedPOI = 4;
     callback(totalPOI, reachedPOI);
 }
 
 function closeProgress() {
-    document.getElementById("map-page-progress").style.display = "none";
+    document.getElementById("mapPageProgress").style.display = "none";
 }
 
 //---------------------------------LOGIN---------------------------------
@@ -269,7 +272,7 @@ function showCreateTeamPage() {
 function createTeam() {
     document.getElementById("notLoggedUserPage").style.display = "none";
     loggedTeam = document.getElementById("createTeamNameInput").value;
-    if (document.getElementById("createTeamPass1Input").value == document.getElementById("createTeamPass2Input").value) {
+    if (document.getElementById("createTeamPassInput").value === document.getElementById("createTeamConfirmPassInput").value) {
         //TODO create team
     }
     showLoggedTeamName()

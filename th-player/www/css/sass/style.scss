@@ -3,8 +3,13 @@
     src: url(../../font/Andrew.ttf) format("truetype");
 }
 
-// Font Variables
+/*----------SCSS Variables----------*/
+
+//Font
 $andrew: AndrewScript;
+
+//Padding
+$defaultPadding: 3% 1% 1%;
 
 * {
     font-family: $andrew, sans-serif;
@@ -46,7 +51,7 @@ p {
     padding: 6%;
 }
 
-.halfButton button {
+.half-button button {
     width: 125px;
 }
 
@@ -55,7 +60,7 @@ button {
     background-color: white;
     margin: 2% auto;
     display: inline-block;
-    padding: 3% 1% 1%;
+    padding: $defaultPadding;
     width: 250px;
     @include border-radius(5px);
     text-align: center;
@@ -65,9 +70,9 @@ label {
     font-size: 85%;
 }
 
-.textInput {
+.text-input {
     margin: 2%;
-    padding: 3% 1% 1%;
+    padding: $defaultPadding;
     height: 25px;
     text-align: center;
     font-size: 125%;
@@ -76,25 +81,25 @@ label {
 
 /*-------------Gestione Visibilità Pagine--------------*/
 
-#insertCodePage {
+.select-treasure-hunt-page {
     display: block;
 }
 
-#mapPage {
+.map-page {
     display: none;
 }
 
-#insertCodeManuallyPage {
+.insert-code-manually-page {
     display: none;
 }
 
-#currentTreasureHunt {
+.current-treasure-hunt {
     display: none;
 }
 
 /*--------1st Page: notLoggedUser-----------*/
 
-.notLoggedUserPage {
+.not-logged-user-page {
     background-image: url("../img/backgroundRainbow.jpg");
     background-position: bottom center;
     background-size: cover;
@@ -110,20 +115,20 @@ label {
 
 /*---------2nd Page: CreateNewTeam or Login---------*/
 
-#createTeam, #loginTeam {
+.create-team, .login-team {
     display: none;
     width: 290px;
     margin: auto;
     text-align: center;
 }
 
-.loginInput {
+.login-input {
     width: 250px;
 }
 
-/*----------------3rd Page: select TH-------------------*/
+/*----------------3rd Page: Select Treasure Hunt (Insert Code or Qr Scan-------------------*/
 
-#insertCodePage {
+.select-treasure-hunt-page {
     margin-top: 30%;
 }
 
@@ -138,45 +143,46 @@ label {
     @include border-radius(5px);
 }
 
-#currentTreasureHunt {
+.current-treasure-hunt {
     margin-top: 5%;
 }
 
-#codeButtons{
-    display:none;
+.code-buttons {
+    display: none;
 }
 
-.buttonContainer{
+.button-container {
     font-size: 80%;
     text-align: center;
 }
 
-#insertCodeInput {
+.insert-code-input {
     display: block;
     width: 250px;
     margin: 2% auto;
 }
 
-#nearTreasureHunt ul{
-    border:2px solid #cccccc;
-    border-radius:5px;
-    margin:35px;
+.near-treasure-hunt ul {
+    border: 2px solid #cccccc;
+    border-radius: 5px;
+    margin: 35px;
 }
 
-#nearTreasureHunt li{
-    padding:10px;
-    border-bottom:1px solid gray;
+.near-treasure-hunt li {
+    padding: $defaultPadding;
+    border-bottom: 1px solid gray;
+    text-align: center;
 }
 
-#nearTreasureHunt li:nth-child(2n) {
-     background-color: #eee;
+.near-treasure-hunt li:nth-child(2n) {
+    background-color: #eee;
 }
 
-#nearTreasureHunt li:last-child{
+.near-treasure-hunt li:last-child {
     border-bottom: 0;
 }
 
-/*--------------------------5th Page: Map Page------------------------*/
+/*--------------------------4th Page: Map Page------------------------*/
 
 .reset-page {
     margin: 0;
@@ -228,7 +234,7 @@ label {
     word-wrap: break-word;
 }
 
-#map-page-clue, #map-page-quiz {
+.map-page-clue, .map-page-quiz {
     display: none;
     position: absolute;
     top: 25%;
@@ -255,11 +261,11 @@ label {
     margin-left: calc(40% - 42px);
 }
 
-#close-clue-button, #close-quiz-button {
+.close-clue-button, .close-quiz-button {
     display: none;
 }
 
-#map-page-clue p, #map-page-quiz p {
+.map-page-clue p, .map-page-quiz p {
     padding: 15px;
 }
 
@@ -279,19 +285,19 @@ label {
     margin-top: 10px;
 }
 
-#map-page-clue h1, #map-page-quiz h1 {
+.map-page-clue h1, .map-page-quiz h1 {
     margin: 25px auto 10px;
     text-align: center;
     font-size: 32px;
 }
 
-.quizInput {
+.quiz-input {
     width: 80%;
     margin-left: 9%;
     font-size: 20px;
 }
 
-#googleMap {
+.google-map {
     position: absolute;
     top: 0;
     left: 0;
@@ -301,7 +307,7 @@ label {
     pointer-events: none;
 }
 
-#map-page-progress {
+.map-page-progress {
     position: absolute;
     top: 0;
     left: 0;
@@ -312,7 +318,7 @@ label {
     z-index: 20;
 }
 
-.progressBar {
+.progress-bar {
     width: 10px;
     position: absolute;
     top: 10%;
@@ -323,14 +329,14 @@ label {
     @include border-radius(5px);
 }
 
-.progressBarContent {
+.progress-bar-content {
     position: relative;
     top: -20%;
     background-color: skyblue;
     @include border-radius(5px);
 }
 
-.progressPercent {
+.progress-percent {
     font-size: 100px;
     color: white;
     width: 100%;
@@ -340,7 +346,7 @@ label {
 
 }
 
-.outOfProgress {
+.out-of-progress {
     font-size: 50px;
     color: white;
     width: 100%;
@@ -349,7 +355,7 @@ label {
     top: 41%;
 }
 
-.closeProgress {
+.close-progress {
     position: absolute;
     top: 30px;
     right: 34px;
@@ -362,7 +368,7 @@ label {
 
 /*-------Footer-----*/
 
-#userInfo {
+.user-info {
     color: white;
     background-color: #444444;
     position: absolute;
