@@ -11,78 +11,82 @@
 </head>
 <body>
 <div data-role="page" class="container">
-    <div id="notLoggedUserPage" class="notLoggedUserPage">
+    <div id="notLoggedUserPage" class="not-logged-user-page">
         <img class="logo" src="img/logo.png"/>
-        <div id="createOrLogin">
-            <button onclick="showCreateTeamPage()" class="loginButton">Create new Team</button>
-            <button onclick="showLoginTeamPage()" class="loginButton">Login</button>
+        <div id="createOrLogin" class="create-or-login">
+            <button onclick="showCreateTeamPage()" class="login-button">Create new Team</button>
+            <button onclick="showLoginTeamPage()" class="login-button">Login</button>
         </div>
-        <div id="createTeam">
-            <input class="loginInput textInput" id="createTeamNameInput" placeholder="Choose a Name"/>
-            <input class="loginInput textInput" id="createTeamPass1Input" placeholder="Choose a Password"/>
-            <input class="loginInput textInput" id="createTeamPass2Input" placeholder="Confirm the Password"/>
-            <div class="buttonContainer">
-                <button onclick="createTeam()" class="loginButton">Create Team</button>
-                <button onclick="showNotLoggedUser()" class="loginButton">Back</button>
+        <div id="createTeam" class="create-team">
+            <input class="login-input text-input create-team-name-input" id="createTeamNameInput"
+                   placeholder="Choose a Name"/>
+            <input class="login-input text-input create-team-pass-input" id="createTeamPassInput"
+                   placeholder="Choose a Password"/>
+            <input class="login-input text-input create-team-confirm-pass-input" id="createTeamConfirmPassInput"
+                   placeholder="Confirm the Password"/>
+            <div class="button-container">
+                <button onclick="createTeam()" class="login-button">Create Team</button>
+                <button onclick="showNotLoggedUser()" class="login-button">Back</button>
             </div>
         </div>
-        <div id="loginTeam">
-            <input class="loginInput textInput" id="loginTeamNameInput" placeholder="Team Name"/>
-            <input class="loginInput textInput" id="loginTeamPassInput" placeholder="Password"/>
-            <div class="buttonContainer">
-                <button onclick="loginTeam()" class="loginButton">Login</button>
-                <button onclick="showNotLoggedUser()" class="loginButton"><span>Back</span></button>
+        <div id="loginTeam" class="login-team">
+            <input class="login-input text-input login-team-name-input" id="loginTeamNameInput"
+                   placeholder="Team Name"/>
+            <input class="login-input text-input login-team-pass-input" id="loginTeamPassInput" placeholder="Password"/>
+            <div class="button-container">
+                <button onclick="loginTeam()" class="login-button">Login</button>
+                <button onclick="showNotLoggedUser()" class="login-button"><span>Back</span></button>
             </div>
         </div>
     </div>
-    <div id="insertCodePage">
+    <div id="selectTreasureHuntPage" class="select-treasure-hunt-page">
         <img class="logo" src="img/logo.png"/>
-        <div id="codeButtons" class="buttonContainer">
-            <button id="scanqr">Scan a QR Code</button>
-            <button id="writecode">Insert Code</button>
+        <div id="codeButtons" class="code-buttons button-container">
+            <button id="scanQR" class="scan-qr">Scan a QR Code</button>
+            <button id="writeCode" class="write-code">Insert Code</button>
         </div>
-        <div id="currentTreasureHunt">
+        <div id="currentTreasureHunt" class="current-treasure-hunt">
             <div class="location">
                 <p>YOU ARE PLAYING '</p>
-                <p id="hunt"></p>
+                <p id="treasureHuntName" class="treasure-hunt-name"></p>
                 <p>' HUNT</p>
             </div>
-            <div class="buttonContainer halfButton">
-                <button id="resumeButton">Resume</button>
-                <button id="leaveButton">Leave</button>
+            <div class="button-container half-button">
+                <button id="resumeButton" class="resume-button">Resume</button>
+                <button id="leaveButton" class="leave-button">Leave</button>
             </div>
         </div>
-        <div id="nearTreasureHunt">
+        <div id="nearTreasureHunt" class="near-treasure-hunt">
 
         </div>
     </div>
 
-    <div id="insertCodeManuallyPage">
+    <div id="insertCodeManuallyPage" class="insert-code-manually-page">
         <img class="logo" src="img/logo.png"/>
-        <input id="insertCodeInput" class="textInput" placeholder="Insert Code">
-        <div class="buttonContainer halfButton">
-            <button id="saveCodeButton">Save</button>
-            <button id="cancelCodeButton">Cancel</button>
+        <input id="insertCodeInput" class="text-input insert-code-input" placeholder="Insert Code">
+        <div class="button-container half-button">
+            <button id="saveCodeButton" class="save-code-button">Save</button>
+            <button id="cancelCodeButton" class="cancel-code-button">Cancel</button>
         </div>
     </div>
     <div id="mapPage" class="map-page">
         <div id="mapPageTitle" class="map-page-title animated bounceInDown"></div>
-        <div id="googleMap"></div>
+        <div id="googleMap" class="google-map"></div>
         <div class="map-page-menu">
-            <div class="map-page-menu-button-container left-button animated bounceInLeft" id="show-last-clue-button">
-                <span onclick="showLastClue()">Show last clue</span></div>
+            <div class="map-page-menu-button-container left-button animated bounceInLeft" id="showLastClueButton">
+                <span onclick="showLastClue()">Show Last Clue</span></div>
             <div class="map-page-menu-button-container right-button animated bounceInRight"><span
                     onclick='viewProgress()'>Progress</span></div>
             <div class="map-page-menu-button-container left-button animated bounceInLeft"><span
-                    onclick="contactManager()">Contact manager</span></div>
+                    onclick="contactManager()">Contact Manager</span></div>
             <div class="map-page-menu-button-container right-button animated bounceInRight"><span
                     onClick='exitFromMap()'>Exit</span></div>
         </div>
-        <div id="map-page-clue" class="animated tada"></div>
-        <div id="map-page-quiz" class="animated tada"></div>
-        <div id="map-page-progress"></div>
+        <div id="mapPageClue" class="map-page-clue animated tada"></div>
+        <div id="mapPageQuiz" class="map-page-quiz animated tada"></div>
+        <div id="mapPageProgress" class="map-page-progress"></div>
     </div>
-    <div id="userInfo"></div>
+    <div id="userInfo" class="user-info"></div>
 </div>
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
