@@ -6,7 +6,7 @@ trait PositionMsg extends Message{
 
 }
 
-case class PositionMsgImpl(override val sender: String, override val payload: String) extends PositionMsg{
+case class PositionMsgImpl(override val sender: String, override val payload: String) extends PositionMsg {
 
     implicit val positionMsgWrites = Json.writes[PositionMsgImpl]
 
