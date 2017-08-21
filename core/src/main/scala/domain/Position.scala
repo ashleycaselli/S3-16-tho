@@ -1,9 +1,11 @@
 package domain
 
+import play.api.libs.json.Json
+
 /** An entity that represents a Position
   *
   */
-trait Position {
+trait Position extends Serializable{
     /**
       * Property to get the latitude value.
       *
@@ -24,4 +26,15 @@ trait Position {
   * @param latitude  the position's latitude
   * @param longitude the position's longitude
   */
-case class PositionImpl(override val latitude: Double, override val longitude: Double) extends Position
+case class PositionImpl(override val latitude: Double, override val longitude: Double) extends Position {
+
+    implicit val positionWrites = Json.writes[PositionImpl]
+
+    /**
+      * Property for getting an entity's String representation.
+      *
+      * @return a String containing the representation
+      */
+    override def defaultRepresentation: String = Json toJson this toString
+
+}
