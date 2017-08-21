@@ -5,7 +5,7 @@ import play.api.libs.json.Json
 /** An entity that represents a Position
   *
   */
-trait Position extends Serializable{
+trait Position extends Serializable {
     /**
       * Property to get the latitude value.
       *
