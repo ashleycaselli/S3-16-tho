@@ -16,7 +16,7 @@ class ClueMsgTest extends FunSuite with BeforeAndAfter {
 
     before {
         clue = ClueImpl(clueText)
-        clueMessage =  ClueMsgImpl(sender, clue.defaultRepresentation)
+        clueMessage = ClueMsgImpl(sender, clue.defaultRepresentation)
     }
 
     test("ClueMsg sender and payload must be String") {
