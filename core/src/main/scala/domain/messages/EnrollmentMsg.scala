@@ -5,14 +5,12 @@ import play.api.libs.json.Json
 /** An Entity that contains an Enrollment.
   *
   */
-trait EnrollmentMsg extends Message {
-
-}
+trait EnrollmentMsg extends Message
 
 /**
   * An Entity that contains an Enrollment to Treasure Hunt
   *
-  * @param sender a string that contains the sender
+  * @param sender  a string that contains the sender
   * @param payload a string that contains the payload
   */
 case class EnrollmentMsgImpl(override val sender: String, override val payload: String) extends EnrollmentMsg {

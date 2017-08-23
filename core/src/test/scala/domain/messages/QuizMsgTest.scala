@@ -17,7 +17,7 @@ class QuizMsgTest extends FunSuite with BeforeAndAfter {
 
     before {
         quiz = QuizImpl(quizQuestion, quizAnswer)
-        quizMessage =  QuizMsgImpl(sender, quiz.defaultRepresentation)
+        quizMessage = QuizMsgImpl(sender, quiz.defaultRepresentation)
     }
 
     test("QuizMsg sender and payload must be String") {

@@ -17,7 +17,7 @@ class PositionMsgTest extends FunSuite with BeforeAndAfter {
 
     before {
         position = PositionImpl(latitude, longitude)
-        positionMessage =  PositionMsgImpl(sender, position.defaultRepresentation)
+        positionMessage = PositionMsgImpl(sender, position.defaultRepresentation)
     }
 
     test("PositionMsg sender and payload must be String") {
