@@ -83,7 +83,7 @@ label {
     display: none;
 }
 
-.insert-code-manually-page {
+.insert-code-manually {
     display: none;
 }
 
@@ -116,7 +116,7 @@ label {
 }
 
 .login-input {
-    width: 250px;
+    width: 240px;
 }
 
 /*----------------3rd Page: Select Treasure Hunt (Insert Code or Qr Scan-------------------*/
@@ -125,14 +125,14 @@ label {
     margin-top: 30%;
 }
 
-.location {
-    font-size: 70%;
+.select-hunt-label {
+    font-size: 20px;
     text-align: center;
     margin: 2% auto;
     display: block;
-    padding: 1%;
-    width: 250px;
-    border: 5px solid aqua;
+    padding: 15px 0 5px;
+    width: 244px;
+    border: 4px solid skyblue;
     @include border-radius(5px);
 }
 
@@ -151,7 +151,7 @@ label {
 
 .insert-code-input {
     display: block;
-    width: 250px;
+    width: 240px;
     margin: 2% auto;
 }
 
@@ -160,6 +160,7 @@ label {
         border: 2px solid #cccccc;
         border-radius: 5px;
         margin: 35px;
+        font-size: 22px;
     }
 }
 

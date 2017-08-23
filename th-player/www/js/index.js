@@ -2,7 +2,6 @@
 var lastClueText = "text text text text text text text text text text text text text text text text text text ";
 var loggedTeam;
 var currentHunt;
-var save;
 var app = {
     // Application Constructor
     initialize: function () {
@@ -28,49 +27,12 @@ var app = {
     },
 
     // deviceready Event Handler
-    //
-    // Bind any cordova events here. Common events are:
-    // 'pause', 'resume', etc.
     onDeviceReady: function () {
-        this.scanQRCodeButton();
-        this.insertCodeManuallyPageButton();
-        this.backButton();
-        this.saveCodeButton();
         this.resumeTreasureHuntButton();
         this.leaveTreasureHuntButton();
     },
 
-
     // Update DOM on a Received Event
-    scanQRCodeButton: function () {
-        document.getElementById("scanQR").onclick = function () {
-        }
-    },
-    insertCodeManuallyPageButton: function () {
-        document.getElementById("writeCode").onclick = function () {
-            document.getElementById("selectTreasureHuntPage").style.display = "none";
-            document.getElementById("insertCodeManuallyPage").style.display = "block";
-            document.getElementById("currentTreasureHunt").style.display = "none";
-        }
-    },
-    backButton: function () {
-        var cancelButton = document.getElementById("cancelCodeButton");
-        cancelButton.onclick = function () {
-            document.getElementById("selectTreasureHuntPage").style.display = "block";
-            document.getElementById("insertCodeManuallyPage").style.display = "none";
-        }
-    },
-    saveCodeButton: function () {
-        var saveButton = document.getElementById("saveCodeButton");
-        saveButton.onclick = function () {
-            codeSave = document.getElementById("insertCodeInput").value;
-            alert("Saved treasure hunt");
-            document.getElementById("treasureHuntName").innerHTML = codeSave;
-            document.getElementById("selectTreasureHuntPage").style.display = "block";
-            document.getElementById("insertCodeManuallyPage").style.display = "none";
-            document.getElementById("currentTreasureHunt").style.display = "block";
-        }
-    },
     resumeTreasureHuntButton: function () {
         var resume = document.getElementById("resumeButton");
         resume.onclick = function () {
@@ -108,20 +70,21 @@ function showNearTreasureHunt() {
 }
 
 function showScanButtons(selectedTH) {
-    document.getElementById("nearTreasureHunt").style.display = "none";
-    document.getElementById("scanQR").onClick = scanQRCode("" + selectedTH);
+    document.getElementById("nearTreasureHunt").style.display = "none"
+    document.getElementById("scanQR").onclick = function () {
+        scanQRCode("" + selectedTH)
+    };
+    document.getElementById("writeCode").onclick = function () {
+        writeQRCode("" + selectedTH)
+    };
+    document.getElementById("codeButtonsLabel").innerHTML = selectedTH;
     document.getElementById("codeButtons").style.display = "block";
 }
 
 function scanQRCode(selectedTH) {
     cordova.plugins.barcodeScanner.scan(
         function (result) {
-            if (true) {//TODO check if result is valid
-                currentHunt = selectedTH;
-                localStorage.setItem("currentHunt", selectedTH)
-                document.getElementById("selectTreasureHuntPage").style.display = "none";
-                loadMapPage();
-            }
+            checkScanResults(selectedTH, result.text);
         },
         function (error) {
             alert("Scanning failed: " + error);
@@ -129,11 +92,36 @@ function scanQRCode(selectedTH) {
     );
 }
 
+function writeQRCode(selectedTH) {
+    document.getElementById("codeButtons").style.display = "none";
+    document.getElementById("saveCodeButton").onclick = function () {
+        checkScanResults(selectedTH, document.getElementById("insertCodeInput").value);
+        document.getElementById("insertCodeManually").style.display = "none";
+    }
+    document.getElementById("cancelCodeButton").onclick = function () {
+        document.getElementById("insertCodeManually").style.display = "none";
+        document.getElementById("codeButtons").style.display = "block";
+    }
+    document.getElementById("insertCodeInput").value = "";
+    document.getElementById("insertCodeManually").style.display = "block";
+    document.getElementById("insertCodeInput").focus()
+}
+
+function checkScanResults(selectedTH, result) {
+    if (true) {//TODO check if result is valid
+        currentHunt = selectedTH;
+        localStorage.setItem("currentHunt", selectedTH)
+        document.getElementById("selectTreasureHuntPage").style.display = "none";
+        loadMapPage();
+    }
+}
+
 //-------------------------------MAP----------------------------------------
 function loadMapPage() {
     var mapScript = document.createElement('script');
     mapScript.setAttribute('src', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBNQr4YcrvttSMIgWOX68kJnigaI0Cir9c&callback=mapLoadedCallback');
     document.head.appendChild(mapScript);
+    document.getElementById("mapPageTitle").innerText = currentHunt;
     document.getElementById("mapPage").style.display = "block";
 }
 
@@ -175,10 +163,8 @@ function exitFromMap() {
     document.getElementById("mapPage").style.display = "none";
     document.getElementById("selectTreasureHuntPage").style.display = "block";
     document.getElementById("codeButtons").style.display = "none";
-    var huntName = document.getElementById("treasureHuntName").innerText;
-    if (huntName != "") {
-        document.getElementById("currentTreasureHunt").style.display = "block";
-    }
+    document.getElementById("treasureHuntName").innerHTML = currentHunt;
+    document.getElementById("currentTreasureHunt").style.display = "block";
 }
 
 //-------------------------------CLUE----------------------------------------
