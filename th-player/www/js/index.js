@@ -71,8 +71,12 @@ function showNearTreasureHunt() {
 
 function showScanButtons(selectedTH) {
     document.getElementById("nearTreasureHunt").style.display = "none"
-    document.getElementById("scanQR").onclick = function() { scanQRCode(""+selectedTH) };
-    document.getElementById("writeCode").onclick = function() { writeQRCode(""+selectedTH) };
+    document.getElementById("scanQR").onclick = function () {
+        scanQRCode("" + selectedTH)
+    };
+    document.getElementById("writeCode").onclick = function () {
+        writeQRCode("" + selectedTH)
+    };
     document.getElementById("codeButtonsLabel").innerHTML = selectedTH;
     document.getElementById("codeButtons").style.display = "block";
 }
@@ -90,14 +94,14 @@ function scanQRCode(selectedTH) {
 
 function writeQRCode(selectedTH) {
     document.getElementById("codeButtons").style.display = "none";
-    document.getElementById("saveCodeButton").onclick = function() {
-                 checkScanResults(selectedTH, document.getElementById("insertCodeInput").value);
-                 document.getElementById("insertCodeManually").style.display = "none";
-             }
-    document.getElementById("cancelCodeButton").onclick = function() {
-                document.getElementById("insertCodeManually").style.display = "none";
-                document.getElementById("codeButtons").style.display = "block";
-            }
+    document.getElementById("saveCodeButton").onclick = function () {
+        checkScanResults(selectedTH, document.getElementById("insertCodeInput").value);
+        document.getElementById("insertCodeManually").style.display = "none";
+    }
+    document.getElementById("cancelCodeButton").onclick = function () {
+        document.getElementById("insertCodeManually").style.display = "none";
+        document.getElementById("codeButtons").style.display = "block";
+    }
     document.getElementById("insertCodeInput").value = "";
     document.getElementById("insertCodeManually").style.display = "block";
     document.getElementById("insertCodeInput").focus()
@@ -111,6 +115,7 @@ function checkScanResults(selectedTH, result) {
         loadMapPage();
     }
 }
+
 //-------------------------------MAP----------------------------------------
 function loadMapPage() {
     var mapScript = document.createElement('script');
