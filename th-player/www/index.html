@@ -42,15 +42,17 @@
     <div id="selectTreasureHuntPage" class="select-treasure-hunt-page">
         <img class="logo" src="img/logo.png"/>
         <div id="codeButtons" class="code-buttons button-container">
+            <p id="codeButtonsLabel" class="select-hunt-label"></p>
             <button id="scanQR" class="scan-qr">Scan a QR Code</button>
             <button id="writeCode" class="write-code">Insert Code</button>
         </div>
+        <div id="insertCodeManually" class="insert-code-manually button-container">
+            <input id="insertCodeInput" class="text-input insert-code-input" placeholder="Insert Code">
+            <button id="saveCodeButton" class="save-code-button">Save</button>
+            <button id="cancelCodeButton" class="cancel-code-button">Cancel</button>
+        </div>
         <div id="currentTreasureHunt" class="current-treasure-hunt">
-            <div class="location">
-                <p>YOU ARE PLAYING '</p>
-                <p id="treasureHuntName" class="treasure-hunt-name"></p>
-                <p>' HUNT</p>
-            </div>
+            <p id="treasureHuntName" class="select-hunt-label"></p>
             <div class="button-container half-button">
                 <button id="resumeButton" class="resume-button">Resume</button>
                 <button id="leaveButton" class="leave-button">Leave</button>
@@ -58,15 +60,6 @@
         </div>
         <div id="nearTreasureHunt" class="near-treasure-hunt">
 
-        </div>
-    </div>
-
-    <div id="insertCodeManuallyPage" class="insert-code-manually-page">
-        <img class="logo" src="img/logo.png"/>
-        <input id="insertCodeInput" class="text-input insert-code-input" placeholder="Insert Code">
-        <div class="button-container half-button">
-            <button id="saveCodeButton" class="save-code-button">Save</button>
-            <button id="cancelCodeButton" class="cancel-code-button">Cancel</button>
         </div>
     </div>
     <div id="mapPage" class="map-page">
