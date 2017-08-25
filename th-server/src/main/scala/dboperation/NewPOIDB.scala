@@ -1,8 +1,10 @@
+package dboperation
+
 import java.sql.Connection
 
 import utils.{DBConnectionManager, DBConnectionManagerImpl}
 
-trait NewPOI {
+trait NewPOIDB {
     /**
       * Method to insert a new POI in the DB
       *
@@ -14,7 +16,7 @@ trait NewPOI {
     def insertNewPOI(name: String, latitude: Double, longitude: Double, idOrganizer: Int): Unit
 }
 
-case class NewPOIImpl() extends NewPOI {
+case class NewPOIDBImpl() extends NewPOIDB {
     /**
       * Method to insert a new POI in the DB
       *

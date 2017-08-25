@@ -1,14 +1,16 @@
+package dboperation
+
 import java.sql.Connection
 
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import utils.{DBConnectionManager, DBConnectionManagerImpl}
 
-class NewQuizTest extends FunSuite with BeforeAndAfter {
-    private var newQuiz: NewQuiz = null
+class NewQuizDBTest extends FunSuite with BeforeAndAfter {
+    private var newQuiz: NewQuizDB = null
     private var connectionManager: DBConnectionManager = null
 
     before {
-        newQuiz = new NewQuizImpl
+        newQuiz = new NewQuizDBImpl
         connectionManager = new DBConnectionManagerImpl
     }
 
@@ -20,7 +22,7 @@ class NewQuizTest extends FunSuite with BeforeAndAfter {
         val answer: String = "in the stomach of a goat"
         val idOrganizer: Int = 1
 
-        new NewQuizImpl().insertNewQuiz(question, answer, idOrganizer)
+        new NewQuizDBImpl().insertNewQuiz(question, answer, idOrganizer)
 
         var rs = statement.executeQuery("SELECT MAX(id_quiz) FROM quiz")
         var idQuiz = 0

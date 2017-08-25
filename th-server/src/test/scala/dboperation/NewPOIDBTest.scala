@@ -1,14 +1,16 @@
+package dboperation
+
 import java.sql.Connection
 
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import utils.{DBConnectionManager, DBConnectionManagerImpl}
 
-class NewPOITest extends FunSuite with BeforeAndAfter {
-    private var newPOI: NewPOI = null
+class NewPOIDBTest extends FunSuite with BeforeAndAfter {
+    private var newPOI: NewPOIDB = null
     private var connectionManager: DBConnectionManager = null
 
     before {
-        newPOI = new NewPOIImpl
+        newPOI = new NewPOIDBImpl
         connectionManager = new DBConnectionManagerImpl
     }
 
@@ -21,7 +23,7 @@ class NewPOITest extends FunSuite with BeforeAndAfter {
         val longitude: Double = 13.0242399
         val idOrganizer: Int = 1
 
-        new NewPOIImpl().insertNewPOI(name, latitude, longitude, idOrganizer)
+        new NewPOIDBImpl().insertNewPOI(name, latitude, longitude, idOrganizer)
 
         var rs = statement.executeQuery("SELECT MAX(id_poi) FROM point_of_interest")
         var idPOI = 0
