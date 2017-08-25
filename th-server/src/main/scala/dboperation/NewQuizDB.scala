@@ -1,8 +1,10 @@
+package dboperation
+
 import java.sql.Connection
 
 import utils.{DBConnectionManager, DBConnectionManagerImpl}
 
-trait NewQuiz {
+trait NewQuizDB {
     /**
       * Method to insert a new quiz in the DB
       *
@@ -13,7 +15,7 @@ trait NewQuiz {
     def insertNewQuiz(question: String, answer: String, idOrganizer: Int): Unit
 }
 
-case class NewQuizImpl() extends NewQuiz {
+case class NewQuizDBImpl() extends NewQuizDB {
     /**
       * Method to insert a new quiz in the DB
       *

@@ -1,9 +1,11 @@
+package dboperation
+
 import java.sql.Connection
 
 import org.joda.time.DateTime
 import utils.{DBConnectionManager, DBConnectionManagerImpl}
 
-trait NewTreasureHunt {
+trait NewTreasureHuntDB {
     /**
       * Method to insert a new treasure hunt in the DB
       *
@@ -16,7 +18,7 @@ trait NewTreasureHunt {
     def insertNewTreasureHunt(name: String, location: String, startDate: DateTime, startTime: String, idOrganizer: Int): Unit
 }
 
-case class NewTreasureHuntImpl() extends NewTreasureHunt {
+case class NewTreasureHuntDBImpl() extends NewTreasureHuntDB {
     /**
       * Method to insert a new treasure hunt in the DB
       *

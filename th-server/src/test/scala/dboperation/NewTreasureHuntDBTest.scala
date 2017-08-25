@@ -1,15 +1,17 @@
+package dboperation
+
 import java.sql.Connection
 
 import org.joda.time.DateTime
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import utils.{DBConnectionManager, DBConnectionManagerImpl}
 
-class NewTreasureHuntTest extends FunSuite with BeforeAndAfter {
-    private var newTreasureHunt: NewTreasureHunt = null
+class NewTreasureHuntDBTest extends FunSuite with BeforeAndAfter {
+    private var newTreasureHunt: NewTreasureHuntDB = null
     private var connectionManager: DBConnectionManager = null
 
     before {
-        newTreasureHunt = new NewTreasureHuntImpl
+        newTreasureHunt = new NewTreasureHuntDBImpl
         connectionManager = new DBConnectionManagerImpl
     }
 
@@ -23,7 +25,7 @@ class NewTreasureHuntTest extends FunSuite with BeforeAndAfter {
         val startTime: String = "20:30"
         val idOrganizer: Int = 1
 
-        new NewTreasureHuntImpl().insertNewTreasureHunt(name, location, startDate, startTime, idOrganizer)
+        new NewTreasureHuntDBImpl().insertNewTreasureHunt(name, location, startDate, startTime, idOrganizer)
 
         var rs = statement.executeQuery("SELECT MAX(id_treasure_hunt) FROM treasure_hunt")
         var idTH = 0
