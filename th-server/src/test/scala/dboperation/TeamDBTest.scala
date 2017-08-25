@@ -2,7 +2,6 @@ package dboperation
 
 import java.sql.Connection
 
-import domain.TeamImpl
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import utils.{DBConnectionManager, DBConnectionManagerImpl}
 
@@ -22,7 +21,7 @@ class TeamDBTest extends FunSuite with BeforeAndAfter {
         val idTH: Int = 1
         val idTeam: Int = 1
 
-        new TeamImpl().subscribeTreasureHunt(idTH, idTeam)
+        new TeamDBImpl().subscribeTreasureHunt(idTH, idTeam)
 
         /*---CHECK IF INSERT IS CORRECT---*/
         var rs = statement.executeQuery(s"SELECT COUNT(*) FROM team_in_treasure_hunt WHERE id_treasure_hunt = ${idTH} AND id_team = ${idTeam}")
