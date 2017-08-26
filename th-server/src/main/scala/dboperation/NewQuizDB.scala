@@ -19,8 +19,9 @@ case class NewQuizDBImpl() extends NewQuizDB {
     /**
       * Method to insert a new quiz in the DB
       *
-      * @param question text of the question
-      * @param answer   answer of the question
+      * @param question    text of the question
+      * @param answer      answer of the question
+      * @param idOrganizer organizer that have created this quiz
       */
     override def insertNewQuiz(question: String, answer: String, idOrganizer: Int): Unit = {
         val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
