@@ -1,11 +1,25 @@
 package domain.messages
 
 import domain._
+import domain.messages.msgType.msgType
+
+object msgType extends Enumeration {
+    type msgType = Value
+    val Clue = Value("ClueMsg")
+    val Enrollment = Value("EnrollmentMsg")
+    val Answer = Value("AnswerMsg")
+    val Position = Value("PositionMsg")
+    val Quiz = Value("QuizMsg")
+    val State = Value("StateMsg")
+    val Poi = Value("PoiMsg")
+}
 
 /**
   * A Message is an entity that could be spread through a communication channel.
   */
 trait Message extends Serializable {
+
+    def messageType: msgType
 
     /**
       * Property to get the message's sender
@@ -20,7 +34,6 @@ trait Message extends Serializable {
       * @return contains a String that represents the payload
       */
     def payload: String
-
 }
 
 /**
