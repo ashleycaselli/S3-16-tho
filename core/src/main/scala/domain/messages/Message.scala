@@ -41,7 +41,7 @@ trait Message extends Serializable {
   */
 object Message {
 
-    def apply(sender: Any, entity: Serializable): Message = entity match {
+    def apply(messageType: Any, sender: Any, entity: Serializable): Message = entity match {
         case _: Position => PositionMsgImpl(sender.toString, entity.defaultRepresentation)
         case _: Quiz => QuizMsgImpl(sender.toString, entity.defaultRepresentation)
         case _: Clue => ClueMsgImpl(sender.toString, entity.defaultRepresentation)

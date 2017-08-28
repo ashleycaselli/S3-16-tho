@@ -6,11 +6,11 @@ import org.scalatest.{BeforeAndAfter, FunSuite}
 import utils.{DBConnectionManager, DBConnectionManagerImpl}
 
 class TeamDBTest extends FunSuite with BeforeAndAfter {
-    private var team: TeamDB = null
+    private var teamDB: TeamDB = null
     private var connectionManager: DBConnectionManager = null
 
     before {
-        team = new TeamDBImpl
+        teamDB = new TeamDBImpl
         connectionManager = new DBConnectionManagerImpl
     }
 
@@ -21,7 +21,7 @@ class TeamDBTest extends FunSuite with BeforeAndAfter {
         val idTH: Int = 1
         val idTeam: Int = 1
 
-        new TeamDBImpl().subscribeTreasureHunt(idTH, idTeam)
+        teamDB.subscribeTreasureHunt(idTH, idTeam)
 
         /*---CHECK IF INSERT IS CORRECT---*/
         var rs = statement.executeQuery(s"SELECT COUNT(*) FROM team_in_treasure_hunt WHERE id_treasure_hunt = ${idTH} AND id_team = ${idTeam}")

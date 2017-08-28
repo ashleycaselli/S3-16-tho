@@ -3,9 +3,8 @@ package receiver
 import java.io.IOException
 
 import com.rabbitmq.client._
-import domain.POI
-import domain.messages._
-import play.api.libs.json.JsValue
+import domain.messages.Message
+import play.api.libs.json.Json
 import utils.RabbitInfo
 
 
@@ -39,7 +38,10 @@ class ReceiverImpl extends Receiver {
             @throws[IOException]
             override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, body: Array[Byte]): Unit = {
                 val data = new String(body, RabbitInfo.MESSAGE_ENCODING)
-                val message = data.asInstanceOf[JsValue].as[Message]
+
+                /*implicit val msgReads = Json.reads[Message]
+
+                /*val message = data.asInstanceOf[JsValue].as[Message]
                 val sender = message.sender
                 val mType = message.messageType
                 if (mType == msgType.Answer) { // received when a team solves a quiz
@@ -65,7 +67,7 @@ class ReceiverImpl extends Receiver {
                     val poi = payload.asInstanceOf[JsValue].as[POI]
                     //TODO call function to add poi to database
                     //TODO attention: it contains name, clue, quiz and the ID of the TH in which is contained
-                }
+                }*/
             }
         }
         channelPS.basicConsume(queueName, true, consumer2)
