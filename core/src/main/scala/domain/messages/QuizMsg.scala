@@ -5,7 +5,9 @@ import play.api.libs.json.Json
 /** A message that contains a Quiz.
   *
   */
-trait QuizMsg extends Message
+trait QuizMsg extends Message {
+    def messageType = msgType.Quiz
+}
 
 /**
   * A message that contains a quiz to unlock the next clue in a Treasure Hunt

@@ -2,7 +2,9 @@ package domain.messages
 
 import play.api.libs.json.Json
 
-trait PositionMsg extends Message
+trait PositionMsg extends Message {
+    def messageType = msgType.Position
+}
 
 case class PositionMsgImpl(override val sender: String, override val payload: String) extends PositionMsg {
 

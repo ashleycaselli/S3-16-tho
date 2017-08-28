@@ -1,9 +1,11 @@
 package domain
 
+import play.api.libs.json.{Json, Writes}
+
 /** A point of interest on the map
   *
   */
-trait POI extends Positionable {
+trait POI extends Positionable with Serializable {
     /**
       * Property to get the POI's name
       *
@@ -50,6 +52,14 @@ trait POI extends Positionable {
   */
 case class POIImpl(override var position: Position, override val name: String, private var _quiz: Quiz = null, private var _clue: Clue = null) extends POI {
 
+    implicit val poiWrites = new Writes[POIImpl] {
+        def writes(poi: POIImpl) = Json.obj(
+            "name" -> name,
+            "position" -> position.defaultRepresentation,
+            "quiz" -> quiz.defaultRepresentation,
+            "clue" -> clue.defaultRepresentation)
+    }
+
     /**
       * Property to get the POI's quiz
       *
@@ -84,4 +94,10 @@ case class POIImpl(override var position: Position, override val name: String, p
         _clue = clue
     }
 
+    /**
+      * Property for getting an entity's String representation.
+      *
+      * @return a String containing the representation
+      */
+    override def defaultRepresentation: String = Json toJson this toString
 }
