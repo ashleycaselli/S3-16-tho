@@ -25,7 +25,7 @@ class NewTreasureHuntDBTest extends FunSuite with BeforeAndAfter {
         val startTime: String = "20:30"
         val idOrganizer: Int = 1
 
-        new NewTreasureHuntDBImpl().insertNewTreasureHunt(name, location, startDate, startTime, idOrganizer)
+        newTreasureHunt.insertNewTreasureHunt(name, location, startDate, startTime, idOrganizer)
 
         var rs = statement.executeQuery("SELECT MAX(id_treasure_hunt) FROM treasure_hunt")
         var idTH = 0

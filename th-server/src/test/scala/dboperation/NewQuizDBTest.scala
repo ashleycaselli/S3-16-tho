@@ -22,7 +22,7 @@ class NewQuizDBTest extends FunSuite with BeforeAndAfter {
         val answer: String = "in the stomach of a goat"
         val idOrganizer: Int = 1
 
-        new NewQuizDBImpl().insertNewQuiz(question, answer, idOrganizer)
+        newQuiz.insertNewQuiz(question, answer, idOrganizer)
 
         var rs = statement.executeQuery("SELECT MAX(id_quiz) FROM quiz")
         var idQuiz = 0
