@@ -23,6 +23,8 @@ object State extends Enumeration {
   */
 trait StateMsg extends Message {
 
+    def messageType = msgType.State
+
     def treasureHuntID: String
 
     implicit val stateMsgWrites = new Writes[StateMsg] {

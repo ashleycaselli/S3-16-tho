@@ -2,22 +2,19 @@ package domain.messages
 
 import play.api.libs.json.Json
 
-/** An Entity that contains an Answer.
-  *
-  */
-trait AnswerMsg extends Message {
-    def messageType = msgType.Answer
+trait PoiMsg extends Message {
+    def messageType = msgType.Quiz
 }
 
 /**
-  * A message that represent the quiz-solved event
+  * A message that contains a quiz to unlock the next clue in a Treasure Hunt
   *
   * @param sender  a string that contains the sender
   * @param payload a string that contains the payload
   */
-case class AnswerMsgImpl(override val sender: String, override val payload: String = "") extends AnswerMsg {
+case class PoiMsgImpl(override val sender: String, override val payload: String) extends PoiMsg {
 
-    implicit val answerMsgWrites = Json.writes[AnswerMsgImpl]
+    implicit val POIMsgWrites = Json.writes[PoiMsgImpl]
 
     /**
       * Property for getting an entity's String representation.

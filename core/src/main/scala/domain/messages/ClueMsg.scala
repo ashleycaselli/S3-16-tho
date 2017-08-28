@@ -5,7 +5,9 @@ import play.api.libs.json.Json
 /** A message that contains a Clue.
   *
   */
-trait ClueMsg extends Message
+trait ClueMsg extends Message {
+    def messageType = msgType.Clue
+}
 
 /**
   * A message that contains a clue to reach the next POI in a Treasure Hunt

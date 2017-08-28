@@ -5,7 +5,9 @@ import play.api.libs.json.Json
 /** An Entity that contains an Enrollment.
   *
   */
-trait EnrollmentMsg extends Message
+trait EnrollmentMsg extends Message {
+    def messageType = msgType.Enrollment
+}
 
 /**
   * An Entity that contains an Enrollment to Treasure Hunt
