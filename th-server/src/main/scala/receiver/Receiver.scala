@@ -3,8 +3,6 @@ package receiver
 import java.io.IOException
 
 import com.rabbitmq.client._
-import domain.messages.Message
-import play.api.libs.json.Json
 import utils.RabbitInfo
 
 
@@ -29,7 +27,7 @@ class ReceiverImpl extends Receiver {
         }
         channel.basicConsume(RabbitInfo.QUEUE_NAME, true, consumer)
 
-        
+
         val channelPS = connection.createChannel
         channelPS.exchangeDeclare(RabbitInfo.EXCHANGE_NAME, "fanout")
         val queueName = channelPS.queueDeclare.getQueue
@@ -40,8 +38,8 @@ class ReceiverImpl extends Receiver {
                 val data = new String(body, RabbitInfo.MESSAGE_ENCODING)
 
                 /*implicit val msgReads = Json.reads[Message]
-
-                /*val message = data.asInstanceOf[JsValue].as[Message]
+                
+                val message = data.asInstanceOf[JsValue].as[Message]
                 val sender = message.sender
                 val mType = message.messageType
                 if (mType == msgType.Answer) { // received when a team solves a quiz

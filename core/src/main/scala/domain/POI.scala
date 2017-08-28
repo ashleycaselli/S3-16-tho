@@ -14,13 +14,6 @@ trait POI extends Positionable with Serializable {
     def name: String
 
     /**
-      * Property to get the POI's TH
-      *
-      * @return
-      */
-    def treasureHuntID: String
-
-    /**
       * Property to get the POI's quiz
       *
       * @return
@@ -57,12 +50,11 @@ trait POI extends Positionable with Serializable {
   * @param _quiz    a Quiz for POI. null if not specified
   * @param _clue    a Clue for POI. null if not specified
   */
-case class POIImpl(override var position: Position, override val treasureHuntID: String, override val name: String, private var _quiz: Quiz = null, private var _clue: Clue = null) extends POI {
+case class POIImpl(override var position: Position, override val name: String, private var _quiz: Quiz = null, private var _clue: Clue = null) extends POI {
 
     implicit val poiWrites = new Writes[POIImpl] {
         def writes(poi: POIImpl) = Json.obj(
             "name" -> name,
-            "treasureHuntID" -> treasureHuntID,
             "position" -> position.defaultRepresentation,
             "quiz" -> quiz.defaultRepresentation,
             "clue" -> clue.defaultRepresentation)
