@@ -1,3 +1,6 @@
+package model
+
+import core.Observable
 import domain.messages.PoiMsgImpl
 import domain.{POI, Quiz, TreasureHunt}
 
@@ -28,7 +31,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
 
     override def addTreasureHunt(th: TreasureHunt): Unit = {
         require(ths != null && !ths.contains(th))
-        broker send (th.ID)
+        broker send th.ID
         ths = ths :+ th
     }
 

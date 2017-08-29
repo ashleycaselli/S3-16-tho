@@ -1,5 +1,8 @@
+package controller
+
 import com.typesafe.scalalogging.Logger
 import domain.TreasureHuntImpl
+import model.THModel
 
 sealed trait THOrganizer {
 
@@ -12,9 +15,9 @@ class THOrganizerImpl(model: THModel) extends THOrganizer {
     private val logger = Logger[THOrganizerImpl]
 
     override def createTreasureHunt(name: String): Unit = {
-        logger info (s"Creating a Treasure Hunt: $name ..........")
+        logger info s"Creating a Treasure Hunt: $name .........."
         model addTreasureHunt TreasureHuntImpl(name)
-        logger info (s"$name creation successfully!")
+        logger info s"$name creation successfully!"
     }
 
 }
