@@ -39,3 +39,11 @@ case class ClueImpl(override var content: String) extends Clue {
     override def defaultRepresentation: String = Json toJson this toString
 
 }
+
+object Clue {
+
+    def apply(content: String): ClueImpl = {
+        ClueImpl(content)
+    }
+
+}
