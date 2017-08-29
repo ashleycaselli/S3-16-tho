@@ -50,3 +50,11 @@ case class QuizImpl(override var question: String, override var answer: String) 
     override def defaultRepresentation: String = Json toJson this toString
 
 }
+
+object Quiz {
+
+    def apply(question: String, answer: String): QuizImpl = {
+        QuizImpl(question, answer)
+    }
+
+}

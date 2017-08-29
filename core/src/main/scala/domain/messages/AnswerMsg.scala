@@ -1,6 +1,6 @@
 package domain.messages
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 
 /** An Entity that contains an Answer.
   *
@@ -17,7 +17,12 @@ trait AnswerMsg extends Message {
   */
 case class AnswerMsgImpl(override val sender: String, override val payload: String = "") extends AnswerMsg {
 
-    implicit val answerMsgWrites = Json.writes[AnswerMsgImpl]
+    implicit val answerMsgWrites = new Writes[AnswerMsgImpl] {
+        def writes(answerMsg: AnswerMsgImpl) = Json.obj(
+            "messageType" -> messageType,
+            "sender" -> sender,
+            "payload" -> payload)
+    }
 
     /**
       * Property for getting an entity's String representation.

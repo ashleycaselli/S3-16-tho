@@ -1,6 +1,6 @@
 package domain.messages
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 
 trait PositionMsg extends Message {
     def messageType = msgType.Position
@@ -8,7 +8,12 @@ trait PositionMsg extends Message {
 
 case class PositionMsgImpl(override val sender: String, override val payload: String) extends PositionMsg {
 
-    implicit val positionMsgWrites = Json.writes[PositionMsgImpl]
+    implicit val positionMsgWrites = new Writes[PositionMsgImpl] {
+        def writes(positionMsg: PositionMsgImpl) = Json.obj(
+            "messageType" -> messageType,
+            "sender" -> sender,
+            "payload" -> payload)
+    }
 
     /**
       * Property for getting an entity's String representation.
