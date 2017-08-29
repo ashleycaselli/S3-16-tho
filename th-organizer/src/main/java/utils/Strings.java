@@ -7,4 +7,7 @@ public class Strings {
 
     public final static String ORGANIZER_TITLE = "Treasure Hunt Organizer";
 
+    public final static String NEW_TREASURE_HUNT_BUTTON = "New Treasure Hunt";
+
+    public final static String EXISTING_TH_LABEL = "Existing Treasure Hunt:";
 }
