@@ -3,17 +3,56 @@ package receiver
 import java.io.IOException
 
 import com.rabbitmq.client._
+import domain._
+import domain.messages._
+import domain.messages.msgType.msgType
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, Json, Reads}
 import utils.RabbitInfo
 
-
 trait Receiver {
+
     def startRecv: Unit
+
+    def getLastMessage(): String
 }
 
 class ReceiverImpl extends Receiver {
 
+    private var lastMessage: String = null
+
+    implicit val messageReads: Reads[Message] = (
+      (JsPath \ "messageType").read[msgType] and
+        (JsPath \ "sender").read[String] and
+        (JsPath \ "payload").read[String]
+      ) (Message.apply _)
+
+
+    implicit val positionReads: Reads[Position] = (
+      (JsPath \ "latitude").read[Double] and
+        (JsPath \ "longitude").read[Double]
+      ) (Position.apply _)
+
+    implicit val quizReads: Reads[Quiz] = (
+      (JsPath \ "question").read[String] and
+        (JsPath \ "answer").read[String]
+      ) (Quiz.apply _)
+
+    implicit val clueReads: Reads[Clue] = (
+      (JsPath \ "content").read[String].map(Clue.apply _)
+      )
+
+    implicit val poiReads: Reads[POI] = (
+      (JsPath \ "name").read[String] and
+        (JsPath \ "position").read[String] and
+        (JsPath \ "quiz").read[String] and
+        (JsPath \ "clue").read[String]
+      ) (POI.apply _)
+
+
     @throws[Exception]
     override def startRecv: Unit = {
+        println("Receiver started")
         val factory = new ConnectionFactory
         factory.setHost(RabbitInfo.HOST)
         val connection = factory.newConnection
@@ -36,39 +75,34 @@ class ReceiverImpl extends Receiver {
             @throws[IOException]
             override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, body: Array[Byte]): Unit = {
                 val data = new String(body, RabbitInfo.MESSAGE_ENCODING)
-
-                /*implicit val msgReads = Json.reads[Message]
-                
-                val message = data.asInstanceOf[JsValue].as[Message]
+                lastMessage = data;
+                val message = Json.parse(data).as[Message]
                 val sender = message.sender
                 val mType = message.messageType
-                if (mType == msgType.Answer) { // received when a team solves a quiz
-                    val payload = data.asInstanceOf[JsValue].as[AnswerMsg].payload
-                }
-                if (mType == msgType.Clue) { // never received
-                    val payload = data.asInstanceOf[JsValue].as[ClueMsg].payload
-                }
-                if (mType == msgType.Enrollment) { // received when a team require to join a th
-                    val payload = data.asInstanceOf[JsValue].as[EnrollmentMsg].payload
-                }
-                if (mType == msgType.Position) { // received if player reach a position
-                    val payload = data.asInstanceOf[JsValue].as[PositionMsg].payload
-                }
-                if (mType == msgType.Quiz) { // never received
-                    val payload = data.asInstanceOf[JsValue].as[QuizMsg].payload
-                }
-                if (mType == msgType.State) { // received state needs to be changed
-                    val payload = data.asInstanceOf[JsValue].as[StateMsg].payload
-                }
+                val payload = message.payload
                 if (mType == msgType.Poi) { // received if organizer creates a new POI
-                    val payload = data.asInstanceOf[JsValue].as[PoiMsg].payload
-                    val poi = payload.asInstanceOf[JsValue].as[POI]
+                    var poi = Json.parse(payload).as[POI]
                     //TODO call function to add poi to database
-                    //TODO attention: it contains name, clue, quiz and the ID of the TH in which is contained
-                }*/
+                }
+                if (mType == msgType.Clue) {
+                    var clue = Json.parse(payload).as[Clue]
+                    //TODO call database function
+                }
+                if (mType == msgType.Quiz) {
+                    var quiz = Json.parse(payload).as[Quiz]
+                    //TODO call database function
+                }
+                if (mType == msgType.Position) {
+                    var position = Json.parse(payload).as[Position]
+                    //TODO call database function
+                }
             }
         }
         channelPS.basicConsume(queueName, true, consumer2)
+    }
+
+    override def getLastMessage(): String = {
+        lastMessage
     }
 }
 

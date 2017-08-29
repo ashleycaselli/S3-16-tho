@@ -38,3 +38,11 @@ case class PositionImpl(override val latitude: Double, override val longitude: D
     override def defaultRepresentation: String = Json toJson this toString
 
 }
+
+object Position {
+
+    def apply(latitude: Double, longitude: Double): PositionImpl = {
+        PositionImpl(latitude, longitude)
+    }
+
+}

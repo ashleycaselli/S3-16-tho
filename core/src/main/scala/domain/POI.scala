@@ -1,6 +1,7 @@
 package domain
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
 /** A point of interest on the map
   *
@@ -100,4 +101,27 @@ case class POIImpl(override var position: Position, override val name: String, p
       * @return a String containing the representation
       */
     override def defaultRepresentation: String = Json toJson this toString
+}
+
+
+object POI {
+
+    implicit val positionReads: Reads[Position] = (
+      (JsPath \ "latitude").read[Double] and
+        (JsPath \ "longitude").read[Double]
+      ) (Position.apply _)
+
+    implicit val quizReads: Reads[Quiz] = (
+      (JsPath \ "question").read[String] and
+        (JsPath \ "answer").read[String]
+      ) (Quiz.apply _)
+
+    implicit val clueReads: Reads[Clue] = (
+      (JsPath \ "content").read[String].map(Clue.apply _)
+      )
+
+    def apply(name: String, position: String, quiz: String, clue: String): POIImpl = {
+        POIImpl(Json.parse(position).as[Position], name, Json.parse(quiz).as[Quiz], Json.parse(clue).as[Clue])
+    }
+
 }

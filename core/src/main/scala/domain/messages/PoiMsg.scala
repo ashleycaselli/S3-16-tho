@@ -1,9 +1,9 @@
 package domain.messages
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 
 trait PoiMsg extends Message {
-    def messageType = msgType.Quiz
+    def messageType = msgType.Poi
 }
 
 /**
@@ -14,7 +14,12 @@ trait PoiMsg extends Message {
   */
 case class PoiMsgImpl(override val sender: String, override val payload: String) extends PoiMsg {
 
-    implicit val POIMsgWrites = Json.writes[PoiMsgImpl]
+    implicit val POIMsgWrites = new Writes[PoiMsg] {
+        def writes(msg: PoiMsg) = Json.obj(
+            "messageType" -> messageType,
+            "sender" -> sender,
+            "payload" -> payload)
+    }
 
     /**
       * Property for getting an entity's String representation.
