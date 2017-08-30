@@ -14,6 +14,14 @@ trait TeamDB {
     def subscribeTreasureHunt(idTH: Int, idTeam: Int): Unit
 
     /**
+      * Method to unsubscribe a Team in a TH and delete a record in the DB
+      *
+      * @param idTH   ID of the Treasure Hunt the team want to unsubscribe
+      * @param idTeam ID of the team that want to unsubscribe the Treasure Hunt
+      */
+    def unsubscribeTreasureHunt(idTH: Int, idTeam: Int): Unit
+
+    /**
       * Method to check if the chosen team name is available or not
       *
       * @param teamName name of the team you want to check availability of
@@ -49,6 +57,21 @@ case class TeamDBImpl() extends TeamDB {
         val connection: Connection = connectionManager.establishConnection
         val statement = connection.createStatement
         val query = s"INSERT INTO team_in_treasure_hunt (id_treasure_hunt, id_team) VALUES (${idTH},${idTeam})"
+        statement.executeUpdate(query)
+        connection.close()
+    }
+
+    /**
+      * Method to unsubscribe a Team in a TH and delete a record in the DB
+      *
+      * @param idTH   ID of the Treasure Hunt the team want to unsubscribe
+      * @param idTeam ID of the team that want to unsubscribe the Treasure Hunt
+      */
+    override def unsubscribeTreasureHunt(idTH: Int, idTeam: Int): Unit = {
+        val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
+        val connection: Connection = connectionManager.establishConnection
+        val statement = connection.createStatement
+        val query = s"DELETE FROM team_in_treasure_hunt WHERE id_treasure_hunt = (${idTH} AND id_team = ${idTeam})"
         statement.executeUpdate(query)
         connection.close()
     }

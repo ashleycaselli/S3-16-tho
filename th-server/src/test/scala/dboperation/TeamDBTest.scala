@@ -14,7 +14,7 @@ class TeamDBTest extends FunSuite with BeforeAndAfter {
         connectionManager = new DBConnectionManagerImpl
     }
 
-    test("After the subscribtion of a team in a treasure hunt, it is present in team_in_treasure_hunt table and has the correct value") {
+    test("After the subscription of a team in a treasure hunt, it is present in team_in_treasure_hunt table and has the correct value") {
         val connection: Connection = connectionManager.establishConnection
         var statement = connection.createStatement
 
@@ -35,6 +35,30 @@ class TeamDBTest extends FunSuite with BeforeAndAfter {
         /*---DELETE THE LAST ADDED ROW---*/
         statement = connection.createStatement
         statement.executeUpdate(s"DELETE FROM team_in_treasure_hunt WHERE id_treasure_hunt = ${idTH} AND id_team = ${idTeam}")
+
+        connection.close()
+    }
+
+    test("After an unsubscription of a team in a treasure hunt, it is not present in team_in_treasure_hunt table") {
+        val connection: Connection = connectionManager.establishConnection
+        var statement = connection.createStatement
+
+        val idTH: Int = 1
+        val idTeam: Int = 1
+
+        //first of all subscribe a team in order to unsubscribe that team
+        teamDB.subscribeTreasureHunt(idTH, idTeam)
+
+        teamDB.unsubscribeTreasureHunt(idTH, idTeam)
+
+        /*---CHECK IF DELETE IS CORRECT---*/
+        var rs = statement.executeQuery(s"SELECT COUNT(*) FROM team_in_treasure_hunt WHERE id_treasure_hunt = ${idTH} AND id_team = ${idTeam}")
+        var subscribtion = 0
+        while (rs.next) {
+            subscribtion = rs.getInt(1)
+        }
+
+        assert(subscribtion == 0)
 
         connection.close()
     }
