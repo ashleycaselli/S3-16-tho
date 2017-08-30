@@ -3,11 +3,12 @@ package receiver
 import java.io.IOException
 
 import com.rabbitmq.client._
-import domain._
+import domain.messages.StateType.StateType
 import domain.messages._
 import domain.messages.msgType.msgType
+import domain.{State, _}
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Json, Reads}
+import play.api.libs.json._
 import utils.RabbitInfo
 
 trait Receiver {
@@ -44,11 +45,16 @@ class ReceiverImpl extends Receiver {
 
     implicit val poiReads: Reads[POI] = (
       (JsPath \ "name").read[String] and
+        (JsPath \ "treasureHuntID").read[String] and
         (JsPath \ "position").read[String] and
         (JsPath \ "quiz").read[String] and
         (JsPath \ "clue").read[String]
       ) (POI.apply _)
 
+    implicit val stateReads: Reads[State] = (
+      (JsPath \ "th").read[StateType] and
+        (JsPath \ "state").read[String]
+      ) (State.apply _)
 
     @throws[Exception]
     override def startRecv: Unit = {
@@ -94,6 +100,12 @@ class ReceiverImpl extends Receiver {
                 }
                 if (mType == msgType.Position) {
                     var position = Json.parse(payload).as[Position]
+                    //TODO call database function
+                }
+                if (mType == msgType.State) {
+                    var state = Json.parse(payload).as[State]
+                    val thID = state.treasureHuntID
+                    val stateType = state.state
                     //TODO call database function
                 }
             }

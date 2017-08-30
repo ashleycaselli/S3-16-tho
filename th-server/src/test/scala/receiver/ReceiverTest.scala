@@ -53,6 +53,20 @@ class ReceiverTest extends FunSuite {
         else assert(false);
     }
 
+    test("State message test") {
+        Thread.sleep(2000)
+        val msg = sender.sendState()
+        var pass: Boolean = false
+        val timestamp: Long = System.currentTimeMillis
+        while (pass == false && System.currentTimeMillis - timestamp < 2000) {
+            if (receiver.getLastMessage() == msg) {
+                pass = true
+            }
+        }
+        if (pass == true) assert(true)
+        else assert(false);
+    }
+
     test("Poi message test") {
         Thread.sleep(2000)
         val msg = sender.sendPoi()
