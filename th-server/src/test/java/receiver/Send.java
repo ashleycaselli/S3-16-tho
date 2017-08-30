@@ -4,10 +4,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import domain.*;
-import domain.messages.ClueMsgImpl;
-import domain.messages.PoiMsgImpl;
-import domain.messages.PositionMsgImpl;
-import domain.messages.QuizMsgImpl;
+import domain.messages.*;
 import utils.RabbitInfo;
 
 class Send {
@@ -42,8 +39,14 @@ class Send {
         return message3;
     }
 
+    String sendState() throws Exception {
+        String message4 = new StateMsgImpl("sender", new StateImpl(StateType.Created(), "thID").defaultRepresentation()).defaultRepresentation();
+        this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message4.getBytes());
+        return message4;
+    }
+
     String sendPoi() throws Exception {
-        POI poi = new POIImpl(new PositionImpl(44.55432, 45.83654), "test POI", new QuizImpl("question", "answer"), new ClueImpl("clue"));
+        POI poi = new POIImpl(new PositionImpl(44.55432, 45.83654), "test POI", "thID", new QuizImpl("question", "answer"), new ClueImpl("clue"));
         String message = new PoiMsgImpl("sender", poi.defaultRepresentation()).defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message.getBytes());
         return message;

@@ -55,6 +55,7 @@ object Message {
         case msgType.Answer => AnswerMsgImpl(sender, entity)
         case msgType.Enrollment => EnrollmentMsgImpl(sender, entity)
         case msgType.Position => PositionMsgImpl(sender, entity)
+        case msgType.State => StateMsgImpl(sender, entity)
         case _ => throw new NoMsgDefinedException(s"No message defined for $entity class")
     }
 
