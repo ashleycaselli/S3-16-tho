@@ -67,7 +67,7 @@ class ModelBroker extends Broker {
         response
     }
 
-    def close: Unit = {
+    def close(): Unit = {
         channelPS close()
         channelRPC close()
         logger info "Channels closed"
