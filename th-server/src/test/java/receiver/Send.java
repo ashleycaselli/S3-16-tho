@@ -40,7 +40,7 @@ class Send {
     }
 
     String sendState() throws Exception {
-        String message4 = new StartMsgImpl("sender", StateType.Start().toString(), "thID").defaultRepresentation();
+        String message4 = new StateMsgImpl("sender", new StateImpl(StateType.Created(), "thID").defaultRepresentation()).defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message4.getBytes());
         return message4;
     }

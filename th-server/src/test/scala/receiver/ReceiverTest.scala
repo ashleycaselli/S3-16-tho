@@ -1,15 +1,16 @@
 package receiver
 
-import org.scalatest.FunSuite
+import org.scalatest.{BeforeAndAfter, FunSuite}
 
-class ReceiverTest extends FunSuite {
+class ReceiverTest extends FunSuite with BeforeAndAfter {
     private var sender: Send = null
     private var receiver: Receiver = null
 
-
-    sender = new Send()
-    receiver = new ReceiverImpl
-    receiver.startRecv
+    before {
+        sender = new Send
+        receiver = new ReceiverImpl
+        receiver.startRecv
+    }
 
     test("Position message test") {
         Thread.sleep(2000)
@@ -53,31 +54,32 @@ class ReceiverTest extends FunSuite {
         else assert(false);
     }
 
-    test("State message test") {
-        Thread.sleep(2000)
-        val msg = sender.sendState()
-        var pass: Boolean = false
-        val timestamp: Long = System.currentTimeMillis
-        while (pass == false && System.currentTimeMillis - timestamp < 2000) {
-            if (receiver.getLastMessage() == msg) {
-                pass = true
-            }
-        }
-        if (pass == true) assert(true)
-        else assert(false);
-    }
-
     test("Poi message test") {
         Thread.sleep(2000)
         val msg = sender.sendPoi()
-        var pass: Boolean = false
+        var pass5: Boolean = false
         val timestamp: Long = System.currentTimeMillis
-        while (pass == false && System.currentTimeMillis - timestamp < 2000) {
+        while (pass5 == false && System.currentTimeMillis - timestamp < 4000) {
             if (receiver.getLastMessage() == msg) {
-                pass = true
+                pass5 = true
             }
         }
-        if (pass == true) assert(true)
+        if (pass5 == true) assert(true)
         else assert(false);
     }
+
+    test("State message test") {
+        Thread.sleep(2000)
+        val message = sender.sendState()
+        var pass4: Boolean = false
+        val timestamp: Long = System.currentTimeMillis
+        while (pass4 == false && System.currentTimeMillis - timestamp < 2000) {
+            if (receiver.getLastMessage() == message) {
+                pass4 = true
+            }
+        }
+        if (pass4 == true) assert(true)
+        else assert(false);
+    }
+
 }

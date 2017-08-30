@@ -63,6 +63,7 @@ case class POIImpl(override var position: Position, override val name: String, o
     implicit val poiWrites = new Writes[POIImpl] {
         def writes(poi: POIImpl) = Json.obj(
             "name" -> name,
+            "treasureHuntID" -> treasureHuntID,
             "position" -> position.defaultRepresentation,
             "quiz" -> quiz.defaultRepresentation,
             "clue" -> clue.defaultRepresentation)

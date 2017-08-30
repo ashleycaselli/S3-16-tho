@@ -52,8 +52,8 @@ class ReceiverImpl extends Receiver {
       ) (POI.apply _)
 
     implicit val stateReads: Reads[State] = (
-      (JsPath \ "th").read[StateType] and
-        (JsPath \ "state").read[String]
+      (JsPath \ "state").read[StateType] and
+        (JsPath \ "treasureHuntID").read[String]
       ) (State.apply _)
 
     @throws[Exception]
@@ -104,8 +104,6 @@ class ReceiverImpl extends Receiver {
                 }
                 if (mType == msgType.State) {
                     var state = Json.parse(payload).as[State]
-                    val thID = state.treasureHuntID
-                    val stateType = state.state
                     //TODO call database function
                 }
             }

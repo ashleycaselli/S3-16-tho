@@ -25,15 +25,12 @@ trait StateMsg extends Message {
 
     def messageType = msgType.State
 
-    def treasureHuntID: String
 
     implicit val stateMsgWrites = new Writes[StateMsg] {
         def writes(msg: StateMsg) = Json.obj(
             "messageType" -> messageType,
             "sender" -> sender,
-            "payload" -> Json.obj(
-                "th" -> treasureHuntID,
-                "state" -> payload))
+            "payload" -> payload)
     }
 
     /**
@@ -51,20 +48,4 @@ trait StateMsg extends Message {
   * @param sender  a string that contains the sender
   * @param payload a string that contains the payload
   */
-case class CreatedMsgImpl(override val sender: String, override val payload: String = StateType.Created.toString, override val treasureHuntID: String) extends StateMsg
-
-/**
-  * A message that contains a state (start)
-  *
-  * @param sender  a string that contains the sender
-  * @param payload a string that contains the payload
-  */
-case class StartMsgImpl(override val sender: String, override val payload: String = StateType.Start.toString, override val treasureHuntID: String) extends StateMsg
-
-/**
-  * A message that contains a state (stop)
-  *
-  * @param sender  a string that contains the sender
-  * @param payload a string that contains the payload
-  */
-case class StopMsgImpl(override val sender: String, override val payload: String = StateType.Stop.toString, override val treasureHuntID: String) extends StateMsg
+case class StateMsgImpl(override val sender: String, override val payload: String) extends StateMsg
