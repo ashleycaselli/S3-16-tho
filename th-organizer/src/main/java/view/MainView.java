@@ -13,7 +13,7 @@ import java.awt.*;
  */
 public class MainView extends JFrame implements OrganizerView {
 
-    public static final Dimension FRAME_DIMENSION = new Dimension(600, 600);
+    public static final Dimension FRAME_DIMENSION = new Dimension(600, 700);
     public static final int DEFAULT_INSET_VALUE = 10;
     public static final int LIST_ROW_VISIBLE = 10;
 
@@ -52,11 +52,14 @@ public class MainView extends JFrame implements OrganizerView {
         this.add(this.logoPanel, c);
 
         this.newTHButton = new JButton(Strings.NEW_TREASURE_HUNT_BUTTON.toUpperCase());
+        this.newTHButton.setFont(Resources.DEFAULT_FONT);
         c.gridy++;
         c.fill = GridBagConstraints.CENTER;
         this.add(this.newTHButton, c);
 
         this.existingTHLabel = new JLabel(Strings.EXISTING_TH_LABEL);
+        this.existingTHLabel.setFont(Resources.DEFAULT_FONT);
+        c.anchor = GridBagConstraints.LINE_START;
         c.gridy++;
         this.add(this.existingTHLabel, c);
 
