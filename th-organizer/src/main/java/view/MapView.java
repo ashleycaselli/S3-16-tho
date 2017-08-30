@@ -19,23 +19,22 @@ public class MapView extends JFrame {
     private LogoPanel logoPanel;
     private final List<JButton> buttonList = new ArrayList();
     private GoogleMapsPanel googleMapsPanel;
+    private final String treasureHuntID;
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MapView());
-    }
-
-    public MapView() {
+    public MapView(final String treasureHuntID) {
+        this.treasureHuntID = treasureHuntID;
         init();
     }
 
     private void init() {
         this.getContentPane().setBackground(Color.white);
         this.setLayout(new GridBagLayout());
-        this.setTitle(Strings.ORGANIZER_TITLE);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setTitle(this.treasureHuntID);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(FRAME_DIMENSION);
         this.setResizable(false);
         this.initComponent();
+        this.setLocation(100, 0);
         this.setVisible(true);
 
         Platform.runLater(() -> this.googleMapsPanel.initFX());

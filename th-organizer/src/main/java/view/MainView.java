@@ -102,6 +102,8 @@ public class MainView extends JFrame implements OrganizerView {
         this.deleteButton.setFont(Resources.DEFAULT_FONT);
         this.loadButton.setFont(Resources.DEFAULT_FONT);
 
+        this.loadButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> new MapView(this.existingTHList.getSelectedValue().toString())));
+
     }
 
     @Override
