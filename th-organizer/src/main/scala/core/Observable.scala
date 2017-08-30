@@ -1,3 +1,5 @@
+package core
+
 trait Observable[T] {
 
     private var observers: List[Observer[T]] = Nil

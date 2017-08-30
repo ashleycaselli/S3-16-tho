@@ -1,3 +1,4 @@
+import model.ModelBroker
 import org.scalatest.{BeforeAndAfter, FunSuite}
 
 

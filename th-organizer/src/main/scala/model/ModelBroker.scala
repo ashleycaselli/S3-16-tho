@@ -1,3 +1,5 @@
+package model
+
 import java.util.UUID
 
 import com.rabbitmq.client._
@@ -20,12 +22,12 @@ class ModelBroker extends Broker {
 
     private val EXCHANGE_NAME = "organizer-message"
 
-    private var connection: Connection = null
-    private var channelRPC: Channel = null
-    private var channelPS: Channel = null
+    private var connection: Connection = _
+    private var channelRPC: Channel = _
+    private var channelPS: Channel = _
     private val requestQueueName: String = "rpc_queue"
-    private var replyQueueName: String = null
-    private var consumer: QueueingConsumer = null
+    private var replyQueueName: String = _
+    private var consumer: QueueingConsumer = _
 
     private val logger = Logger[ModelBroker]
 
@@ -43,11 +45,11 @@ class ModelBroker extends Broker {
 
     override def send(msg: String): Unit = {
         channelPS.basicPublish(EXCHANGE_NAME, "", null, msg.getBytes)
-        logger info (s"Message $msg sent!")
+        logger info s"Message $msg sent!"
     }
 
     def call(msg: String): String = {
-        logger info (s"Calling.... $msg")
+        logger info s"Calling.... $msg"
         val corrId: String = UUID randomUUID() toString
         val props: AMQP.BasicProperties = new AMQP.BasicProperties.Builder().correlationId(corrId).replyTo(replyQueueName).build
         channelRPC basicPublish("", requestQueueName, props, msg.getBytes("UTF-8"))
@@ -61,16 +63,16 @@ class ModelBroker extends Broker {
                 found = true
             }
         }
-        logger info (s"Response received: $response")
+        logger info s"Response received: $response"
         response
     }
 
-    def close: Unit = {
+    def close(): Unit = {
         channelPS close()
         channelRPC close()
-        logger info ("Channels closed")
+        logger info "Channels closed"
         connection close()
-        logger info ("Connection closed")
+        logger info "Connection closed"
     }
 
     override def host(hostAddress: String): Unit = factory setHost hostAddress
