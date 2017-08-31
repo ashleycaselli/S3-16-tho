@@ -53,6 +53,7 @@ public class MainView extends JFrame implements OrganizerView {
 
         this.newTHButton = new JButton(Strings.NEW_TREASURE_HUNT_BUTTON.toUpperCase());
         this.newTHButton.setFont(Resources.DEFAULT_FONT);
+        this.newTHButton.setFocusPainted(false);
         c.gridy++;
         c.fill = GridBagConstraints.CENTER;
         this.add(this.newTHButton, c);
@@ -86,6 +87,7 @@ public class MainView extends JFrame implements OrganizerView {
         this.loadButton.setForeground(Color.white);
         this.loadButton.setOpaque(true);
         this.loadButton.setBorderPainted(false);
+        this.loadButton.setFocusPainted(false);
         buttonPanel.add(this.loadButton, c1);
 
         this.deleteButton = new JButton(Strings.DELETE_BUTTON);
@@ -93,6 +95,7 @@ public class MainView extends JFrame implements OrganizerView {
         this.deleteButton.setForeground(Color.white);
         this.deleteButton.setOpaque(true);
         this.deleteButton.setBorderPainted(false);
+        this.deleteButton.setFocusPainted(false);
         c1.gridx++;
         buttonPanel.add(this.deleteButton, c1);
 
