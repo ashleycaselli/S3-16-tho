@@ -1,18 +1,24 @@
 package domain
 
 import com.typesafe.scalalogging.Logger
+import play.api.libs.json.{Json, Writes}
 
 /**
   * A Treasure Hunt
   */
-trait TreasureHunt {
+trait TreasureHunt extends Serializable {
 
-    /**
-      * Property to get the Treasure Hunt's ID
-      *
-      * @return a String containing the ID value
-      */
     def ID: String
+
+    def ID_=(ID: String): Unit
+
+    def name: String
+
+    def location: String
+
+    def date: String
+
+    def time: String
 
     /**
       * Property to get Teams enrolled for Treasure Hunt
@@ -34,16 +40,16 @@ trait TreasureHunt {
       * @param teamName name of the Team that is get
       */
     def team(teamName: String): Team
-
 }
 
 /**
   * A concrete implementation of a Treasure Hunt
   *
-  * @param ID     the Treasure Hunt ID
+  * @param _ID    the Treasure Hunt ID
   * @param _teams Treasure Hunt's teams. If not specified is empty
   */
-case class TreasureHuntImpl(override val ID: String, private var _teams: Seq[Team] = Seq.empty) extends TreasureHunt {
+case class TreasureHuntImpl(private var _ID: String = null, override val name: String, override val location: String, override val date: String, override val time: String, private var _teams: Seq[Team] = Seq.empty) extends TreasureHunt {
+
 
     private val logger = Logger[Team]
 
@@ -62,6 +68,36 @@ case class TreasureHuntImpl(override val ID: String, private var _teams: Seq[Tea
     }) getOrElse {
         logger.info(s"$teamName is not enrolled at Treasure Hunt: $ID")
         null
+    }
+
+    implicit val treasureHuntWrites = new Writes[TreasureHuntImpl] {
+        def writes(th: TreasureHuntImpl) = Json.obj(
+            "ID" -> ID,
+            "name" -> name,
+            "location" -> location,
+            "date" -> date,
+            "time" -> time)
+    }
+
+    override def ID: String = _ID
+
+    override def ID_=(ID: String): Unit = {
+        require(ID != null)
+        _ID = ID
+    }
+
+    /**
+      * Property for getting an entity's String representation.
+      *
+      * @return a String containing the representation
+      */
+    override def defaultRepresentation: String = Json toJson this toString
+}
+
+object TreasureHunt {
+
+    def apply(ID: String = null, name: String, location: String, date: String, time: String): TreasureHuntImpl = {
+        TreasureHuntImpl(ID, name, location, date, time, null)
     }
 
 }
