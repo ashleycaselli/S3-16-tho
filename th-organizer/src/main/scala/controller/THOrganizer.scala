@@ -9,6 +9,8 @@ sealed trait THOrganizer {
     def createTreasureHunt(name: String): Unit
 
     def addPoi(position: Position, name: String, treasureHuntID: String, quiz: Quiz, clue: Clue): Unit
+
+    def getPois(): Seq[POI]
 }
 
 class THOrganizerImpl(model: THModel) extends THOrganizer {
@@ -25,5 +27,9 @@ class THOrganizerImpl(model: THModel) extends THOrganizer {
         logger info s"Creating a POI: $name"
         model addPOI POIImpl(position, name, treasureHuntID, quiz, clue)
         logger info s"$name added to $treasureHuntID"
+    }
+
+    override def getPois(): Seq[POI] = {
+        model getPOIs
     }
 }

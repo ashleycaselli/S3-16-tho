@@ -19,6 +19,8 @@ trait THModel extends Observable[String] {
     def getQuizzes: Seq[Quiz]
 
     def addPOI(poi: POI): Unit
+
+    def getPOIs: Seq[POI]
 }
 
 class THModelImpl(override var broker: Broker) extends THModel {
@@ -29,7 +31,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
 
     private var ths: Seq[TreasureHunt] = Seq empty
     private var quizzes: Seq[Quiz] = Seq empty
-    private val pois: Seq[POI] = Seq empty
+    private var pois: Seq[POI] = Seq empty
 
     override def addTreasureHunt(th: TreasureHunt): Unit = {
         require(ths != null && !ths.contains(th))
@@ -49,7 +51,9 @@ class THModelImpl(override var broker: Broker) extends THModel {
     override def addPOI(poi: POI): Unit = {
         require(pois != null && !pois.contains(poi))
         broker send (PoiMsgImpl(organizerID, poi defaultRepresentation) defaultRepresentation)
-        pois :+ poi
+        pois = pois :+ poi
     }
+
+    override def getPOIs: Seq[POI] = pois
 
 }

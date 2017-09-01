@@ -2,6 +2,7 @@ package view;
 
 import controller.THOrganizer;
 import domain.ClueImpl;
+import domain.POI;
 import domain.PositionImpl;
 import domain.QuizImpl;
 import javafx.application.Platform;
@@ -60,13 +61,28 @@ public class MapView extends JFrame {
         this.add(this.logoPanel, c);
 
         JButton addPoiButton = new JButton(Strings.ADD_POI_BUTTON);
+        addPoiButton.setPreferredSize(new Dimension(300, 45));
         addPoiButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
             JFrame dialog = new JFrame();
             JOptionPane.showMessageDialog(dialog, "Click on the map to select a point");
             this.waitingForCoords = true;
         }));
         this.buttonList.add(addPoiButton);
-        this.buttonList.add(new JButton(Strings.SET_QUIZ_BUTTON));
+        JButton showPoisButton = new JButton(Strings.SHOW_POIS_BUTTON);
+        showPoisButton.setPreferredSize(new Dimension(300, 45));
+        showPoisButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
+            List<POI> pois = scala.collection.JavaConversions.seqAsJavaList(this.controller.getPois());
+            String message = "";
+            for (POI poi : pois) {
+                message += "- " + poi.name() + "\n";
+            }
+            if (message == "") {
+                message = "No POIs. Add one first.";
+            }
+            JFrame dialog = new JFrame();
+            JOptionPane.showMessageDialog(dialog, message);
+        }));
+        this.buttonList.add(showPoisButton);
         this.buttonList.add(new JButton(Strings.SET_CLUE_BUTTON));
         this.buttonList.add(new JButton(Strings.CREATE_HUNT_CODE_BUTTON));
         this.buttonList.add(new JButton(Strings.START_HUNT_BUTTON));
