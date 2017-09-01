@@ -6,7 +6,7 @@ import model.THModel
 
 sealed trait THOrganizer {
 
-    def createTreasureHunt(name: String): Unit
+    def createTreasureHunt(name: String, location: String, date: String, time: String): Unit
 
     def addPoi(position: Position, name: String, treasureHuntID: String, quiz: Quiz, clue: Clue): Unit
 
@@ -21,9 +21,9 @@ class THOrganizerImpl(model: THModel) extends THOrganizer {
 
     private val logger = Logger[THOrganizerImpl]
 
-    override def createTreasureHunt(name: String): Unit = {
+    override def createTreasureHunt(name: String, location: String, date: String, time: String): Unit = {
         logger info s"Creating a Treasure Hunt: $name"
-        model addTreasureHunt TreasureHuntImpl(name)
+        model addTreasureHunt TreasureHuntImpl(null, name, location, date, time)
         logger info s"$name creation successfully!"
     }
 

@@ -10,7 +10,6 @@ object Launcher {
         implicit val controller: THOrganizer = new THOrganizerImpl(model)
         val view: OrganizerView = OrganizerView(OrganizerView.gui)
         model addObserver view
-        controller createTreasureHunt "ciao"
     }
 
 }

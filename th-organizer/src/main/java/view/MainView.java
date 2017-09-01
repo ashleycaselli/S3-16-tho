@@ -59,7 +59,10 @@ public class MainView extends JFrame implements OrganizerView {
         this.newTHButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
             JFrame newHuntNameFrame = new JFrame();
             String newHuntName = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure hunt name:").toString();
-            this.controller.createTreasureHunt(newHuntName);
+            String newHuntLocation = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure city:").toString();
+            String newHuntDate = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure hunt date:").toString();
+            String newHuntTime = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure hunt time:").toString();
+            this.controller.createTreasureHunt(newHuntName, newHuntLocation, newHuntDate, newHuntTime);
             new MapView(newHuntName, this.controller);
         }));
 
