@@ -56,6 +56,15 @@ public class MainView extends JFrame implements OrganizerView {
         c.gridy++;
         c.fill = GridBagConstraints.CENTER;
         this.add(this.newTHButton, c);
+        this.newTHButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
+            JFrame newHuntNameFrame = new JFrame();
+            String newHuntName = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure hunt name:").toString();
+            String newHuntLocation = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure city:").toString();
+            String newHuntDate = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure hunt date:").toString();
+            String newHuntTime = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure hunt time:").toString();
+            this.controller.createTreasureHunt(newHuntName, newHuntLocation, newHuntDate, newHuntTime);
+            new MapView(newHuntName, this.controller);
+        }));
 
         this.existingTHLabel = new JLabel(Strings.EXISTING_TH_LABEL);
         this.existingTHLabel.setFont(Resources.DEFAULT_FONT);
@@ -102,7 +111,7 @@ public class MainView extends JFrame implements OrganizerView {
         this.deleteButton.setFont(Resources.DEFAULT_FONT);
         this.loadButton.setFont(Resources.DEFAULT_FONT);
 
-        this.loadButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> new MapView(this.existingTHList.getSelectedValue().toString())));
+        this.loadButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> new MapView(this.existingTHList.getSelectedValue().toString(), this.controller)));
 
     }
 

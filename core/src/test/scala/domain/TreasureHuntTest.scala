@@ -5,7 +5,7 @@ import org.scalatest.FunSuite;
 class TreasureHuntTest extends FunSuite {
 
     val thID = "TH-0"
-    val th = TreasureHuntImpl(thID)
+    val th = TreasureHuntImpl(thID, "name", "location", "date", "time")
     val teamName = "TestTeam"
     val team = TeamImpl(teamName, null)
 

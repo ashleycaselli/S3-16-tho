@@ -57,6 +57,14 @@ class ReceiverImpl extends Receiver {
         (JsPath \ "treasureHuntID").read[String]
       ) (State.apply _)
 
+    implicit val thReads: Reads[TreasureHunt] = (
+      (JsPath \ "ID").read[String] and
+        (JsPath \ "name").read[String] and
+        (JsPath \ "location").read[String] and
+        (JsPath \ "date").read[String] and
+        (JsPath \ "time").read[String]
+      ) (TreasureHunt.apply _)
+
     @throws[Exception]
     override def startRecv: Unit = {
         println("Receiver started")
@@ -68,6 +76,17 @@ class ReceiverImpl extends Receiver {
         val consumer = new DefaultConsumer(channel) {
             @throws[IOException]
             override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, body: Array[Byte]): Unit = {
+                val data = new String(body, RabbitInfo.MESSAGE_ENCODING)
+                lastMessage = data;
+                val message = Json.parse(data).as[Message]
+                val sender = message.sender
+                val mType = message.messageType
+                val payload = message.payload
+                if (mType == msgType.TreasureHunt) { // received if organizer creates a new POI
+                    var th = Json.parse(payload).as[TreasureHunt]
+                    //TODO generate th ID
+                    channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, "ID".getBytes)
+                }
                 channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.KO_RESPONSE.getBytes)
             }
         }
@@ -116,6 +135,10 @@ class ReceiverImpl extends Receiver {
                 if (mType == msgType.State) {
                     var state = Json.parse(payload).as[State]
                     //TODO call database function
+                }
+                if (mType == msgType.TreasureHunt) { // received if organizer creates a new POI
+                    var th = Json.parse(payload).as[TreasureHunt]
+                    //TODO
                 }
             }
         }
