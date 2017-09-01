@@ -6,7 +6,7 @@ class TeamTest extends FunSuite {
 
     val name = "TestTeam"
     val players = Seq(PlayerImpl("Player0"), PlayerImpl("Player1"))
-    val path = new PathImpl(List(POIImpl(PositionImpl(44.147288, 12.236599), "domain.POI-1")))
+    val path = new PathImpl(List(POIImpl(PositionImpl(44.147288, 12.236599), "domain.POI-1", "thID")))
     val team = TeamImpl(name, path)
 
     test("Checking the Team's name") {

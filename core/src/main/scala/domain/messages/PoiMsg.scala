@@ -14,8 +14,8 @@ trait PoiMsg extends Message {
   */
 case class PoiMsgImpl(override val sender: String, override val payload: String) extends PoiMsg {
 
-    implicit val POIMsgWrites = new Writes[PoiMsg] {
-        def writes(msg: PoiMsg) = Json.obj(
+    implicit val poiMsgWrites = new Writes[PoiMsgImpl] {
+        def writes(msg: PoiMsgImpl) = Json.obj(
             "messageType" -> messageType,
             "sender" -> sender,
             "payload" -> payload)
