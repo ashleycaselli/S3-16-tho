@@ -22,13 +22,15 @@ class NewQuizDBTest extends FunSuite with BeforeAndAfter {
         val answer: String = "in the stomach of a goat"
         val idOrganizer: Int = 1
 
-        newQuiz.insertNewQuiz(question, answer, idOrganizer)
+        val idNewQuiz = newQuiz.insertNewQuiz(question, answer, idOrganizer)
 
         var rs = statement.executeQuery("SELECT MAX(id_quiz) FROM quiz")
         var idQuiz = 0
         while (rs.next) {
             idQuiz = rs.getInt("MAX(id_quiz)")
         }
+
+        assert(idNewQuiz == idQuiz)
 
         /*---CHECK IF INSERT IS CORRECT---*/
         rs = statement.executeQuery(s"SELECT * FROM quiz WHERE id_quiz = ${idQuiz}")
