@@ -1,8 +1,8 @@
 package model
 
 import core.Observable
-import domain.messages.PoiMsgImpl
-import domain.{POI, Quiz, TreasureHunt}
+import domain.messages.{PoiMsgImpl, StateMsgImpl, StateType}
+import domain.{POI, Quiz, StateImpl, TreasureHunt}
 
 trait THModel extends Observable[String] {
 
@@ -21,6 +21,10 @@ trait THModel extends Observable[String] {
     def addPOI(poi: POI): Unit
 
     def getPOIs: Seq[POI]
+
+    def getCode: String
+
+    def startHunt: Unit
 }
 
 class THModelImpl(override var broker: Broker) extends THModel {
@@ -28,6 +32,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
     require(broker != null)
 
     private val organizerID = ""
+    private var runningTH: TreasureHunt = null
 
     private var ths: Seq[TreasureHunt] = Seq empty
     private var quizzes: Seq[Quiz] = Seq empty
@@ -37,6 +42,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
         require(ths != null && !ths.contains(th))
         broker send th.ID
         ths = ths :+ th
+        setRunningTH(th.ID)
     }
 
     override def getTreasureHunts: Seq[TreasureHunt] = ths
@@ -55,5 +61,20 @@ class THModelImpl(override var broker: Broker) extends THModel {
     }
 
     override def getPOIs: Seq[POI] = pois
+
+    override def getCode: String = runningTH.ID
+
+    override def startHunt: Unit = {
+        require(runningTH != null)
+        broker send (StateMsgImpl(organizerID, new StateImpl(StateType.Start, runningTH.ID).defaultRepresentation) defaultRepresentation)
+    }
+
+    def setRunningTH(ID: String) = {
+        for (th <- ths) {
+            if (th.ID == ID) {
+                runningTH = th
+            }
+        }
+    }
 
 }

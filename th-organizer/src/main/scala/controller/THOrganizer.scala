@@ -11,6 +11,10 @@ sealed trait THOrganizer {
     def addPoi(position: Position, name: String, treasureHuntID: String, quiz: Quiz, clue: Clue): Unit
 
     def getPois(): Seq[POI]
+
+    def getCode(): String
+
+    def startHunt(): Unit
 }
 
 class THOrganizerImpl(model: THModel) extends THOrganizer {
@@ -31,5 +35,13 @@ class THOrganizerImpl(model: THModel) extends THOrganizer {
 
     override def getPois(): Seq[POI] = {
         model getPOIs
+    }
+
+    override def getCode(): String = {
+        model getCode
+    }
+
+    override def startHunt(): Unit = {
+        model startHunt
     }
 }

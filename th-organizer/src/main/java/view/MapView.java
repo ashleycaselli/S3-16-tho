@@ -83,10 +83,28 @@ public class MapView extends JFrame {
             JOptionPane.showMessageDialog(dialog, message);
         }));
         this.buttonList.add(showPoisButton);
-        this.buttonList.add(new JButton(Strings.SET_CLUE_BUTTON));
-        this.buttonList.add(new JButton(Strings.CREATE_HUNT_CODE_BUTTON));
-        this.buttonList.add(new JButton(Strings.START_HUNT_BUTTON));
-        this.buttonList.add(new JButton(Strings.SHOW_PLAYERS_BUTTON));
+        JButton createCodeButton = new JButton(Strings.CREATE_HUNT_CODE_BUTTON);
+        createCodeButton.setPreferredSize(new Dimension(300, 45));
+        createCodeButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
+            String code = this.controller.getCode();
+            JFrame dialog = new JFrame();
+            JOptionPane.showMessageDialog(dialog, "Your code is: " + code + "\nGive it to the players");
+        }));
+        this.buttonList.add(createCodeButton);
+        JButton startHuntButton = new JButton(Strings.START_HUNT_BUTTON);
+        startHuntButton.setPreferredSize(new Dimension(300, 45));
+        startHuntButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
+            this.controller.startHunt();
+            JFrame dialog = new JFrame();
+            JOptionPane.showMessageDialog(dialog, "Treasure Hunt started.\nDon't forget to create a code.");
+        }));
+        this.buttonList.add(startHuntButton);
+        JButton showPlayersButton = new JButton(Strings.SHOW_PLAYERS_BUTTON);
+        showPlayersButton.setPreferredSize(new Dimension(300, 45));
+        showPlayersButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
+
+        }));
+        this.buttonList.add(showPlayersButton);
         c.anchor = GridBagConstraints.LINE_START;
         this.buttonList.forEach(button -> {
             button.setFont(Resources.DEFAULT_FONT);
