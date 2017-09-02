@@ -16,6 +16,8 @@ class Send {
     Send() throws Exception {
         this.factory = new ConnectionFactory();
         this.factory.setHost(RabbitInfo.HOST());
+        this.factory.setUsername(RabbitInfo.USERNAME());
+        this.factory.setPassword(RabbitInfo.PASSWORD());
         this.connection = this.factory.newConnection();
         this.channel = this.connection.createChannel();
         this.channel.queueDeclare(RabbitInfo.QUEUE_NAME(), false, false, false, null);

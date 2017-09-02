@@ -61,6 +61,8 @@ class ReceiverImpl extends Receiver {
         println("Receiver started")
         val factory = new ConnectionFactory
         factory.setHost(RabbitInfo.HOST)
+        factory.setUsername(RabbitInfo.USERNAME)
+        factory.setPassword(RabbitInfo.PASSWORD)
         val connection = factory.newConnection
         val channel = connection.createChannel
         channel.queueDeclare(RabbitInfo.QUEUE_NAME, false, false, false, null)
