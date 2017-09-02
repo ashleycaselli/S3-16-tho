@@ -3,6 +3,7 @@ package receiver
 import java.io.IOException
 
 import com.rabbitmq.client._
+import dboperation._
 import domain.messages.StateType.StateType
 import domain.messages._
 import domain.messages.msgType.msgType
@@ -56,6 +57,14 @@ class ReceiverImpl extends Receiver {
         (JsPath \ "treasureHuntID").read[String]
       ) (State.apply _)
 
+    implicit val thReads: Reads[TreasureHunt] = (
+      (JsPath \ "ID").read[String] and
+        (JsPath \ "name").read[String] and
+        (JsPath \ "location").read[String] and
+        (JsPath \ "date").read[String] and
+        (JsPath \ "time").read[String]
+      ) (TreasureHunt.apply _)
+
     @throws[Exception]
     override def startRecv: Unit = {
         println("Receiver started")
@@ -69,6 +78,17 @@ class ReceiverImpl extends Receiver {
         val consumer = new DefaultConsumer(channel) {
             @throws[IOException]
             override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, body: Array[Byte]): Unit = {
+                val data = new String(body, RabbitInfo.MESSAGE_ENCODING)
+                lastMessage = data;
+                val message = Json.parse(data).as[Message]
+                val sender = message.sender
+                val mType = message.messageType
+                val payload = message.payload
+                if (mType == msgType.TreasureHunt) { // received if organizer creates a new POI
+                    var th = Json.parse(payload).as[TreasureHunt]
+                    //TODO generate th ID
+                    channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, "ID".getBytes)
+                }
                 channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.KO_RESPONSE.getBytes)
             }
         }
@@ -83,14 +103,24 @@ class ReceiverImpl extends Receiver {
             @throws[IOException]
             override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, body: Array[Byte]): Unit = {
                 val data = new String(body, RabbitInfo.MESSAGE_ENCODING)
-                lastMessage = data;
+                lastMessage = data
                 val message = Json.parse(data).as[Message]
                 val sender = message.sender
                 val mType = message.messageType
                 val payload = message.payload
                 if (mType == msgType.Poi) { // received if organizer creates a new POI
-                    var poi = Json.parse(payload).as[POI]
+                    val poi = Json.parse(payload).as[POI]
                     //TODO call function to add poi to database
+                    val newQuiz: NewQuizDB = new NewQuizDBImpl
+                    val newClue: NewClueDB = new NewClueDBImpl
+                    val poiDB: POIDB = new POIDBImpl
+
+                    val idQuiz = newQuiz.insertNewQuiz(poi.quiz.question, poi.quiz.answer, 1)
+                    val idClue = newClue.insertNewClue(poi.clue.content, 1)
+                    val idPOI = poiDB.insertNewPOI(poi.name, poi.position.latitude, poi.position.longitude, 1)
+
+                    poiDB.setQuiz(idPOI, idQuiz)
+                    poiDB.setClue(idPOI, idClue)
                 }
                 if (mType == msgType.Clue) {
                     var clue = Json.parse(payload).as[Clue]
@@ -107,6 +137,10 @@ class ReceiverImpl extends Receiver {
                 if (mType == msgType.State) {
                     var state = Json.parse(payload).as[State]
                     //TODO call database function
+                }
+                if (mType == msgType.TreasureHunt) { // received if organizer creates a new POI
+                    var th = Json.parse(payload).as[TreasureHunt]
+                    //TODO
                 }
             }
         }

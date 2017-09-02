@@ -13,7 +13,7 @@ trait POIDB {
       * @param longitude   Longitude of the POI
       * @param idOrganizer organizer that have created this quiz
       */
-    def insertNewPOI(name: String, latitude: Double, longitude: Double, idOrganizer: Int): Unit
+    def insertNewPOI(name: String, latitude: Double, longitude: Double, idOrganizer: Int): Int
 
     /**
       * Method to assign a Clue to a POI in the DB
@@ -43,13 +43,20 @@ case class POIDBImpl() extends POIDB {
       * @param longitude   Longitude of the POI
       * @param idOrganizer organizer that have created this quiz
       */
-    override def insertNewPOI(name: String, latitude: Double, longitude: Double, idOrganizer: Int): Unit = {
+    override def insertNewPOI(name: String, latitude: Double, longitude: Double, idOrganizer: Int): Int = {
         val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
         val connection: Connection = connectionManager.establishConnection
         val statement = connection.createStatement
-        val query = s"INSERT INTO point_of_interest (name,latitude,longitude,id_organizer) VALUES ('${name}',${latitude},${longitude},${idOrganizer})"
+        var query = s"INSERT INTO point_of_interest (name,latitude,longitude,id_organizer) VALUES ('${name}',${latitude},${longitude},${idOrganizer})"
         statement.executeUpdate(query)
+        query = s"SELECT MAX(id_poi) FROM point_of_interest"
+        val rs = statement.executeQuery(query)
+        var idNewPOI = 0
+        while (rs.next) {
+            idNewPOI = rs.getInt(1)
+        }
         connection.close()
+        idNewPOI
     }
 
     /**

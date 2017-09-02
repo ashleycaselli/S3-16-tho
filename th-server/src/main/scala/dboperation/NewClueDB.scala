@@ -11,7 +11,7 @@ trait NewClueDB {
       * @param text        text of the clue
       * @param idOrganizer organizer that have created this clue
       */
-    def insertNewClue(text: String, idOrganizer: Int): Unit
+    def insertNewClue(text: String, idOrganizer: Int): Int
 }
 
 case class NewClueDBImpl() extends NewClueDB {
@@ -21,12 +21,19 @@ case class NewClueDBImpl() extends NewClueDB {
       * @param text        text of the clue
       * @param idOrganizer organizer that have created this clue
       */
-    override def insertNewClue(text: String, idOrganizer: Int): Unit = {
+    override def insertNewClue(text: String, idOrganizer: Int): Int = {
         val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
         val connection: Connection = connectionManager.establishConnection
         val statement = connection.createStatement
-        val query = s"INSERT INTO clue (clue_text,id_organizer) VALUES ('${text}',${idOrganizer})"
+        var query = s"INSERT INTO clue (clue_text,id_organizer) VALUES ('${text}',${idOrganizer})"
         statement.executeUpdate(query)
+        query = s"SELECT MAX(id_clue) FROM clue"
+        val rs = statement.executeQuery(query)
+        var idNewClue = 0
+        while (rs.next) {
+            idNewClue = rs.getInt(1)
+        }
         connection.close()
+        idNewClue
     }
 }

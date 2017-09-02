@@ -26,5 +26,7 @@ public class Strings {
     public final static String START_HUNT_BUTTON = "Start Hunt";
 
     public final static String SHOW_PLAYERS_BUTTON = "Show Players on Map";
+
+    public final static String SHOW_POIS_BUTTON = "Show existing pois";
     
 }

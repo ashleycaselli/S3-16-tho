@@ -26,13 +26,15 @@ class POIDBTest extends FunSuite with BeforeAndAfter {
         val longitude: Double = 13.0242399
         val idOrganizer: Int = 1
 
-        POI.insertNewPOI(name, latitude, longitude, idOrganizer)
+        val idNewPOI = POI.insertNewPOI(name, latitude, longitude, idOrganizer)
 
         var rs = statement.executeQuery("SELECT MAX(id_poi) FROM point_of_interest")
         var idPOI = 0
         while (rs.next) {
             idPOI = rs.getInt("MAX(id_poi)")
         }
+
+        assert(idNewPOI == idPOI)
 
         /*---CHECK IF INSERT IS CORRECT---*/
         rs = statement.executeQuery(s"SELECT * FROM point_of_interest WHERE id_poi = ${idPOI}")

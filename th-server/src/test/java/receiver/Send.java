@@ -23,6 +23,12 @@ class Send {
         this.channel.queueDeclare(RabbitInfo.QUEUE_NAME(), false, false, false, null);
     }
 
+    String callTreasureHunt() throws Exception {
+        String message1 = new TreasureHuntMsgImpl("sender", new TreasureHuntImpl("ID", "name", "location", "date", "time", null).defaultRepresentation()).defaultRepresentation();
+        this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message1.getBytes());
+        return message1;
+    }
+
     String sendClue() throws Exception {
         String message1 = new ClueMsgImpl("sender", new ClueImpl("contenuto").defaultRepresentation()).defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message1.getBytes());

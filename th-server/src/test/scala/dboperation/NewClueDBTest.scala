@@ -21,13 +21,15 @@ class NewClueDBTest extends FunSuite with BeforeAndAfter {
         val text: String = "Se qualcuno vuole trovare qualcosa, deve seguire i ragni!"
         val idOrganizer: Int = 1
 
-        newClue.insertNewClue(text, idOrganizer)
+        val idNewClue = newClue.insertNewClue(text, idOrganizer)
 
         var rs = statement.executeQuery("SELECT MAX(id_clue) FROM clue")
         var idClue = 0
         while (rs.next) {
             idClue = rs.getInt("MAX(id_clue)")
         }
+
+        assert(idClue == idNewClue)
 
         /*---CHECK IF INSERT IS CORRECT---*/
         rs = statement.executeQuery(s"SELECT * FROM clue WHERE id_clue = ${idClue}")
