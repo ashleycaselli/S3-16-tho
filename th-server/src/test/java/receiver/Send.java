@@ -21,10 +21,16 @@ class Send {
         this.channel.queueDeclare(RabbitInfo.QUEUE_NAME(), false, false, false, null);
     }
 
+    String callListTHs() throws Exception {
+        String message = new ListTHsMsgImpl("sender", "{\"list\":[{\"ID\":\"id\",\"name\":\"nome\",\"location\":\"loc\",\"date\":\"date\",\"time\":\"time\"},{\"ID\":\"id\",\"name\":\"nome\",\"location\":\"loc\",\"date\":\"date\",\"time\":\"time\"}]}").defaultRepresentation();
+        this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message.getBytes());
+        return message;
+    }
+
     String callTreasureHunt() throws Exception {
-        String message1 = new TreasureHuntMsgImpl("sender", new TreasureHuntImpl("ID", "name", "location", "date", "time", null).defaultRepresentation()).defaultRepresentation();
-        this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message1.getBytes());
-        return message1;
+        String message = new TreasureHuntMsgImpl("sender", new TreasureHuntImpl("ID", "name", "location", "date", "time", null).defaultRepresentation()).defaultRepresentation();
+        this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message.getBytes());
+        return message;
     }
 
     String sendClue() throws Exception {
