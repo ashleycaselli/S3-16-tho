@@ -15,11 +15,7 @@ trait POI extends Positionable with Serializable {
     def name: String
 
     /**
-<<<<<<< HEAD
-      * Property to get the hunt ID
-=======
       * Property to get the Treasure Hunt's identifier
->>>>>>> 1ed98ec541691196a7531567e100f8b30adb5dfe
       *
       * @return
       */
