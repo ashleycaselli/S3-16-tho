@@ -158,7 +158,7 @@ case class ListTHsImpl(override val list: List[TreasureHunt]) extends ListTHs {
 object ListTHs {
 
     implicit val thReads: Reads[TreasureHunt] = (
-      (JsPath \ "ID").read[String] and
+      (JsPath \ "ID").read[Int] and
         (JsPath \ "name").read[String] and
         (JsPath \ "location").read[String] and
         (JsPath \ "date").read[String] and

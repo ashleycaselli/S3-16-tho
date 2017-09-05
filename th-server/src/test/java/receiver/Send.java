@@ -22,21 +22,15 @@ class Send {
     }
 
     String callListTHs() throws Exception {
-        String message = new ListTHsMsgImpl("sender", "{\"list\":[{\"ID\":\"id\",\"name\":\"nome\",\"location\":\"loc\",\"date\":\"date\",\"time\":\"time\"},{\"ID\":\"id\",\"name\":\"nome\",\"location\":\"loc\",\"date\":\"date\",\"time\":\"time\"}]}").defaultRepresentation();
+        String message = new ListTHsMsgImpl("sender", "{\"list\":[{\"ID\":0,\"name\":\"nome\",\"location\":\"loc\",\"date\":\"date\",\"time\":\"time\"},{\"ID\":0,\"name\":\"nome\",\"location\":\"loc\",\"date\":\"date\",\"time\":\"time\"}]}").defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message.getBytes());
         return message;
     }
 
     String callTreasureHunt() throws Exception {
-<<<<<<< HEAD
-        String message = new TreasureHuntMsgImpl("sender", new TreasureHuntImpl("ID", "name", "location", "date", "time", null).defaultRepresentation()).defaultRepresentation();
-        this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message.getBytes());
-        return message;
-=======
         String message1 = new TreasureHuntMsgImpl("sender", new TreasureHuntImpl(0, "name", "location", "2017-09-04", "time", null).defaultRepresentation()).defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message1.getBytes());
         return message1;
->>>>>>> 1ed98ec541691196a7531567e100f8b30adb5dfe
     }
 
     String sendClue() throws Exception {
