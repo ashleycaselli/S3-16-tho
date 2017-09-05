@@ -15,6 +15,7 @@ object msgType extends Enumeration {
     val State = Value("StateMsg")
     val Poi = Value("PoiMsg")
     val TreasureHunt = Value("TreasureHuntMsg")
+    val ListTHs = Value("ListTHsMsg")
 
     implicit val enumReads: Reads[msgType] = EnumUtils.enumReads(msgType)
 
@@ -58,6 +59,7 @@ object Message {
         case msgType.Position => PositionMsgImpl(sender, entity)
         case msgType.State => StateMsgImpl(sender, entity)
         case msgType.TreasureHunt => TreasureHuntMsgImpl(sender, entity)
+        case msgType.ListTHs => ListTHsMsgImpl(sender, entity)
         case _ => throw new NoMsgDefinedException(s"No message defined for $entity class")
     }
 

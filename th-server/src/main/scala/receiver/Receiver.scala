@@ -64,6 +64,10 @@ class ReceiverImpl extends Receiver {
                     (JsPath \ "time").read[String]
             ) (TreasureHunt.apply _)
 
+    implicit val listTHsReads: Reads[ListTHs] = (
+      (JsPath \ "list").read[JsArray].map(ListTHs.apply _)
+      )
+
     @throws[Exception]
     override def startRecv: Unit = {
         println("Receiver started")
@@ -87,6 +91,13 @@ class ReceiverImpl extends Receiver {
                     val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
                     val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, sender.toInt)
                     channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, thID.toString.getBytes)
+                }
+                if (mType == msgType.ListTHs) { // received if organizer creates a new POI
+                    var th = Json.parse(payload).as[List[TreasureHunt]]
+                    //TODO generate th LIST
+                    //val list = List(treasureHunt1, trasureHunt2, ...)
+                    //val message: String = new ListTHsMsgImpl("sender", new ListTHsImpl(list).defaultRepresentation).defaultRepresentation
+                    //channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
                 }
                 channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.KO_RESPONSE.getBytes)
             }
@@ -141,6 +152,10 @@ class ReceiverImpl extends Receiver {
                     val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
 
                     val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, sender.toInt)
+                }
+                if (mType == msgType.ListTHs) { // received if organizer require TH list
+                    var list = Json.parse(payload).as[ListTHs]
+                    //TODO
                 }
             }
         }

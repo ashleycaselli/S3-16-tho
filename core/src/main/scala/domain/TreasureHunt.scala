@@ -2,7 +2,8 @@ package domain
 
 
 import com.typesafe.scalalogging.Logger
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 /**
   * A Treasure Hunt
@@ -99,6 +100,73 @@ object TreasureHunt {
 
     def apply(ID: Int = 0, name: String, location: String, date: String, time: String): TreasureHuntImpl = {
         TreasureHuntImpl(ID, name, location, date, time, null)
+    }
+}
+
+
+trait ListTHs extends Serializable {
+    /**
+      * Property to get the list of treasure hunts
+      *
+      * @return
+      */
+    def list: scala.collection.immutable.List[TreasureHunt]
+
+}
+
+/**
+  * An Entity that contains a list of Treasure Hunts
+  *
+  * @param list a string that contains the list
+  */
+case class ListTHsImpl(override val list: List[TreasureHunt]) extends ListTHs {
+
+    implicit val listTHsWrites = new Writes[ListTHsImpl] {
+        def writes(listTHs: ListTHsImpl) = Json.obj(
+            "list" -> Json.toJson(list)(
+
+                new Writes[List[TreasureHunt]] {
+                    def writes(list: List[TreasureHunt]) = JsArray(list.map(e => Json.toJson(e)(
+
+                        new Writes[TreasureHunt] {
+                            def writes(th: TreasureHunt) = Json.obj(
+                                "ID" -> th.ID,
+                                "name" -> th.name,
+                                "location" -> th.location,
+                                "date" -> th.date,
+                                "time" -> th.time)
+                        }
+
+
+                    )))
+                }
+
+            )
+        )
+    }
+
+
+    /**
+      * Property for getting an entity's String representation.
+      *
+      * @return a String containing the representation
+      */
+    override def defaultRepresentation: String = Json toJson this toString
+
+}
+
+object ListTHs {
+
+    implicit val thReads: Reads[TreasureHunt] = (
+      (JsPath \ "ID").read[Int] and
+        (JsPath \ "name").read[String] and
+        (JsPath \ "location").read[String] and
+        (JsPath \ "date").read[String] and
+        (JsPath \ "time").read[String]
+      ) (TreasureHunt.apply _)
+
+    def apply(list: JsArray): ListTHsImpl = {
+        ListTHsImpl(list.as[List[TreasureHunt]])
     }
 
 }
