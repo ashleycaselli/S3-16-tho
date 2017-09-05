@@ -24,46 +24,45 @@ class ReceiverImpl extends Receiver {
     private var lastMessage: String = null
 
     implicit val messageReads: Reads[Message] = (
-      (JsPath \ "messageType").read[msgType] and
-        (JsPath \ "sender").read[String] and
-        (JsPath \ "payload").read[String]
-      ) (Message.apply _)
+            (JsPath \ "messageType").read[msgType] and
+                    (JsPath \ "sender").read[String] and
+                    (JsPath \ "payload").read[String]
+            ) (Message.apply _)
 
 
     implicit val positionReads: Reads[Position] = (
-      (JsPath \ "latitude").read[Double] and
-        (JsPath \ "longitude").read[Double]
-      ) (Position.apply _)
+            (JsPath \ "latitude").read[Double] and
+                    (JsPath \ "longitude").read[Double]
+            ) (Position.apply _)
 
     implicit val quizReads: Reads[Quiz] = (
-      (JsPath \ "question").read[String] and
-        (JsPath \ "answer").read[String]
-      ) (Quiz.apply _)
+            (JsPath \ "question").read[String] and
+                    (JsPath \ "answer").read[String]
+            ) (Quiz.apply _)
 
-    implicit val clueReads: Reads[Clue] = (
-      (JsPath \ "content").read[String].map(Clue.apply _)
-      )
+    implicit val clueReads: Reads[Clue] =
+        (JsPath \ "content").read[String].map(Clue.apply _)
 
     implicit val poiReads: Reads[POI] = (
-      (JsPath \ "name").read[String] and
-        (JsPath \ "treasureHuntID").read[String] and
-        (JsPath \ "position").read[String] and
-        (JsPath \ "quiz").read[String] and
-        (JsPath \ "clue").read[String]
-      ) (POI.apply _)
+            (JsPath \ "name").read[String] and
+                    (JsPath \ "treasureHuntID").read[String] and
+                    (JsPath \ "position").read[String] and
+                    (JsPath \ "quiz").read[String] and
+                    (JsPath \ "clue").read[String]
+            ) (POI.apply _)
 
     implicit val stateReads: Reads[State] = (
-      (JsPath \ "state").read[StateType] and
-        (JsPath \ "treasureHuntID").read[String]
-      ) (State.apply _)
+            (JsPath \ "state").read[StateType] and
+                    (JsPath \ "treasureHuntID").read[Int]
+            ) (State.apply _)
 
     implicit val thReads: Reads[TreasureHunt] = (
-      (JsPath \ "ID").read[String] and
-        (JsPath \ "name").read[String] and
-        (JsPath \ "location").read[String] and
-        (JsPath \ "date").read[String] and
-        (JsPath \ "time").read[String]
-      ) (TreasureHunt.apply _)
+            (JsPath \ "ID").read[Int] and
+                    (JsPath \ "name").read[String] and
+                    (JsPath \ "location").read[String] and
+                    (JsPath \ "date").read[String] and
+                    (JsPath \ "time").read[String]
+            ) (TreasureHunt.apply _)
 
     implicit val listTHsReads: Reads[ListTHs] = (
       (JsPath \ "list").read[JsArray].map(ListTHs.apply _)
@@ -89,7 +88,9 @@ class ReceiverImpl extends Receiver {
                 if (mType == msgType.TreasureHunt) { // received if organizer creates a new POI
                     var th = Json.parse(payload).as[TreasureHunt]
                     //TODO generate th ID
-                    channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, "ID".getBytes)
+                    val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
+                    val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, sender.toInt)
+                    channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, thID.toString.getBytes)
                 }
                 if (mType == msgType.ListTHs) { // received if organizer creates a new POI
                     var th = Json.parse(payload).as[List[TreasureHunt]]
@@ -119,7 +120,6 @@ class ReceiverImpl extends Receiver {
                 val payload = message.payload
                 if (mType == msgType.Poi) { // received if organizer creates a new POI
                     val poi = Json.parse(payload).as[POI]
-                    //TODO call function to add poi to database
                     val newQuiz: NewQuizDB = new NewQuizDBImpl
                     val newClue: NewClueDB = new NewClueDBImpl
                     val poiDB: POIDB = new POIDBImpl
@@ -147,9 +147,11 @@ class ReceiverImpl extends Receiver {
                     var state = Json.parse(payload).as[State]
                     //TODO call database function
                 }
-                if (mType == msgType.TreasureHunt) { // received if organizer creates a new POI
+                if (mType == msgType.TreasureHunt) { // received if organizer creates a new TreasureHunt
                     var th = Json.parse(payload).as[TreasureHunt]
-                    //TODO
+                    val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
+
+                    val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, sender.toInt)
                 }
                 if (mType == msgType.ListTHs) { // received if organizer require TH list
                     var list = Json.parse(payload).as[ListTHs]

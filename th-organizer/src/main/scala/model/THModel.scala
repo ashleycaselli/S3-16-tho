@@ -22,7 +22,7 @@ trait THModel extends Observable[String] {
 
     def getPOIs: Seq[POI]
 
-    def getCode: String
+    def getCode: Int
 
     def startHunt: Unit
 }
@@ -62,7 +62,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
 
     override def getPOIs: Seq[POI] = pois
 
-    override def getCode: String = runningTH.ID
+    override def getCode: Int = runningTH.ID
 
     override def startHunt: Unit = {
         require(runningTH != null)

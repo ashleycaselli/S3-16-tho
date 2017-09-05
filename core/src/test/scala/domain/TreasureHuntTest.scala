@@ -1,11 +1,13 @@
 package domain
 
+import org.joda.time.DateTime
 import org.scalatest.FunSuite;
 
 class TreasureHuntTest extends FunSuite {
 
-    val thID = "TH-0"
-    val th = TreasureHuntImpl(thID, "name", "location", "date", "time")
+    val thID = 0
+    val date = DateTime.now.toLocalDate.toString
+    val th = TreasureHuntImpl(thID, "name", "location", date, "time")
     val teamName = "TestTeam"
     val team = TeamImpl(teamName, null)
 

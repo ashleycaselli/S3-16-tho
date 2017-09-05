@@ -15,7 +15,11 @@ trait POI extends Positionable with Serializable {
     def name: String
 
     /**
+<<<<<<< HEAD
       * Property to get the hunt ID
+=======
+      * Property to get the Treasure Hunt's identifier
+>>>>>>> 1ed98ec541691196a7531567e100f8b30adb5dfe
       *
       * @return
       */
@@ -115,18 +119,17 @@ case class POIImpl(override var position: Position, override val name: String, o
 object POI {
 
     implicit val positionReads: Reads[Position] = (
-      (JsPath \ "latitude").read[Double] and
-        (JsPath \ "longitude").read[Double]
-      ) (Position.apply _)
+            (JsPath \ "latitude").read[Double] and
+                    (JsPath \ "longitude").read[Double]
+            ) (Position.apply _)
 
     implicit val quizReads: Reads[Quiz] = (
-      (JsPath \ "question").read[String] and
-        (JsPath \ "answer").read[String]
-      ) (Quiz.apply _)
+            (JsPath \ "question").read[String] and
+                    (JsPath \ "answer").read[String]
+            ) (Quiz.apply _)
 
-    implicit val clueReads: Reads[Clue] = (
-      (JsPath \ "content").read[String].map(Clue.apply _)
-      )
+    implicit val clueReads: Reads[Clue] =
+        (JsPath \ "content").read[String].map(Clue.apply _)
 
     def apply(name: String, treasureHuntID: String, position: String, quiz: String, clue: String): POIImpl = {
         POIImpl(Json.parse(position).as[Position], name, treasureHuntID, Json.parse(quiz).as[Quiz], Json.parse(clue).as[Clue])

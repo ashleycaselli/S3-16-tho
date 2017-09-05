@@ -7,12 +7,12 @@ trait State extends Serializable {
 
     def state: StateType
 
-    def treasureHuntID: String
+    def treasureHuntID: Int
 
 }
 
 
-case class StateImpl(override val state: StateType, override val treasureHuntID: String) extends State {
+case class StateImpl(override val state: StateType, override val treasureHuntID: Int) extends State {
 
     implicit val stateWrites = Json.writes[StateImpl]
 
@@ -27,7 +27,7 @@ case class StateImpl(override val state: StateType, override val treasureHuntID:
 
 object State {
 
-    def apply(state: StateType, treasureHuntID: String): StateImpl = {
+    def apply(state: StateType, treasureHuntID: Int): StateImpl = {
         StateImpl(state, treasureHuntID)
     }
 

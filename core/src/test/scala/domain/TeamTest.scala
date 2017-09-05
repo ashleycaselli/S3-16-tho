@@ -6,8 +6,8 @@ class TeamTest extends FunSuite {
 
     val name = "TestTeam"
     val players = Seq(PlayerImpl("Player0"), PlayerImpl("Player1"))
-    val path = new PathImpl(List(POIImpl(PositionImpl(44.147288, 12.236599), "domain.POI-1", "thID")))
-    val team = TeamImpl(name, path)
+    val poi: POI = new POIImpl(new PositionImpl(45.467255, 9.1896145), "POI-0", "TH-0")
+    val team = TeamImpl(name, poi)
 
     test("Checking the Team's name") {
         assert(team.name === name)
@@ -18,12 +18,12 @@ class TeamTest extends FunSuite {
     }
 
     test("Checking the team creation using existing Players") {
-        val newTeam = TeamImpl(name, path, players)
+        val newTeam = TeamImpl(name, poi, players)
         assert(newTeam.players === players)
     }
 
-    test("Checking the Team's path") {
-        assert(team.path === path)
+    test("Checking the Team's poi") {
+        assert(team.poi === poi)
     }
 
     test("Checking player addition to the team") {
