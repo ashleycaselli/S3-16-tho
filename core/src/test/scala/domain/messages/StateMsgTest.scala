@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 class StateMsgTest extends FunSuite with BeforeAndAfter {
 
     private val sender = "Organizer"
-    private val payload: String = new StateImpl(StateType.Start, "thID").defaultRepresentation
+    private val payload: String = new StateImpl(StateType.Start, 0).defaultRepresentation
     private var startMessage: StateMsgImpl = null
     val logger = Logger(LoggerFactory.getLogger("test"))
     private val th = "TH-0"

@@ -21,16 +21,16 @@ trait Team {
       */
     def players: List[Player]
 
-    /** Property to get the team's path.
+    /** Property to get the team's current POI.
       *
-      * @return a path
+      * @return a POI
       */
-    def path: Path
+    def poi: POI
 
     /**
       * Property to add a player to the team
       *
-      * @param player
+      * @param player player entity
       */
     def addPlayer(player: Player): Unit
 }
@@ -39,10 +39,10 @@ trait Team {
   * A concrete Team representation.
   *
   * @param name team's name
-  * @param path team's path
+  * @param poi  team's path
   * @param ps   team's players (empty if not specified)
   */
-case class TeamImpl(override val name: String, override val path: Path, private val ps: Seq[Player] = ListBuffer.empty[Player]) extends Team {
+case class TeamImpl(override val name: String, override val poi: POI, private val ps: Seq[Player] = ListBuffer.empty[Player]) extends Team {
 
     private var _players: Seq[Player] = ps
     private val logger = Logger[Team]

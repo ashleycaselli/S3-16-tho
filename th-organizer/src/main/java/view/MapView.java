@@ -1,10 +1,7 @@
 package view;
 
 import controller.THOrganizer;
-import domain.ClueImpl;
-import domain.POI;
-import domain.PositionImpl;
-import domain.QuizImpl;
+import domain.*;
 import javafx.application.Platform;
 import utils.Resources;
 import utils.Strings;
@@ -86,7 +83,7 @@ public class MapView extends JFrame {
         JButton createCodeButton = new JButton(Strings.CREATE_HUNT_CODE_BUTTON);
         createCodeButton.setPreferredSize(new Dimension(300, 45));
         createCodeButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
-            String code = this.controller.getCode();
+            Integer code = this.controller.getCode();
             JFrame dialog = new JFrame();
             JOptionPane.showMessageDialog(dialog, "Your code is: " + code + "\nGive it to the players");
         }));
@@ -130,7 +127,8 @@ public class MapView extends JFrame {
                 String clue = JOptionPane.showInputDialog(dialog, "Enter a clue that helps to reach this point:", JOptionPane.PLAIN_MESSAGE);
                 String quizQuestion = JOptionPane.showInputDialog(dialog, "Enter a quiz to be solved when this point is reached:", JOptionPane.PLAIN_MESSAGE);
                 String quizAnswer = JOptionPane.showInputDialog(dialog, "Enter the quiz's answer:", JOptionPane.PLAIN_MESSAGE);
-                this.controller.addPoi(new PositionImpl(latitude, longitude), poiName, this.treasureHuntID, new QuizImpl(quizQuestion, quizAnswer), new ClueImpl(clue));
+                POI poi = new POIImpl(new PositionImpl(latitude, longitude), poiName, this.treasureHuntID, new QuizImpl(quizQuestion, quizAnswer), new ClueImpl(clue));
+                this.controller.addPoi(poi);
             })).start();
         }
     }

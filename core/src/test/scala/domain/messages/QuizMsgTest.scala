@@ -11,8 +11,8 @@ class QuizMsgTest extends FunSuite with BeforeAndAfter {
     private val sender = "Riddler"
     private val quizQuestion = "Everyone has me but nobody can lose me. What am I?"
     private val quizAnswer = "Shadow"
-    private var quiz: Quiz = null
-    private var quizMessage: QuizMsg = null
+    private var quiz: Quiz = _
+    private var quizMessage: QuizMsg = _
     val logger = Logger(LoggerFactory.getLogger("test"))
 
     before {
