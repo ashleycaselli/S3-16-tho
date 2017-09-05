@@ -22,7 +22,7 @@ class Send {
     }
 
     String callTreasureHunt() throws Exception {
-        String message1 = new TreasureHuntMsgImpl("sender", new TreasureHuntImpl("ID", "name", "location", "date", "time", null).defaultRepresentation()).defaultRepresentation();
+        String message1 = new TreasureHuntMsgImpl("sender", new TreasureHuntImpl(0, "name", "location", "2017-09-04", "time", null).defaultRepresentation()).defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message1.getBytes());
         return message1;
     }
@@ -46,7 +46,7 @@ class Send {
     }
 
     String sendState() throws Exception {
-        String message4 = new StateMsgImpl("sender", new StateImpl(StateType.Created(), "thID").defaultRepresentation()).defaultRepresentation();
+        String message4 = new StateMsgImpl("sender", new StateImpl(StateType.Created(), 0).defaultRepresentation()).defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message4.getBytes());
         return message4;
     }

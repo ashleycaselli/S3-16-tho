@@ -1,6 +1,7 @@
 package view;
 
 import controller.THOrganizer;
+import domain.TreasureHuntImpl;
 import utils.Resources;
 import utils.Strings;
 import view.component.LogoPanel;
@@ -62,7 +63,8 @@ public class MainView extends JFrame implements OrganizerView {
             String newHuntLocation = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure city:").toString();
             String newHuntDate = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure hunt date:").toString();
             String newHuntTime = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure hunt time:").toString();
-            this.controller.createTreasureHunt(newHuntName, newHuntLocation, newHuntDate, newHuntTime);
+            TreasureHuntImpl th = new TreasureHuntImpl(0, newHuntName, newHuntLocation, newHuntDate, newHuntTime, null);
+            this.controller.createTreasureHunt(th);
             new MapView(newHuntName, this.controller);
         }));
 
