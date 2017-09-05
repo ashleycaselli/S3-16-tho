@@ -26,6 +26,20 @@ class ReceiverTest extends FunSuite with BeforeAndAfter {
         else assert(false);
     }
 
+    test("ListTH message test") {
+        Thread.sleep(5000)
+        val msg = sender.callListTHs()
+        var pass: Boolean = false
+        val timestamp: Long = System.currentTimeMillis
+        while (pass == false && System.currentTimeMillis - timestamp < 5000) {
+            if (receiver.getLastMessage() == msg) {
+                pass = true
+            }
+        }
+        if (pass == true) assert(true)
+        else assert(false);
+    }
+
     test("Position message test") {
         Thread.sleep(5000)
         val msg = sender.sendPosition()
