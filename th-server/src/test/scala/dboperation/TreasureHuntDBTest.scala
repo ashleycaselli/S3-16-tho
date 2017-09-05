@@ -6,12 +6,12 @@ import org.joda.time.DateTime
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import utils.{DBConnectionManager, DBConnectionManagerImpl}
 
-class NewTreasureHuntDBTest extends FunSuite with BeforeAndAfter {
-    private var newTreasureHunt: NewTreasureHuntDB = null
-    private var connectionManager: DBConnectionManager = null
+class TreasureHuntDBTest extends FunSuite with BeforeAndAfter {
+    private var treasureHunt: TreasureHuntDB = _
+    private var connectionManager: DBConnectionManager = _
 
     before {
-        newTreasureHunt = new NewTreasureHuntDBImpl
+        treasureHunt = new TreasureHuntDBImpl
         connectionManager = new DBConnectionManagerImpl
     }
 
@@ -21,11 +21,11 @@ class NewTreasureHuntDBTest extends FunSuite with BeforeAndAfter {
 
         val name: String = "TestInsertingTH"
         val location: String = "Gotham City"
-        val startDate: DateTime = DateTime.now()
+        val startDate: String = DateTime.now.toLocalDate.toString
         val startTime: String = "20:30"
         val idOrganizer: Int = 1
 
-        newTreasureHunt.insertNewTreasureHunt(name, location, startDate, startTime, idOrganizer)
+        treasureHunt.insertNewTreasureHunt(name, location, startDate, startTime, idOrganizer)
 
         var rs = statement.executeQuery("SELECT MAX(id_treasure_hunt) FROM treasure_hunt")
         var idTH = 0
@@ -34,18 +34,18 @@ class NewTreasureHuntDBTest extends FunSuite with BeforeAndAfter {
         }
 
         /*---CHECK IF INSERT IS CORRECT---*/
-        rs = statement.executeQuery(s"SELECT * FROM treasure_hunt WHERE id_treasure_hunt = ${idTH}")
+        rs = statement.executeQuery(s"SELECT * FROM treasure_hunt WHERE id_treasure_hunt = $idTH")
         while (rs.next) {
             assert(rs.getString("name") == name)
             assert(rs.getString("location") == location)
-            assert(rs.getDate("start_date").toString == startDate.toLocalDate.toString)
+            assert(rs.getDate("start_date").toString == startDate.toString)
             assert(rs.getString("start_time") == startTime)
             assert(rs.getInt("id_organizer") == idOrganizer)
         }
 
         /*---DELETE THE LAST ADDED ROW---*/
         statement = connection.createStatement
-        statement.executeUpdate(s"DELETE FROM treasure_hunt WHERE id_treasure_hunt = ${idTH}")
+        statement.executeUpdate(s"DELETE FROM treasure_hunt WHERE id_treasure_hunt = $idTH")
 
         connection.close()
     }
