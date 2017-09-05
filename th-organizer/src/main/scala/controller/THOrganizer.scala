@@ -45,3 +45,21 @@ class THOrganizerImpl(model: THModel) extends THOrganizer {
         model startHunt
     }
 }
+
+object THOrganizer {
+
+    private var _instance: THOrganizer = _
+
+    def apply(model: THModel): THOrganizer = {
+        _instance match {
+            case null => {
+                _instance = new THOrganizerImpl(model)
+                _instance
+            }
+            case _ => _instance
+        }
+    }
+
+    def instance: THOrganizer = _instance
+
+}
