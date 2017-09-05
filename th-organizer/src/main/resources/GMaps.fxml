@@ -5,10 +5,8 @@
 <?import javafx.scene.layout.*?>
 <AnchorPane id="AnchorPane" prefHeight="443.0" xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/8.0.65" fx:controller="view.GoogleMapsFXMLController">
-    <children>
-        <GoogleMapView fx:id="mapView" layoutX="-311.0" layoutY="-244.0" prefWidth="490.0" AnchorPane.bottomAnchor="0.0"
-                       AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-        <TextField fx:id="addressTextField" onAction="#addressTextFieldAction" prefHeight="27.0" prefWidth="274.0"
-                   promptText="Address" AnchorPane.leftAnchor="10" AnchorPane.topAnchor="10"/>
-    </children>
+    <GoogleMapView fx:id="mapView" layoutX="-311.0" layoutY="-244.0" prefWidth="490.0" AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+    <TextField fx:id="addressTextField" onAction="#addressTextFieldAction" prefHeight="27.0" prefWidth="250.0"
+               promptText="Address" AnchorPane.leftAnchor="120" AnchorPane.topAnchor="10"/>
 </AnchorPane>
