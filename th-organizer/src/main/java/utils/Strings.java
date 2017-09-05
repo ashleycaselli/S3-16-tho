@@ -28,5 +28,5 @@ public class Strings {
     public final static String SHOW_PLAYERS_BUTTON = "Show Players on Map";
 
     public final static String SHOW_POIS_BUTTON = "Show existing pois";
-    
+
 }
