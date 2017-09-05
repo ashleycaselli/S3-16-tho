@@ -16,6 +16,8 @@ trait TreasureHunt extends Serializable {
 
     def location: String
 
+    def location_=(place: String): Unit
+
     def date: String
 
     def time: String
@@ -48,8 +50,7 @@ trait TreasureHunt extends Serializable {
   * @param _ID    the Treasure Hunt ID
   * @param _teams Treasure Hunt's teams. If not specified is empty
   */
-case class TreasureHuntImpl(private var _ID: String = null, override val name: String, override val location: String, override val date: String, override val time: String, private var _teams: Seq[Team] = Seq.empty) extends TreasureHunt {
-
+case class TreasureHuntImpl(private var _ID: String = null, override val name: String, private var _location: String = null, override val date: String, override val time: String, private var _teams: Seq[Team] = Seq.empty) extends TreasureHunt {
 
     private val logger = Logger[Team]
 
@@ -86,6 +87,13 @@ case class TreasureHuntImpl(private var _ID: String = null, override val name: S
         _ID = ID
     }
 
+    override def location: String = _location
+
+    override def location_=(place: String): Unit = {
+        require(place != null)
+        _location = place
+    }
+
     /**
       * Property for getting an entity's String representation.
       *
@@ -96,8 +104,6 @@ case class TreasureHuntImpl(private var _ID: String = null, override val name: S
 
 object TreasureHunt {
 
-    def apply(ID: String = null, name: String, location: String, date: String, time: String): TreasureHuntImpl = {
-        TreasureHuntImpl(ID, name, location, date, time, null)
-    }
+    def apply(ID: String = null, name: String, location: String, date: String, time: String): TreasureHuntImpl = TreasureHuntImpl(ID, name, location, date, time, null)
 
 }
