@@ -51,7 +51,7 @@ trait TreasureHunt extends Serializable {
   * @param _ID    the Treasure Hunt ID
   * @param _teams Treasure Hunt's teams. If not specified is empty
   */
-case class TreasureHuntImpl(private var _ID: Int = 0, override val name: String, override val _location: String = null, override val date: String, override val time: String, private var _teams: Seq[Team] = Seq.empty) extends TreasureHunt {
+case class TreasureHuntImpl(private var _ID: Int = 0, override val name: String, private var _location: String = null, override val date: String, override val time: String, private var _teams: Seq[Team] = Seq.empty) extends TreasureHunt {
 
     private val logger = Logger[Team]
 
