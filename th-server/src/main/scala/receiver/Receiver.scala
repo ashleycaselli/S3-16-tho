@@ -64,9 +64,11 @@ class ReceiverImpl extends Receiver {
                     (JsPath \ "time").read[String]
             ) (TreasureHunt.apply _)
 
-    implicit val listTHsReads: Reads[ListTHs] = (
-      (JsPath \ "list").read[JsArray].map(ListTHs.apply _)
-      )
+    implicit val listTHsReads: Reads[ListTHs] =
+        (JsPath \ "list").read[JsArray].map(ListTHs.apply _)
+
+    implicit val listPOIsReads: Reads[ListPOIs] =
+        (JsPath \ "list").read[JsArray].map(ListPOIs.apply _)
 
     @throws[Exception]
     override def startRecv: Unit = {
@@ -86,17 +88,24 @@ class ReceiverImpl extends Receiver {
                 val mType = message.messageType
                 val payload = message.payload
                 if (mType == msgType.TreasureHunt) { // received if organizer creates a new POI
-                    var th = Json.parse(payload).as[TreasureHunt]
+                    val th = Json.parse(payload).as[TreasureHunt]
                     //TODO generate th ID
                     val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
                     val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, sender.toInt)
                     channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, thID.toString.getBytes)
                 }
                 if (mType == msgType.ListTHs) { // received if organizer creates a new POI
-                    var th = Json.parse(payload).as[List[TreasureHunt]]
+                    val ths = Json.parse(payload).as[List[TreasureHunt]] //TODO delete this line if var ths is not used (probably)
                     //TODO generate th LIST
                     //val list = List(treasureHunt1, trasureHunt2, ...)
                     //val message: String = new ListTHsMsgImpl("sender", new ListTHsImpl(list).defaultRepresentation).defaultRepresentation
+                    //channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
+                }
+                if (mType == msgType.ListPOIs) { // received if organizer require TH list
+                    val pois = Json.parse(payload).as[ListPOIs] //TODO delete this line if var pois is not used (probably)
+                    //TODO generate poi list
+                    //val list = List(poi1, poi2, ...)
+                    //val message: String = new ListPOIsMsgImpl("sender", new ListPOIsImpl(list).defaultRepresentation).defaultRepresentation
                     //channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
                 }
                 channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.KO_RESPONSE.getBytes)
@@ -150,11 +159,12 @@ class ReceiverImpl extends Receiver {
                 if (mType == msgType.TreasureHunt) { // received if organizer creates a new TreasureHunt
                     var th = Json.parse(payload).as[TreasureHunt]
                     val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
-
                     val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, sender.toInt)
                 }
                 if (mType == msgType.ListTHs) { // received if organizer require TH list
-                    var list = Json.parse(payload).as[ListTHs]
+                    //TODO
+                }
+                if (mType == msgType.ListPOIs) {
                     //TODO
                 }
             }
