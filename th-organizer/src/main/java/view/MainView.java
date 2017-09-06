@@ -1,7 +1,7 @@
 package view;
 
+import controller.NewTHButtonController;
 import controller.THOrganizer;
-import domain.TreasureHuntImpl;
 import utils.Resources;
 import utils.Strings;
 import view.component.LogoPanel;
@@ -14,9 +14,9 @@ import java.awt.*;
  */
 public class MainView extends JFrame implements OrganizerView {
 
-    public static final Dimension FRAME_DIMENSION = new Dimension(600, 700);
-    public static final int DEFAULT_INSET_VALUE = 10;
-    public static final int LIST_ROW_VISIBLE = 10;
+    private static final Dimension FRAME_DIMENSION = new Dimension(600, 700);
+    private static final int DEFAULT_INSET_VALUE = 10;
+    private static final int LIST_ROW_VISIBLE = 10;
 
     private JButton newTHButton;
     private JLabel existingTHLabel;
@@ -58,16 +58,7 @@ public class MainView extends JFrame implements OrganizerView {
         c.gridy++;
         c.fill = GridBagConstraints.CENTER;
         this.add(this.newTHButton, c);
-        this.newTHButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
-            JFrame newHuntNameFrame = new JFrame();
-            String newHuntName = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure hunt name:").toString();
-            String newHuntLocation = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure city:").toString();
-            String newHuntDate = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure hunt date:").toString();
-            String newHuntTime = JOptionPane.showInputDialog(newHuntNameFrame, "Enter treasure hunt time:").toString();
-            TreasureHuntImpl th = new TreasureHuntImpl(0, newHuntName, newHuntLocation, newHuntDate, newHuntTime, null);
-            this.controller.createTreasureHunt(th);
-            new MapView(newHuntName, this.controller);
-        }));
+        this.newTHButton.addActionListener(new NewTHButtonController());
 
         this.existingTHLabel = new JLabel(Strings.EXISTING_TH_LABEL);
         this.existingTHLabel.setFont(Resources.DEFAULT_FONT);
@@ -116,8 +107,7 @@ public class MainView extends JFrame implements OrganizerView {
         this.deleteButton.setFont(Resources.DEFAULT_FONT);
         this.loadButton.setFont(Resources.DEFAULT_FONT);
 
-        this.loadButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> new MapView(this.existingTHList.getSelectedValue().toString(), this.controller)));
-
+        this.loadButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> new MapView(null, this.controller)));
     }
 
     @Override
