@@ -6,7 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import utils.Resources;
 import view.GoogleMapsFXMLController;
-import view.MapView;
 
 import java.io.IOException;
 
@@ -16,15 +15,14 @@ import java.io.IOException;
 public class GoogleMapsPanel extends JFXPanel {
 
     private Scene scene;
+    private final GoogleMapsFXMLController controller;
 
-    MapView view;
-
-    public GoogleMapsPanel() {
+    public GoogleMapsPanel(final GoogleMapsFXMLController controller) {
         super();
+        this.controller = controller;
     }
 
-    public void initFX(MapView view) {
-        this.view = view;
+    public void initFX() {
         this.scene = createScene();
         this.setScene(this.scene);
     }
@@ -33,14 +31,12 @@ public class GoogleMapsPanel extends JFXPanel {
         Parent root = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Resources.GOOGLE_MAPS_VIEW));
+            loader.setController(this.controller);
             root = loader.load();
-            GoogleMapsFXMLController controller = loader.getController();
-            controller.setView(this.view);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Scene scene = new Scene(root);
-        return scene;
+        return new Scene(root);
     }
 
 }
