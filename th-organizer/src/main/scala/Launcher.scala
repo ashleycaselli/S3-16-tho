@@ -1,15 +1,13 @@
-import controller.{THOrganizer, THOrganizerImpl}
+import controller.THOrganizer
 import model.{ModelBroker, THModel, THModelImpl}
 import view.OrganizerView
 
-object Launcher {
+object Launcher extends App {
 
-    def main(args: Array[String]): Unit = {
-        val broker = new ModelBroker
-        val model: THModel = new THModelImpl(broker)
-        implicit val controller: THOrganizer = new THOrganizerImpl(model)
-        val view: OrganizerView = OrganizerView(OrganizerView.gui)
-        model addObserver view
-    }
+    val broker = new ModelBroker
+    val model: THModel = new THModelImpl(broker)
+    implicit val controller: THOrganizer = THOrganizer.apply(model)
+    val view: OrganizerView = OrganizerView(OrganizerView.gui)
+    model addObserver view
 
 }
