@@ -108,6 +108,14 @@ object TreasureHunt {
 
     def apply(ID: Int = 0, name: String, location: String, date: String, time: String): TreasureHuntImpl = TreasureHuntImpl(ID, name, location, date, time, null)
 
+    implicit val thReads: Reads[TreasureHunt] = (
+            (JsPath \ "ID").read[Int] and
+                    (JsPath \ "name").read[String] and
+                    (JsPath \ "location").read[String] and
+                    (JsPath \ "date").read[String] and
+                    (JsPath \ "time").read[String]
+            ) (TreasureHunt.apply _)
+
 }
 
 
@@ -165,12 +173,12 @@ case class ListTHsImpl(override val list: List[TreasureHunt]) extends ListTHs {
 object ListTHs {
 
     implicit val thReads: Reads[TreasureHunt] = (
-      (JsPath \ "ID").read[Int] and
-        (JsPath \ "name").read[String] and
-        (JsPath \ "location").read[String] and
-        (JsPath \ "date").read[String] and
-        (JsPath \ "time").read[String]
-      ) (TreasureHunt.apply _)
+            (JsPath \ "ID").read[Int] and
+                    (JsPath \ "name").read[String] and
+                    (JsPath \ "location").read[String] and
+                    (JsPath \ "date").read[String] and
+                    (JsPath \ "time").read[String]
+            ) (TreasureHunt.apply _)
 
     def apply(list: JsArray): ListTHsImpl = {
         ListTHsImpl(list.as[List[TreasureHunt]])

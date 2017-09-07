@@ -56,14 +56,6 @@ class ReceiverImpl extends Receiver {
                     (JsPath \ "treasureHuntID").read[Int]
             ) (State.apply _)
 
-    implicit val thReads: Reads[TreasureHunt] = (
-            (JsPath \ "ID").read[Int] and
-                    (JsPath \ "name").read[String] and
-                    (JsPath \ "location").read[String] and
-                    (JsPath \ "date").read[String] and
-                    (JsPath \ "time").read[String]
-            ) (TreasureHunt.apply _)
-
     implicit val listTHsReads: Reads[ListTHs] =
         (JsPath \ "list").read[JsArray].map(ListTHs.apply _)
 

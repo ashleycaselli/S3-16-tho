@@ -4,7 +4,12 @@ import controller.THOrganizer;
 import controller.THOrganizer$;
 import domain.POI;
 import domain.TreasureHunt;
+import domain.TreasureHunt$;
+import domain.messages.Message;
+import domain.messages.Message$;
+import domain.messages.msgType;
 import javafx.application.Platform;
+import play.api.libs.json.Json;
 import utils.Resources;
 import utils.Strings;
 import view.component.GoogleMapsPanel;
@@ -24,7 +29,7 @@ public class MapView extends JFrame implements OrganizerView {
     private final List<JButton> buttonList = new ArrayList();
     private GoogleMapsPanel googleMapsPanel;
     private final GoogleMapsFXMLController googleMapsController;
-    private final TreasureHunt currentTreasureHunt;
+    private TreasureHunt currentTreasureHunt;
     private final THOrganizer controller;
     private Boolean waitingForCoords = false;
 
@@ -124,12 +129,13 @@ public class MapView extends JFrame implements OrganizerView {
     }
 
     @Override
-    public void receiveUpdate(final String update) {
-        // TODO method implementation
-        try {
-            throw new Exception("Not implemented method");
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void receiveUpdate(final String message) {
+        Message msg = Json.parse(message).as(Message$.MODULE$.messageReads());
+        String payload = msg.payload();
+        if (msg.messageType().equals(msgType.TreasureHunt())) {
+            this.buttonList.forEach(button -> button.setEnabled(true));
+            this.currentTreasureHunt = Json.parse(payload).as(TreasureHunt$.MODULE$.thReads());
         }
+        // TODO method implementation
     }
 }
