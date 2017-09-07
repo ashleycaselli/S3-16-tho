@@ -4,6 +4,8 @@ import core.Observable
 import domain._
 import domain.messages.{PoiMsgImpl, StateMsgImpl, StateType, TreasureHuntMsgImpl}
 
+import scala.language.postfixOps
+
 trait THModel extends Observable[String] {
 
     def broker: Broker
@@ -24,7 +26,7 @@ trait THModel extends Observable[String] {
 
     def getCode: Int
 
-    def startHunt: Unit
+    def startHunt(): Unit
 }
 
 class THModelImpl(override var broker: Broker) extends THModel {
@@ -32,7 +34,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
     require(broker != null)
 
     private val organizerID = ""
-    private var runningTH: TreasureHunt = null
+    private var runningTH: TreasureHunt = _
 
     private var ths: Seq[TreasureHunt] = Seq empty
     private var quizzes: Seq[Quiz] = Seq empty
@@ -40,9 +42,11 @@ class THModelImpl(override var broker: Broker) extends THModel {
 
     override def addTreasureHunt(th: TreasureHunt): Unit = {
         require(ths != null && !ths.contains(th))
-        val ID = broker call (TreasureHuntMsgImpl(organizerID, th.defaultRepresentation).defaultRepresentation)
-        ths = ths :+ th
+        val thMsg = TreasureHuntMsgImpl(organizerID, th defaultRepresentation).defaultRepresentation
+        val ID = broker call thMsg
         setRunningTH(ID)
+        ths = ths :+ th
+        notifyObservers(thMsg)
     }
 
     override def getTreasureHunts: Seq[TreasureHunt] = ths
@@ -64,12 +68,12 @@ class THModelImpl(override var broker: Broker) extends THModel {
 
     override def getCode: Int = runningTH.ID
 
-    override def startHunt: Unit = {
+    override def startHunt(): Unit = {
         require(runningTH != null)
-        broker send (StateMsgImpl(organizerID, new StateImpl(StateType.Start, runningTH.ID).defaultRepresentation) defaultRepresentation)
+        broker send (StateMsgImpl(organizerID, StateImpl(StateType.Start, runningTH.ID).defaultRepresentation) defaultRepresentation)
     }
 
-    def setRunningTH(ID: String) = {
+    def setRunningTH(ID: String): Unit = {
         for (th <- ths) {
             if (th.ID == ID) {
                 runningTH = th
