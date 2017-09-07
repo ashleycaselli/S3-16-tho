@@ -89,11 +89,10 @@ class ReceiverImpl extends Receiver {
                     channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, thID.toString.getBytes)
                 }
                 if (mType == msgType.ListTHs) { // received if organizer creates a new POI
-                    val ths = Json.parse(payload).as[List[TreasureHunt]] //TODO delete this line if var ths is not used (probably)
-                    //TODO generate th LIST
-                    //val list = List(treasureHunt1, trasureHunt2, ...)
-                    //val message: String = new ListTHsMsgImpl("sender", new ListTHsImpl(list).defaultRepresentation).defaultRepresentation
-                    //channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
+                    val treasureHuntDB = new TreasureHuntDBImpl
+                    val list = treasureHuntDB.viewTreasureHuntList(sender.toInt)
+                    val message: String = new ListTHsMsgImpl("0", new ListTHsImpl(list).defaultRepresentation).defaultRepresentation
+                    channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
                 }
                 if (mType == msgType.ListPOIs) { // received if organizer require TH list
                     val pois = Json.parse(payload).as[ListPOIs] //TODO delete this line if var pois is not used (probably)
