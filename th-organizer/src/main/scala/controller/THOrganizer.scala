@@ -16,6 +16,8 @@ sealed trait THOrganizer {
     def getCode(): Int
 
     def startHunt(): Unit
+
+    def getTreasureHunts(): List[TreasureHunt]
 }
 
 class THOrganizerImpl(model: THModel) extends THOrganizer {
@@ -44,5 +46,9 @@ class THOrganizerImpl(model: THModel) extends THOrganizer {
 
     override def startHunt(): Unit = {
         model startHunt
+    }
+
+    def getTreasureHunts(): List[TreasureHunt] = {
+        model getTreasureHunts
     }
 }
