@@ -6,7 +6,7 @@ class PositionTest extends FunSuite with BeforeAndAfter {
 
     private val latitude = 45.467255
     private val longitude = 9.1896145
-    var position: Position = null
+    var position: Position = _
 
     before {
         position = PositionImpl(latitude, longitude)

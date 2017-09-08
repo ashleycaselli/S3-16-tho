@@ -4,66 +4,24 @@ import java.io.IOException
 
 import com.rabbitmq.client._
 import dboperation._
-import domain.messages.StateType.StateType
 import domain.messages._
-import domain.messages.msgType.msgType
 import domain.{State, _}
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import utils.RabbitInfo
 
 trait Receiver {
 
-    def startRecv: Unit
+    def startRecv(): Unit
 
-    def getLastMessage(): String
+    def getLastMessage: String
 }
 
 class ReceiverImpl extends Receiver {
 
-    private var lastMessage: String = null
-
-    implicit val messageReads: Reads[Message] = (
-            (JsPath \ "messageType").read[msgType] and
-                    (JsPath \ "sender").read[String] and
-                    (JsPath \ "payload").read[String]
-            ) (Message.apply _)
-
-
-    implicit val positionReads: Reads[Position] = (
-            (JsPath \ "latitude").read[Double] and
-                    (JsPath \ "longitude").read[Double]
-            ) (Position.apply _)
-
-    implicit val quizReads: Reads[Quiz] = (
-            (JsPath \ "question").read[String] and
-                    (JsPath \ "answer").read[String]
-            ) (Quiz.apply _)
-
-    implicit val clueReads: Reads[Clue] =
-        (JsPath \ "content").read[String].map(Clue.apply _)
-
-    implicit val poiReads: Reads[POI] = (
-            (JsPath \ "name").read[String] and
-                    (JsPath \ "treasureHuntID").read[Int] and
-                    (JsPath \ "position").read[String] and
-                    (JsPath \ "quiz").read[String] and
-                    (JsPath \ "clue").read[String]
-            ) (POI.apply _)
-
-    implicit val stateReads: Reads[State] = (
-            (JsPath \ "state").read[StateType] and
-                    (JsPath \ "treasureHuntID").read[Int]
-            ) (State.apply _)
-
-    implicit val listTHsReads: Reads[ListTHs] =
-        (JsPath \ "list").read[JsArray].map(ListTHs.apply _)
-
-    implicit val listPOIsReads: Reads[ListPOIs] =
-        (JsPath \ "list").read[JsArray].map(ListPOIs.apply _)
+    private var lastMessage: String = _
 
     @throws[Exception]
-    override def startRecv: Unit = {
+    override def startRecv(): Unit = {
         println("Receiver started")
         val factory = new ConnectionFactory
         factory.setHost(RabbitInfo.HOST)
@@ -76,7 +34,7 @@ class ReceiverImpl extends Receiver {
             @throws[IOException]
             override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, body: Array[Byte]): Unit = {
                 val data = new String(body, RabbitInfo.MESSAGE_ENCODING)
-                lastMessage = data;
+                lastMessage = data
                 val message = Json.parse(data).as[Message]
                 val sender = message.sender
                 val mType = message.messageType
@@ -91,7 +49,7 @@ class ReceiverImpl extends Receiver {
                 if (mType == msgType.ListTHs) { // received if organizer creates a new POI
                     val treasureHuntDB = new TreasureHuntDBImpl
                     val list = treasureHuntDB.viewTreasureHuntList(sender.toInt)
-                    val message: String = new ListTHsMsgImpl("0", new ListTHsImpl(list).defaultRepresentation).defaultRepresentation
+                    val message: String = ListTHsMsgImpl("0", ListTHsImpl(list).defaultRepresentation).defaultRepresentation
                     channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
                 }
                 if (mType == msgType.ListPOIs) { // received if organizer require TH list
@@ -165,12 +123,11 @@ class ReceiverImpl extends Receiver {
         channelPS.basicConsume(queueName, true, consumer2)
     }
 
-    override def getLastMessage(): String = {
-        lastMessage
-    }
+    override def getLastMessage: String = lastMessage
+    
 }
 
 object Server extends App {
     val receiver: Receiver = new ReceiverImpl
-    receiver startRecv
+    receiver startRecv()
 }

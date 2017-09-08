@@ -3,16 +3,15 @@ package domain.messages
 import com.typesafe.scalalogging.Logger
 import domain.{Clue, ClueImpl}
 import org.scalatest.{BeforeAndAfter, FunSuite}
-import org.slf4j.LoggerFactory
 import play.api.libs.json.Json
 
 class ClueMsgTest extends FunSuite with BeforeAndAfter {
 
     private val sender = "Anakin Skywalker"
     private val clueText = "io sono tuo padre!"
-    private var clue: Clue = null
-    private var clueMessage: ClueMsg = null
-    val logger = Logger(LoggerFactory.getLogger("test"))
+    private var clue: Clue = _
+    private var clueMessage: ClueMsg = _
+    val logger = Logger[ClueMsgTest]
 
     before {
         clue = ClueImpl(clueText)
@@ -28,10 +27,9 @@ class ClueMsgTest extends FunSuite with BeforeAndAfter {
     }
 
     test("Checking ClueMsg's serializability") {
-        implicit val clueMsgReads = Json.reads[ClueMsgImpl]
-        val newClueMsg = Json.parse(clueMessage.defaultRepresentation).as[ClueMsgImpl]
-        logger.info(s"oldClueMsg: ${clueMessage.defaultRepresentation.toString}")
-        logger.info(s"newClueMsg: ${newClueMsg.defaultRepresentation.toString}")
+        val newClueMsg = Json.parse(clueMessage.defaultRepresentation).as[Message]
+        logger info s"oldClueMsg: ${clueMessage.defaultRepresentation.toString}"
+        logger info s"newClueMsg: ${newClueMsg.defaultRepresentation.toString}"
         assert(clueMessage === newClueMsg)
     }
 

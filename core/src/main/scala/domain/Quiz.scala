@@ -1,6 +1,6 @@
 package domain
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsPath, Json, Reads}
 
 /** An Entity that contains a Question and an Answer
   *
@@ -53,8 +53,13 @@ case class QuizImpl(override var question: String, override var answer: String) 
 
 object Quiz {
 
-    def apply(question: String, answer: String): QuizImpl = {
-        QuizImpl(question, answer)
-    }
+    def apply(question: String, answer: String): QuizImpl = QuizImpl(question, answer)
+
+    import play.api.libs.functional.syntax._
+
+    implicit val quizReads: Reads[Quiz] = (
+            (JsPath \ "question").read[String] and
+                    (JsPath \ "answer").read[String]
+            ) (Quiz.apply _)
 
 }

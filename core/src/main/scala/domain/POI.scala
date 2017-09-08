@@ -114,22 +114,15 @@ case class POIImpl(override var position: Position, override val name: String, o
 
 object POI {
 
-    implicit val positionReads: Reads[Position] = (
-            (JsPath \ "latitude").read[Double] and
-                    (JsPath \ "longitude").read[Double]
-            ) (Position.apply _)
+    def apply(name: String, treasureHuntID: Int, position: String, quiz: String, clue: String): POIImpl = POIImpl(Json.parse(position).as[Position], name, treasureHuntID, Json.parse(quiz).as[Quiz], Json.parse(clue).as[Clue])
 
-    implicit val quizReads: Reads[Quiz] = (
-            (JsPath \ "question").read[String] and
-                    (JsPath \ "answer").read[String]
-            ) (Quiz.apply _)
-
-    implicit val clueReads: Reads[Clue] =
-        (JsPath \ "content").read[String].map(Clue.apply _)
-
-    def apply(name: String, treasureHuntID: Int, position: String, quiz: String, clue: String): POIImpl = {
-        POIImpl(Json.parse(position).as[Position], name, treasureHuntID, Json.parse(quiz).as[Quiz], Json.parse(clue).as[Clue])
-    }
+    implicit val poiReads: Reads[POI] = (
+            (JsPath \ "name").read[String] and
+                    (JsPath \ "treasureHuntID").read[Int] and
+                    (JsPath \ "position").read[String] and
+                    (JsPath \ "quiz").read[String] and
+                    (JsPath \ "clue").read[String]
+            ) (POI.apply _)
 
 }
 
@@ -153,23 +146,14 @@ case class ListPOIsImpl(override val list: List[POI]) extends ListPOIs {
     implicit val listPOIsWrites = new Writes[ListPOIsImpl] {
         def writes(listPOIs: ListPOIsImpl) = Json.obj(
             "list" -> Json.toJson(list)(
-
-                new Writes[List[POI]] {
-                    def writes(list: List[POI]) = JsArray(list.map(e => Json.toJson(e)(
-
-                        new Writes[POI] {
-                            def writes(poi: POI) = Json.obj(
-                                "name" -> poi.name,
-                                "treasureHuntID" -> poi.treasureHuntID,
-                                "position" -> poi.position.defaultRepresentation,
-                                "quiz" -> poi.quiz.defaultRepresentation,
-                                "clue" -> poi.clue.defaultRepresentation)
-                        }
-
-
-                    )))
-                }
-
+                (list: List[POI]) => JsArray(list.map(e => Json.toJson(e)(
+                    (poi: POI) => Json.obj(
+                        "name" -> poi.name,
+                        "treasureHuntID" -> poi.treasureHuntID,
+                        "position" -> poi.position.defaultRepresentation,
+                        "quiz" -> poi.quiz.defaultRepresentation,
+                        "clue" -> poi.clue.defaultRepresentation)
+                )))
             )
         )
     }
@@ -186,16 +170,8 @@ case class ListPOIsImpl(override val list: List[POI]) extends ListPOIs {
 
 object ListPOIs {
 
-    implicit val poiReads: Reads[POI] = (
-            (JsPath \ "name").read[String] and
-                    (JsPath \ "treasureHuntID").read[Int] and
-                    (JsPath \ "position").read[String] and
-                    (JsPath \ "quiz").read[String] and
-                    (JsPath \ "clue").read[String]
-            ) (POI.apply _)
+    def apply(list: JsArray): ListPOIsImpl = ListPOIsImpl(list.as[List[POI]])
 
-    def apply(list: JsArray): ListPOIsImpl = {
-        ListPOIsImpl(list.as[List[POI]])
-    }
+    implicit val listPOIsReads: Reads[ListPOIs] = (JsPath \ "list").read[JsArray].map(ListPOIs.apply)
 
 }

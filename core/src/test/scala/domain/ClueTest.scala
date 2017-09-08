@@ -8,7 +8,7 @@ import play.api.libs.json.Json
 class ClueTest extends FunSuite with BeforeAndAfter {
 
     private val clueText = "If you want to find the white bunny, go to the hospital and ask for your granny."
-    private var clue: Clue = null
+    private var clue: Clue = _
     val logger = Logger(LoggerFactory.getLogger("test"))
 
     before {
@@ -31,10 +31,9 @@ class ClueTest extends FunSuite with BeforeAndAfter {
     }
 
     test("Checking Clue's serializability") {
-        implicit val clueReads = Json.reads[ClueImpl]
-        val newClue = Json.parse(clue.defaultRepresentation).as[ClueImpl]
-        logger.info(s"oldClue: ${clue.defaultRepresentation.toString}")
-        logger.info(s"newClue: ${newClue.defaultRepresentation.toString}")
+        val newClue = Json.parse(clue.defaultRepresentation).as[Clue]
+        logger info s"oldClue: ${clue.defaultRepresentation.toString}"
+        logger info s"newClue: ${newClue.defaultRepresentation.toString}"
         assert(clue === newClue)
     }
 

@@ -30,7 +30,7 @@ class TeamTest extends FunSuite {
         val newPlayer = PlayerImpl("Player2")
         assert(team.players.isEmpty)
         team.addPlayer(newPlayer)
-        assert(!team.players.isEmpty)
+        assert(team.players.nonEmpty)
         val newPlayer2 = PlayerImpl("Player3")
         team.addPlayer(newPlayer2)
         assert(team.players.contains(newPlayer))

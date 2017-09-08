@@ -1,6 +1,6 @@
 package domain
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsPath, Json, Reads}
 
 /** An entity that represents a Position
   *
@@ -41,8 +41,13 @@ case class PositionImpl(override val latitude: Double, override val longitude: D
 
 object Position {
 
-    def apply(latitude: Double, longitude: Double): PositionImpl = {
-        PositionImpl(latitude, longitude)
-    }
+    def apply(latitude: Double, longitude: Double): PositionImpl = PositionImpl(latitude, longitude)
+
+    import play.api.libs.functional.syntax._
+
+    implicit val positionReads: Reads[Position] = (
+            (JsPath \ "latitude").read[Double] and
+                    (JsPath \ "longitude").read[Double]
+            ) (Position.apply _)
 
 }
