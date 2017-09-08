@@ -49,11 +49,9 @@ class THOrganizerImpl(_model: THModel) extends THOrganizer {
 
     override def getCode: Int = _model getCode
 
-    override def startHunt(): Unit = _model startHunt()
-
     override def model: THModel = _model
 
-    override def startHunt(): Unit = _model startHunt
+    override def startHunt(): Unit = _model startHunt()
 
     def getTreasureHunts(): List[TreasureHunt] = _model getTreasureHunts
 
