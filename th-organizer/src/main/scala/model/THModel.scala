@@ -52,12 +52,12 @@ class THModelImpl(override var broker: Broker) extends THModel {
         (JsPath \ "content").read[String].map(Clue.apply _)
 
     implicit val poiReads: Reads[POI] = (
-      (JsPath \ "name").read[String] and
-        (JsPath \ "treasureHuntID").read[String] and
-        (JsPath \ "position").read[String] and
-        (JsPath \ "quiz").read[String] and
-        (JsPath \ "clue").read[String]
-      ) (POI.apply _)
+            (JsPath \ "name").read[String] and
+                    (JsPath \ "treasureHuntID").read[Int] and
+                    (JsPath \ "position").read[String] and
+                    (JsPath \ "quiz").read[String] and
+                    (JsPath \ "clue").read[String]
+            ) (POI.apply _)
 
     implicit val stateReads: Reads[State] = (
       (JsPath \ "state").read[StateType] and

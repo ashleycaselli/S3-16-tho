@@ -6,16 +6,16 @@ class POITest extends FunSuite with BeforeAndAfter {
 
     val position = PositionImpl(1.2, 3.0)
     val quiz = QuizImpl("This is a question?", "This is the answer")
-    val clue = ClueImpl("The domain.POI is nearby the church")
-    val name = "domain.POI-0"
-    val treasureHuntID = "thID"
-    var poi: POI = null
+    val clue = ClueImpl("The POI is nearby the church")
+    val name = "POI-0"
+    val treasureHuntID = 0
+    var poi: POI = _
 
     before {
         poi = POIImpl(position, name, treasureHuntID)
     }
 
-    test("Getting the domain.POI's name") {
+    test("Getting the POI's name") {
         assert(poi.name === name)
     }
 

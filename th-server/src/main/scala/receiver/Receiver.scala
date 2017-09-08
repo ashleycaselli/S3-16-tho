@@ -45,7 +45,7 @@ class ReceiverImpl extends Receiver {
 
     implicit val poiReads: Reads[POI] = (
             (JsPath \ "name").read[String] and
-                    (JsPath \ "treasureHuntID").read[String] and
+                    (JsPath \ "treasureHuntID").read[Int] and
                     (JsPath \ "position").read[String] and
                     (JsPath \ "quiz").read[String] and
                     (JsPath \ "clue").read[String]

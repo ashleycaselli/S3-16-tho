@@ -60,8 +60,8 @@ class Send {
         return message4;
     }
 
-    String sendPoi() throws Exception {
-        POI poi = new POIImpl(new PositionImpl(44.55432, 45.83654), "test POI", "thID", new QuizImpl("question", "answer"), new ClueImpl("clue"));
+    public String sendPoi() throws Exception {
+        POI poi = new POIImpl(new PositionImpl(44.55432, 45.83654), "test POI", 0, new QuizImpl("question", "answer"), new ClueImpl("clue"));
         String message = new PoiMsgImpl("sender", poi.defaultRepresentation()).defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message.getBytes());
         return message;

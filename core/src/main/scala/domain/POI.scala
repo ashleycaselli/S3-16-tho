@@ -19,7 +19,7 @@ trait POI extends Positionable with Serializable {
       *
       * @return
       */
-    def treasureHuntID: String
+    def treasureHuntID: Int
 
     /**
       * Property to get the POI's quiz
@@ -58,7 +58,7 @@ trait POI extends Positionable with Serializable {
   * @param _quiz    a Quiz for POI. null if not specified
   * @param _clue    a Clue for POI. null if not specified
   */
-case class POIImpl(override var position: Position, override val name: String, override val treasureHuntID: String, private var _quiz: Quiz = null, private var _clue: Clue = null) extends POI {
+case class POIImpl(override var position: Position, override val name: String, override val treasureHuntID: Int, private var _quiz: Quiz = null, private var _clue: Clue = null) extends POI {
 
     implicit val poiWrites = new Writes[POIImpl] {
         def writes(poi: POIImpl) = Json.obj(
@@ -127,7 +127,7 @@ object POI {
     implicit val clueReads: Reads[Clue] =
         (JsPath \ "content").read[String].map(Clue.apply _)
 
-    def apply(name: String, treasureHuntID: String, position: String, quiz: String, clue: String): POIImpl = {
+    def apply(name: String, treasureHuntID: Int, position: String, quiz: String, clue: String): POIImpl = {
         POIImpl(Json.parse(position).as[Position], name, treasureHuntID, Json.parse(quiz).as[Quiz], Json.parse(clue).as[Clue])
     }
 
@@ -187,12 +187,12 @@ case class ListPOIsImpl(override val list: List[POI]) extends ListPOIs {
 object ListPOIs {
 
     implicit val poiReads: Reads[POI] = (
-      (JsPath \ "name").read[String] and
-        (JsPath \ "treasureHuntID").read[String] and
-        (JsPath \ "position").read[String] and
-        (JsPath \ "quiz").read[String] and
-        (JsPath \ "clue").read[String]
-      ) (POI.apply _)
+            (JsPath \ "name").read[String] and
+                    (JsPath \ "treasureHuntID").read[Int] and
+                    (JsPath \ "position").read[String] and
+                    (JsPath \ "quiz").read[String] and
+                    (JsPath \ "clue").read[String]
+            ) (POI.apply _)
 
     def apply(list: JsArray): ListPOIsImpl = {
         ListPOIsImpl(list.as[List[POI]])
