@@ -31,7 +31,6 @@ public class MapView extends JFrame implements OrganizerView {
     private final GoogleMapsFXMLController googleMapsController;
     private TreasureHunt currentTreasureHunt;
     private final THOrganizer controller;
-    private Boolean waitingForCoords = false;
 
     public MapView(final TreasureHunt currentTreasureHunt, final THOrganizer controller) {
         THOrganizer$.MODULE$.instance().model().addObserver(this);
@@ -69,11 +68,7 @@ public class MapView extends JFrame implements OrganizerView {
 
         JButton addPoiButton = new JButton(Strings.ADD_POI_BUTTON);
         addPoiButton.setPreferredSize(new Dimension(300, 45));
-        addPoiButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
-            JFrame dialog = new JFrame();
-            JOptionPane.showMessageDialog(dialog, "Click on the map to select a point");
-            this.waitingForCoords = true;
-        }));
+        addPoiButton.addActionListener((actionEvent) -> JOptionPane.showMessageDialog(null, "Click on the map to select a point"));
         this.buttonList.add(addPoiButton);
         JButton showPoisButton = new JButton(Strings.SHOW_POIS_BUTTON);
         showPoisButton.setPreferredSize(new Dimension(300, 45));

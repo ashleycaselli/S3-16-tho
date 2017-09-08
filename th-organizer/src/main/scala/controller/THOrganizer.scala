@@ -21,7 +21,7 @@ sealed trait THOrganizer {
 
     def model: THModel
 
-    def getTreasureHunts(): List[TreasureHunt]
+    def getTreasureHunts: List[TreasureHunt]
 }
 
 /**
@@ -53,7 +53,7 @@ class THOrganizerImpl(_model: THModel) extends THOrganizer {
 
     override def startHunt(): Unit = _model startHunt()
 
-    def getTreasureHunts(): List[TreasureHunt] = _model getTreasureHunts
+    def getTreasureHunts: List[TreasureHunt] = _model getTreasureHunts
 
 }
 
