@@ -53,7 +53,7 @@ case class QuizImpl(override var question: String, override var answer: String) 
 
 object Quiz {
 
-    def apply(question: String, answer: String): QuizImpl = QuizImpl(question, answer)
+    def apply(question: String, answer: String): Quiz = QuizImpl(question, answer)
 
     import play.api.libs.functional.syntax._
 

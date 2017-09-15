@@ -43,6 +43,8 @@ trait TreasureHunt extends Serializable {
       * @param teamName name of the Team that is get
       */
     def team(teamName: String): Team
+
+    //    def state: State
 }
 
 /**
@@ -105,7 +107,7 @@ case class TreasureHuntImpl(private var _ID: Int = 0, override val name: String,
 
 object TreasureHunt {
 
-    def apply(ID: Int = 0, name: String, location: String, date: String, time: String): TreasureHuntImpl = TreasureHuntImpl(ID, name, location, date, time, null)
+    def apply(ID: Int = 0, name: String, location: String, date: String, time: String): TreasureHunt = TreasureHuntImpl(ID, name, location, date, time, null)
 
     implicit val thReads: Reads[TreasureHunt] = (
             (JsPath \ "ID").read[Int] and

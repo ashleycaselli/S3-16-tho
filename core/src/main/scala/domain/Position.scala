@@ -41,7 +41,7 @@ case class PositionImpl(override val latitude: Double, override val longitude: D
 
 object Position {
 
-    def apply(latitude: Double, longitude: Double): PositionImpl = PositionImpl(latitude, longitude)
+    def apply(latitude: Double, longitude: Double): Position = PositionImpl(latitude, longitude)
 
     import play.api.libs.functional.syntax._
 

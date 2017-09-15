@@ -39,6 +39,7 @@ trait Organizer extends Serializable {
   * @param email       organizer's email
   */
 case class OrganizerImpl(override val idOrganizer: Int, override val name: String, override val surname: String, override val email: String) extends Organizer {
+
     implicit val organizerWrites = Json.writes[OrganizerImpl]
 
     /**
@@ -47,12 +48,11 @@ case class OrganizerImpl(override val idOrganizer: Int, override val name: Strin
       * @return a String containing the representation
       */
     override def defaultRepresentation: String = Json toJson this toString
+
 }
 
 object Organizer {
 
-    def apply(idOrganizer: Int, name: String, surname: String, email: String): OrganizerImpl = {
-        OrganizerImpl(idOrganizer, name, surname, email)
-    }
+    def apply(idOrganizer: Int, name: String, surname: String, email: String): Organizer = OrganizerImpl(idOrganizer, name, surname, email)
 
 }
