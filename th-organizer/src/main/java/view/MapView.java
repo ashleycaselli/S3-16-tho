@@ -1,8 +1,15 @@
 package view;
 
 import controller.THOrganizer;
-import domain.*;
+import controller.THOrganizer$;
+import domain.POI;
+import domain.TreasureHunt;
+import domain.TreasureHunt$;
+import domain.messages.Message;
+import domain.messages.Message$;
+import domain.messages.msgType;
 import javafx.application.Platform;
+import play.api.libs.json.Json;
 import utils.Resources;
 import utils.Strings;
 import view.component.GoogleMapsPanel;
@@ -13,28 +20,30 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapView extends JFrame {
+public class MapView extends JFrame implements OrganizerView {
 
-    public static final Dimension FRAME_DIMENSION = new Dimension(1024, 768);
-    public static final int DEFAULT_INSET_VALUE = 10;
+    private static final Dimension FRAME_DIMENSION = new Dimension(1024, 768);
+    private static final int DEFAULT_INSET_VALUE = 10;
 
     private LogoPanel logoPanel;
     private final List<JButton> buttonList = new ArrayList();
     private GoogleMapsPanel googleMapsPanel;
-    private final String treasureHuntID;
+    private final GoogleMapsFXMLController googleMapsController;
+    private TreasureHunt currentTreasureHunt;
     private final THOrganizer controller;
-    private Boolean waitingForCoords = false;
 
-    public MapView(final String treasureHuntID, THOrganizer controller) {
-        this.treasureHuntID = treasureHuntID;
+    public MapView(final TreasureHunt currentTreasureHunt, final THOrganizer controller) {
+        THOrganizer$.MODULE$.instance().model().addObserver(this);
+        this.currentTreasureHunt = currentTreasureHunt;
         this.controller = controller;
+        this.googleMapsController = new GoogleMapsFXMLController(currentTreasureHunt);
         init();
     }
 
     private void init() {
         this.getContentPane().setBackground(Color.white);
         this.setLayout(new GridBagLayout());
-        this.setTitle(this.treasureHuntID);
+        this.setTitle(this.currentTreasureHunt.name());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(FRAME_DIMENSION);
         this.setResizable(false);
@@ -42,7 +51,7 @@ public class MapView extends JFrame {
         this.setLocation(100, 0);
         this.setVisible(true);
 
-        Platform.runLater(() -> this.googleMapsPanel.initFX(this));
+        Platform.runLater(() -> this.googleMapsPanel.initFX());
     }
 
     private void initComponent() {
@@ -59,11 +68,7 @@ public class MapView extends JFrame {
 
         JButton addPoiButton = new JButton(Strings.ADD_POI_BUTTON);
         addPoiButton.setPreferredSize(new Dimension(300, 45));
-        addPoiButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
-            JFrame dialog = new JFrame();
-            JOptionPane.showMessageDialog(dialog, "Click on the map to select a point");
-            this.waitingForCoords = true;
-        }));
+        addPoiButton.addActionListener((actionEvent) -> JOptionPane.showMessageDialog(null, "Click on the map to select a point"));
         this.buttonList.add(addPoiButton);
         JButton showPoisButton = new JButton(Strings.SHOW_POIS_BUTTON);
         showPoisButton.setPreferredSize(new Dimension(300, 45));
@@ -73,7 +78,7 @@ public class MapView extends JFrame {
             for (POI poi : pois) {
                 message += "- " + poi.name() + "\n";
             }
-            if (message == "") {
+            if (message.isEmpty()) {
                 message = "No POIs. Add one first.";
             }
             JFrame dialog = new JFrame();
@@ -107,29 +112,25 @@ public class MapView extends JFrame {
             button.setFont(Resources.DEFAULT_FONT);
             c.gridy++;
             this.add(button, c);
+            button.setEnabled(false);
         });
 
-        this.googleMapsPanel = new GoogleMapsPanel();
+        this.googleMapsPanel = new GoogleMapsPanel(this.googleMapsController);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 0;
         c.gridheight = 7;
         this.add(this.googleMapsPanel, c);
-
     }
 
-    void newCoordsSelected(Double latitude, Double longitude) {
-        if (this.waitingForCoords) {
-            this.waitingForCoords = false;
-            (new Thread(() -> {
-                JFrame dialog = new JFrame();
-                String poiName = JOptionPane.showInputDialog(dialog, "Enter point's name:", JOptionPane.PLAIN_MESSAGE);
-                String clue = JOptionPane.showInputDialog(dialog, "Enter a clue that helps to reach this point:", JOptionPane.PLAIN_MESSAGE);
-                String quizQuestion = JOptionPane.showInputDialog(dialog, "Enter a quiz to be solved when this point is reached:", JOptionPane.PLAIN_MESSAGE);
-                String quizAnswer = JOptionPane.showInputDialog(dialog, "Enter the quiz's answer:", JOptionPane.PLAIN_MESSAGE);
-                POI poi = new POIImpl(new PositionImpl(latitude, longitude), poiName, this.treasureHuntID, new QuizImpl(quizQuestion, quizAnswer), new ClueImpl(clue));
-                this.controller.addPoi(poi);
-            })).start();
+    @Override
+    public void receiveUpdate(final String message) {
+        Message msg = Json.parse(message).as(Message$.MODULE$.messageReads());
+        String payload = msg.payload();
+        if (msg.messageType().equals(msgType.TreasureHunt())) {
+            this.buttonList.forEach(button -> button.setEnabled(true));
+            this.currentTreasureHunt = Json.parse(payload).as(TreasureHunt$.MODULE$.thReads());
         }
+        // TODO method implementation
     }
 }

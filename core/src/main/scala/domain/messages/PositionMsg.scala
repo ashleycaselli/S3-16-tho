@@ -20,7 +20,6 @@ case class PositionMsgImpl(override val sender: String, override val payload: St
       *
       * @return a String containing the representation
       */
-    override def defaultRepresentation: String = {
-        Json toJson this toString
-    }
+    override def defaultRepresentation: String = Json toJson this toString
+
 }

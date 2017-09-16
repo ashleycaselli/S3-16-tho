@@ -1,6 +1,6 @@
 package domain.messages
 
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json._
 import utils.EnumUtils
 
 /** An enumeration that represents the available states.
@@ -25,7 +25,6 @@ trait StateMsg extends Message {
 
     def messageType = msgType.State
 
-
     implicit val stateMsgWrites = new Writes[StateMsg] {
         def writes(msg: StateMsg) = Json.obj(
             "messageType" -> messageType,
@@ -38,7 +37,7 @@ trait StateMsg extends Message {
       *
       * @return a String containing the representation
       */
-    override def defaultRepresentation = Json toJson this toString()
+    override def defaultRepresentation: String = Json toJson this toString
 
 }
 

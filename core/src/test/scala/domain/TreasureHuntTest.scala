@@ -1,7 +1,7 @@
 package domain
 
 import org.joda.time.DateTime
-import org.scalatest.FunSuite;
+import org.scalatest.FunSuite
 
 class TreasureHuntTest extends FunSuite {
 
@@ -21,8 +21,8 @@ class TreasureHuntTest extends FunSuite {
 
     test("Checking the addition of a Team") {
         th addTeam team
-        assert(!th.teams.isEmpty)
-        assert(th.teams(0) === team)
+        assert(th.teams.nonEmpty)
+        assert(th.teams.head === team)
         assertThrows[IndexOutOfBoundsException] {
             th teams 1
         }

@@ -1,6 +1,6 @@
 package domain
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsPath, Json, Reads}
 
 /** An Entity that contains a Clue.
   *
@@ -42,8 +42,8 @@ case class ClueImpl(override var content: String) extends Clue {
 
 object Clue {
 
-    def apply(content: String): ClueImpl = {
-        ClueImpl(content)
-    }
+    def apply(content: String): ClueImpl = ClueImpl(content)
+
+    implicit val clueReads: Reads[Clue] = (JsPath \ "content").read[String].map(Clue.apply)
 
 }

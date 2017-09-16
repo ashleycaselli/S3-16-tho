@@ -3,13 +3,14 @@ package receiver
 import org.scalatest.{BeforeAndAfter, FunSuite}
 
 class ReceiverTest extends FunSuite with BeforeAndAfter {
-    private var sender: Send = null
-    private var receiver: Receiver = null
+
+    private var sender: Send = _
+    private var receiver: Receiver = _
 
     before {
         sender = new Send
         receiver = new ReceiverImpl
-        receiver.startRecv
+        receiver.startRecv()
     }
 
     test("TH message test") {
@@ -17,13 +18,13 @@ class ReceiverTest extends FunSuite with BeforeAndAfter {
         val msg = sender.callTreasureHunt()
         var pass: Boolean = false
         val timestamp: Long = System.currentTimeMillis
-        while (pass == false && System.currentTimeMillis - timestamp < 5000) {
-            if (receiver.getLastMessage() == msg) {
+        while (!pass && System.currentTimeMillis - timestamp < 5000) {
+            if (receiver.getLastMessage == msg) {
                 pass = true
             }
         }
-        if (pass == true) assert(true)
-        else assert(false);
+        if (pass) assert(true)
+        else assert(false)
     }
 
     test("ListTH message test") {
@@ -31,13 +32,13 @@ class ReceiverTest extends FunSuite with BeforeAndAfter {
         val msg = sender.callListTHs()
         var pass: Boolean = false
         val timestamp: Long = System.currentTimeMillis
-        while (pass == false && System.currentTimeMillis - timestamp < 5000) {
-            if (receiver.getLastMessage() == msg) {
+        while (!pass && System.currentTimeMillis - timestamp < 5000) {
+            if (receiver.getLastMessage == msg) {
                 pass = true
             }
         }
-        if (pass == true) assert(true)
-        else assert(false);
+        if (pass) assert(true)
+        else assert(false)
     }
 
     test("Position message test") {
@@ -45,13 +46,13 @@ class ReceiverTest extends FunSuite with BeforeAndAfter {
         val msg = sender.sendPosition()
         var pass: Boolean = false
         val timestamp: Long = System.currentTimeMillis
-        while (pass == false && System.currentTimeMillis - timestamp < 5000) {
-            if (receiver.getLastMessage() == msg) {
+        while (!pass && System.currentTimeMillis - timestamp < 5000) {
+            if (receiver.getLastMessage == msg) {
                 pass = true
             }
         }
-        if (pass == true) assert(true)
-        else assert(false);
+        if (pass) assert(true)
+        else assert(false)
     }
 
     test("Clue message test") {
@@ -59,13 +60,13 @@ class ReceiverTest extends FunSuite with BeforeAndAfter {
         val msg = sender.sendClue()
         var pass: Boolean = false
         val timestamp: Long = System.currentTimeMillis
-        while (pass == false && System.currentTimeMillis - timestamp < 5000) {
-            if (receiver.getLastMessage() == msg) {
+        while (!pass && System.currentTimeMillis - timestamp < 5000) {
+            if (receiver.getLastMessage == msg) {
                 pass = true
             }
         }
-        if (pass == true) assert(true)
-        else assert(false);
+        if (pass) assert(true)
+        else assert(false)
     }
 
     test("Quiz message test") {
@@ -73,13 +74,13 @@ class ReceiverTest extends FunSuite with BeforeAndAfter {
         val msg = sender.sendQuiz()
         var pass: Boolean = false
         val timestamp: Long = System.currentTimeMillis
-        while (pass == false && System.currentTimeMillis - timestamp < 5000) {
-            if (receiver.getLastMessage() == msg) {
+        while (!pass && System.currentTimeMillis - timestamp < 5000) {
+            if (receiver.getLastMessage == msg) {
                 pass = true
             }
         }
-        if (pass == true) assert(true)
-        else assert(false);
+        if (pass) assert(true)
+        else assert(false)
     }
 
     test("Poi message test") {
@@ -87,13 +88,13 @@ class ReceiverTest extends FunSuite with BeforeAndAfter {
         val msg = sender.sendPoi()
         var pass5: Boolean = false
         val timestamp: Long = System.currentTimeMillis
-        while (pass5 == false && System.currentTimeMillis - timestamp < 5000) {
-            if (receiver.getLastMessage() == msg) {
+        while (!pass5 && System.currentTimeMillis - timestamp < 5000) {
+            if (receiver.getLastMessage == msg) {
                 pass5 = true
             }
         }
-        if (pass5 == true) assert(true)
-        else assert(false);
+        if (pass5) assert(true)
+        else assert(false)
     }
 
     test("State message test") {
@@ -101,13 +102,13 @@ class ReceiverTest extends FunSuite with BeforeAndAfter {
         val message = sender.sendState()
         var pass4: Boolean = false
         val timestamp: Long = System.currentTimeMillis
-        while (pass4 == false && System.currentTimeMillis - timestamp < 5000) {
-            if (receiver.getLastMessage() == message) {
+        while (!pass4 && System.currentTimeMillis - timestamp < 5000) {
+            if (receiver.getLastMessage == message) {
                 pass4 = true
             }
         }
-        if (pass4 == true) assert(true)
-        else assert(false);
+        if (pass4) assert(true)
+        else assert(false)
     }
 
 }

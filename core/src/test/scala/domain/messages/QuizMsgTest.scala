@@ -3,7 +3,6 @@ package domain.messages
 import com.typesafe.scalalogging.Logger
 import domain.{Quiz, QuizImpl}
 import org.scalatest.{BeforeAndAfter, FunSuite}
-import org.slf4j.LoggerFactory
 import play.api.libs.json.Json
 
 class QuizMsgTest extends FunSuite with BeforeAndAfter {
@@ -13,7 +12,7 @@ class QuizMsgTest extends FunSuite with BeforeAndAfter {
     private val quizAnswer = "Shadow"
     private var quiz: Quiz = _
     private var quizMessage: QuizMsg = _
-    val logger = Logger(LoggerFactory.getLogger("test"))
+    val logger = Logger[QuizMsgTest]
 
     before {
         quiz = QuizImpl(quizQuestion, quizAnswer)
@@ -29,10 +28,9 @@ class QuizMsgTest extends FunSuite with BeforeAndAfter {
     }
 
     test("Checking QuizMsg's serializability") {
-        implicit val quizMsgReads = Json.reads[QuizMsgImpl]
-        val newQuizMsg = Json.parse(quizMessage.defaultRepresentation).as[QuizMsgImpl]
-        logger.info(s"oldQuizMsg: ${quizMessage.defaultRepresentation.toString}")
-        logger.info(s"newQuizMsg: ${newQuizMsg.defaultRepresentation.toString}")
+        val newQuizMsg = Json.parse(quizMessage.defaultRepresentation).as[Message]
+        logger info s"oldQuizMsg: ${quizMessage.defaultRepresentation.toString}"
+        logger info s"newQuizMsg: ${newQuizMsg.defaultRepresentation.toString}"
         assert(quizMessage === newQuizMsg)
     }
 

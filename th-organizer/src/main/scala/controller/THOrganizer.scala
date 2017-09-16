@@ -1,54 +1,76 @@
 package controller
 
-
 import com.typesafe.scalalogging.Logger
 import domain._
 import model.THModel
 
+/**
+  * This is the Controller layer of the application.
+  */
 sealed trait THOrganizer {
 
     def createTreasureHunt(treasureHunt: TreasureHunt): Unit
 
     def addPoi(poi: POI): Unit
 
-    def getPois(): Seq[POI]
+    def getPois: Seq[POI]
 
-    def getCode(): Int
+    def getCode: Int
 
     def startHunt(): Unit
 
-    def getTreasureHunts(): List[TreasureHunt]
+    def model: THModel
+
+    def getTreasureHunts: List[TreasureHunt]
 }
 
-class THOrganizerImpl(model: THModel) extends THOrganizer {
+/**
+  * Class that implements a Controller.
+  *
+  * @param _model
+  */
+class THOrganizerImpl(_model: THModel) extends THOrganizer {
 
     private val logger = Logger[THOrganizerImpl]
 
     override def createTreasureHunt(treasureHunt: TreasureHunt): Unit = {
         logger info s"Creating a Treasure Hunt: ${treasureHunt.name}"
-        model addTreasureHunt TreasureHuntImpl(0, treasureHunt.name, treasureHunt.location, treasureHunt.date, treasureHunt.time)
+        _model addTreasureHunt treasureHunt
         logger info s"${treasureHunt.name} creation successfully!"
     }
 
     override def addPoi(poi: POI): Unit = {
         logger info s"Creating a POI: ${poi.name}"
-        model addPOI POIImpl(poi.position, poi.name, poi.treasureHuntID, poi.quiz, poi.clue)
+        _model addPOI poi
         logger info s"${poi.name} added to ${poi.treasureHuntID}"
     }
 
-    override def getPois(): Seq[POI] = {
-        model getPOIs
+    override def getPois: Seq[POI] = _model getPOIs
+
+    override def getCode: Int = _model getCode
+
+    override def model: THModel = _model
+
+    override def startHunt(): Unit = _model startHunt()
+
+    def getTreasureHunts: List[TreasureHunt] = _model getTreasureHunts
+
+}
+
+object THOrganizer {
+
+    private var _instance: THOrganizer = _
+
+    def apply(model: THModel): THOrganizer = {
+        _instance match {
+            case null => {
+                _instance = new THOrganizerImpl(model)
+                _instance
+            }
+            case _ => _instance
+        }
     }
 
-    override def getCode(): Int = {
-        model getCode
-    }
+    def instance: THOrganizer = _instance
 
-    override def startHunt(): Unit = {
-        model startHunt
-    }
-
-    def getTreasureHunts(): List[TreasureHunt] = {
-        model getTreasureHunts
-    }
 }

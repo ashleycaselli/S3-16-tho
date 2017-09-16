@@ -2,15 +2,14 @@ package domain.messages
 
 import com.typesafe.scalalogging.Logger
 import org.scalatest.{BeforeAndAfter, FunSuite}
-import org.slf4j.LoggerFactory
 import play.api.libs.json.Json
 
 class AnswerMsgTest extends FunSuite with BeforeAndAfter {
 
     private val sender = "Master Splinter"
     private val payload: String = ""
-    private var answerMessage: AnswerMsg = null
-    val logger = Logger(LoggerFactory.getLogger("test"))
+    private var answerMessage: Message = _
+    val logger = Logger[AnswerMsgTest]
 
     before {
         answerMessage = AnswerMsgImpl(sender)
@@ -25,10 +24,9 @@ class AnswerMsgTest extends FunSuite with BeforeAndAfter {
     }
 
     test("Checking AnswerMsg's serializability") {
-        implicit val answerMsgReads = Json.reads[AnswerMsgImpl]
-        val newAnswerMsg = Json.parse(answerMessage.defaultRepresentation).as[AnswerMsgImpl]
-        logger.info(s"oldClueMsg: ${answerMessage.defaultRepresentation.toString}")
-        logger.info(s"newClueMsg: ${newAnswerMsg.defaultRepresentation.toString}")
+        val newAnswerMsg = Json.parse(answerMessage.defaultRepresentation).as[Message]
+        logger info s"oldClueMsg: ${answerMessage.defaultRepresentation.toString}"
+        logger info s"newClueMsg: ${newAnswerMsg.defaultRepresentation.toString}"
         assert(answerMessage === newAnswerMsg)
     }
 

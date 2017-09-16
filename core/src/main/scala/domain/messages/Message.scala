@@ -62,7 +62,15 @@ object Message {
         case msgType.TreasureHunt => TreasureHuntMsgImpl(sender, entity)
         case msgType.ListTHs => ListTHsMsgImpl(sender, entity)
         case msgType.ListPOIs => ListPOIsMsgImpl(sender, entity)
-        case _ => throw new NoMsgDefinedException(s"No message defined for $entity class")
+        case _ => throw NoMsgDefinedException(s"No message defined for $entity class")
     }
+
+    import play.api.libs.functional.syntax._
+
+    implicit val messageReads: Reads[Message] = (
+            (JsPath \ "messageType").read[msgType] and
+                    (JsPath \ "sender").read[String] and
+                    (JsPath \ "payload").read[String]
+            ) (Message.apply _)
 
 }

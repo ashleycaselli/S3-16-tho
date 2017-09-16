@@ -4,6 +4,7 @@ package domain
   *
   */
 trait Serializable {
+
     /**
       * Property for getting an entity's String representation.
       *

@@ -1,6 +1,5 @@
 package domain
 
-
 import com.typesafe.scalalogging.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -17,6 +16,8 @@ trait TreasureHunt extends Serializable {
     def name: String
 
     def location: String
+
+    def location_=(place: String): Unit
 
     def date: String
 
@@ -42,6 +43,8 @@ trait TreasureHunt extends Serializable {
       * @param teamName name of the Team that is get
       */
     def team(teamName: String): Team
+
+    //    def state: State
 }
 
 /**
@@ -50,8 +53,7 @@ trait TreasureHunt extends Serializable {
   * @param _ID    the Treasure Hunt ID
   * @param _teams Treasure Hunt's teams. If not specified is empty
   */
-case class TreasureHuntImpl(private var _ID: Int = 0, override val name: String, override val location: String, override val date: String, override val time: String, private var _teams: Seq[Team] = Seq.empty) extends TreasureHunt {
-
+case class TreasureHuntImpl(private var _ID: Int = 0, override val name: String, private var _location: String = null, override val date: String, override val time: String, private var _teams: Seq[Team] = Seq.empty) extends TreasureHunt {
 
     private val logger = Logger[Team]
 
@@ -88,6 +90,13 @@ case class TreasureHuntImpl(private var _ID: Int = 0, override val name: String,
         _ID = ID
     }
 
+    override def location: String = _location
+
+    override def location_=(place: String): Unit = {
+        require(place != null)
+        _location = place
+    }
+
     /**
       * Property for getting an entity's String representation.
       *
@@ -98,9 +107,16 @@ case class TreasureHuntImpl(private var _ID: Int = 0, override val name: String,
 
 object TreasureHunt {
 
-    def apply(ID: Int = 0, name: String, location: String, date: String, time: String): TreasureHuntImpl = {
-        TreasureHuntImpl(ID, name, location, date, time, null)
-    }
+    def apply(ID: Int = 0, name: String, location: String, date: String, time: String): TreasureHunt = TreasureHuntImpl(ID, name, location, date, time, null)
+
+    implicit val thReads: Reads[TreasureHunt] = (
+            (JsPath \ "ID").read[Int] and
+                    (JsPath \ "name").read[String] and
+                    (JsPath \ "location").read[String] and
+                    (JsPath \ "date").read[String] and
+                    (JsPath \ "time").read[String]
+            ) (TreasureHunt.apply _)
+
 }
 
 
@@ -124,27 +140,17 @@ case class ListTHsImpl(override val list: List[TreasureHunt]) extends ListTHs {
     implicit val listTHsWrites = new Writes[ListTHsImpl] {
         def writes(listTHs: ListTHsImpl) = Json.obj(
             "list" -> Json.toJson(list)(
-
-                new Writes[List[TreasureHunt]] {
-                    def writes(list: List[TreasureHunt]) = JsArray(list.map(e => Json.toJson(e)(
-
-                        new Writes[TreasureHunt] {
-                            def writes(th: TreasureHunt) = Json.obj(
-                                "ID" -> th.ID,
-                                "name" -> th.name,
-                                "location" -> th.location,
-                                "date" -> th.date,
-                                "time" -> th.time)
-                        }
-
-
-                    )))
-                }
-
+                (list: List[TreasureHunt]) => JsArray(list.map(e => Json.toJson(e)(
+                    (th: TreasureHunt) => Json.obj(
+                        "ID" -> th.ID,
+                        "name" -> th.name,
+                        "location" -> th.location,
+                        "date" -> th.date,
+                        "time" -> th.time)
+                )))
             )
         )
     }
-
 
     /**
       * Property for getting an entity's String representation.
@@ -157,16 +163,8 @@ case class ListTHsImpl(override val list: List[TreasureHunt]) extends ListTHs {
 
 object ListTHs {
 
-    implicit val thReads: Reads[TreasureHunt] = (
-      (JsPath \ "ID").read[Int] and
-        (JsPath \ "name").read[String] and
-        (JsPath \ "location").read[String] and
-        (JsPath \ "date").read[String] and
-        (JsPath \ "time").read[String]
-      ) (TreasureHunt.apply _)
+    def apply(list: JsArray): ListTHsImpl = ListTHsImpl(list.as[List[TreasureHunt]])
 
-    def apply(list: JsArray): ListTHsImpl = {
-        ListTHsImpl(list.as[List[TreasureHunt]])
-    }
+    implicit val listTHsReads: Reads[ListTHs] = (JsPath \ "list").read[JsArray].map(ListTHs.apply)
 
 }

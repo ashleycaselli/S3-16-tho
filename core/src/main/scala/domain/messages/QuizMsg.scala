@@ -29,7 +29,6 @@ case class QuizMsgImpl(override val sender: String, override val payload: String
       *
       * @return a String containing the representation
       */
-    override def defaultRepresentation: String = {
-        Json toJson this toString
-    }
+    override def defaultRepresentation: String = Json toJson this toString
+
 }

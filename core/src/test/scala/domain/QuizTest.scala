@@ -12,19 +12,18 @@ class QuizTest extends FunSuite {
     val quiz = QuizImpl(question, answer)
 
     test("Question must be not empty") {
-        assert(!quiz.question.isEmpty)
+        assert(quiz.question.nonEmpty)
     }
 
     test("Answer must be not empty") {
-        assert(!quiz.answer.isEmpty)
+        assert(quiz.answer.nonEmpty)
     }
 
     test("Checking Quiz serializability") {
-        implicit val quizReads = Json.reads[QuizImpl]
         val logger = Logger(LoggerFactory.getLogger("test"))
-        val newQuiz = Json.parse(quiz.defaultRepresentation).as[QuizImpl]
-        logger.info(s"oldQuiz: ${quiz.defaultRepresentation.toString}")
-        logger.info(s"newQuiz: ${newQuiz.defaultRepresentation.toString}")
+        val newQuiz = Json.parse(quiz.defaultRepresentation).as[Quiz]
+        logger info s"oldQuiz: ${quiz.defaultRepresentation.toString}"
+        logger info s"newQuiz: ${newQuiz.defaultRepresentation.toString}"
         assert(quiz === newQuiz)
     }
 
