@@ -30,7 +30,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
 
     require(broker != null)
 
-    private val organizerID = ""
+    private val organizerID = "1"
     private var runningTH: TreasureHunt = _
 
     private var ths: List[TreasureHunt] = List empty
@@ -46,8 +46,9 @@ class THModelImpl(override var broker: Broker) extends THModel {
         require(ths != null && !ths.contains(th))
         val thMsg = TreasureHuntMsgImpl(organizerID, th defaultRepresentation).defaultRepresentation
         val ID = broker call thMsg
-        setRunningTH(ID)
+        th.ID = ID.toInt
         ths = ths :+ th
+        setRunningTH(ID)
         notifyObservers(thMsg)
     }
 

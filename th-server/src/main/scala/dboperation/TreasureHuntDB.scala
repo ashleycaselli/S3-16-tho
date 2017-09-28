@@ -59,7 +59,7 @@ case class TreasureHuntDBImpl() extends TreasureHuntDB {
       * Method to view the list of TH of an Organizer
       */
     override def viewTreasureHuntList(idOrganizer: Int) = {
-        val thList: List[TreasureHunt] = null
+        val thList: List[TreasureHunt] = List.empty
 
         val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
         val connection: Connection = connectionManager.establishConnection
