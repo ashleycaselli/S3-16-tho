@@ -64,7 +64,13 @@ case class TreasureHuntDBImpl() extends TreasureHuntDB {
         val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
         val connection: Connection = connectionManager.establishConnection
         val statement = connection.createStatement
-        val query = s"SELECT * FROM treasure_hunt WHERE id_treasure_hunt NOT IN (SELECT id_treasure_hunt FROM event_log WHERE id_organizer = $idOrganizer AND id_organizer <> NULL)"
+        val query = s"SELECT * FROM treasure_hunt " +
+            s"WHERE id_organizer = $idOrganizer " +
+            s"AND id_treasure_hunt NOT IN " +
+            s"(SELECT id_treasure_hunt " +
+            s"FROM event_log " +
+            s"WHERE id_organizer = $idOrganizer " +
+            s"AND event_type = 9)"
         val rs = statement.executeQuery(query)
         while (rs.next) {
             thList :+ TreasureHuntImpl(rs.getInt("id_treasure_hunt"), rs.getString("name"), rs.getString("location"), rs.getString("start_date"), rs.getString("start_time"))
