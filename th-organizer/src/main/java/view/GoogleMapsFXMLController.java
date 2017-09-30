@@ -1,28 +1,28 @@
 package view;
 
-        import com.lynden.gmapsfx.GoogleMapView;
-        import com.lynden.gmapsfx.MapComponentInitializedListener;
-        import com.lynden.gmapsfx.javascript.event.UIEventType;
-        import com.lynden.gmapsfx.javascript.object.*;
-        import com.lynden.gmapsfx.service.geocoding.GeocoderStatus;
-        import com.lynden.gmapsfx.service.geocoding.GeocodingResult;
-        import com.lynden.gmapsfx.service.geocoding.GeocodingService;
-        import controller.THOrganizer$;
-        import domain.*;
-        import javafx.beans.property.SimpleStringProperty;
-        import javafx.beans.property.StringProperty;
-        import javafx.fxml.FXML;
-        import javafx.fxml.Initializable;
-        import javafx.scene.control.Alert;
-        import javafx.scene.control.Button;
-        import javafx.scene.control.TextField;
-        import javafx.scene.control.TextInputDialog;
-        import javafx.stage.StageStyle;
-        import utils.Strings;
+import com.lynden.gmapsfx.GoogleMapView;
+import com.lynden.gmapsfx.MapComponentInitializedListener;
+import com.lynden.gmapsfx.javascript.event.UIEventType;
+import com.lynden.gmapsfx.javascript.object.*;
+import com.lynden.gmapsfx.service.geocoding.GeocoderStatus;
+import com.lynden.gmapsfx.service.geocoding.GeocodingResult;
+import com.lynden.gmapsfx.service.geocoding.GeocodingService;
+import controller.THOrganizer$;
+import domain.*;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+import javafx.stage.StageStyle;
+import utils.Strings;
 
-        import java.net.URL;
-        import java.util.Optional;
-        import java.util.ResourceBundle;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 /**
  * Google Maps controller. It allows to render the Google Maps View specified in .fxml file.
