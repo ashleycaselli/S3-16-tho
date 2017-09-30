@@ -38,7 +38,9 @@ class THModelImpl(override var broker: Broker) extends THModel {
 
     new Thread() {
         override def run() {
-            ths = Json.parse(toMessage(broker.call(ListTHsMsgImpl(organizerID, ListTHsImpl(List.empty[TreasureHunt]).defaultRepresentation).defaultRepresentation)).payload).as[ListTHs].list
+            val listMsg = broker.call(ListTHsMsgImpl(organizerID, ListTHsImpl(List.empty[TreasureHunt]).defaultRepresentation).defaultRepresentation)
+            ths = Json.parse(toMessage(listMsg).payload).as[ListTHs].list
+            notifyObservers(listMsg)
         }
     }.start()
 
@@ -48,7 +50,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
         val ID = broker call thMsg
         th.ID = ID.toInt
         ths = ths :+ th
-        setRunningTH(ID)
+        setRunningTH(ID.toInt)
         notifyObservers(thMsg)
     }
 
@@ -71,7 +73,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
         broker send (StateMsgImpl(organizerID, StateImpl(StateType.Start, runningTH.ID).defaultRepresentation) defaultRepresentation)
     }
 
-    def setRunningTH(ID: String): Unit = {
+    def setRunningTH(ID: Int): Unit = {
         for (th <- ths) {
             if (th.ID == ID) {
                 runningTH = th
