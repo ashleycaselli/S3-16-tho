@@ -5,6 +5,8 @@ import java.sql.Connection
 import domain.{TreasureHunt, TreasureHuntImpl}
 import utils.{DBConnectionManager, DBConnectionManagerImpl}
 
+import scala.collection.mutable.ListBuffer
+
 trait TreasureHuntDB {
     /**
       * Method to insert a new treasure hunt in the DB
@@ -59,7 +61,7 @@ case class TreasureHuntDBImpl() extends TreasureHuntDB {
       * Method to view the list of TH of an Organizer
       */
     override def viewTreasureHuntList(idOrganizer: Int) = {
-        val thList: List[TreasureHunt] = null
+        var thList: ListBuffer[TreasureHunt] = ListBuffer.empty
 
         val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
         val connection: Connection = connectionManager.establishConnection
@@ -73,9 +75,9 @@ case class TreasureHuntDBImpl() extends TreasureHuntDB {
             s"AND event_type = 9)"
         val rs = statement.executeQuery(query)
         while (rs.next) {
-            thList :+ TreasureHuntImpl(rs.getInt("id_treasure_hunt"), rs.getString("name"), rs.getString("location"), rs.getString("start_date"), rs.getString("start_time"))
+            thList += TreasureHuntImpl(rs.getInt("id_treasure_hunt"), rs.getString("name"), rs.getString("location"), rs.getString("start_date"), rs.getString("start_time"))
         }
         connection.close()
-        thList
+        thList.toList
     }
 }
