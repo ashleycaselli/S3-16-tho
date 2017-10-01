@@ -24,6 +24,10 @@ trait THModel extends Observable[String] {
     def getCode: Int
 
     def startHunt(): Unit
+
+    def stopHunt(): Unit
+
+    def isTHRunning(): Boolean
 }
 
 class THModelImpl(override var broker: Broker) extends THModel {
@@ -31,8 +35,8 @@ class THModelImpl(override var broker: Broker) extends THModel {
     require(broker != null)
 
     private val organizerID = "1"
-    private var runningTH: TreasureHunt = _
-
+    private var runningTH: TreasureHunt = null
+    private var THStarted = false //TODO ask to server
     private var ths: List[TreasureHunt] = List empty
     private var pois: List[POI] = List empty
 
@@ -71,6 +75,13 @@ class THModelImpl(override var broker: Broker) extends THModel {
     override def startHunt(): Unit = {
         require(runningTH != null)
         broker send (StateMsgImpl(organizerID, StateImpl(StateType.Start, runningTH.ID).defaultRepresentation) defaultRepresentation)
+        THStarted = true
+    }
+
+    override def stopHunt(): Unit = {
+        require(runningTH != null)
+        broker send (StateMsgImpl(organizerID, StateImpl(StateType.Stop, runningTH.ID).defaultRepresentation) defaultRepresentation)
+        THStarted = false
     }
 
     def setRunningTH(ID: Int): Unit = {
@@ -79,6 +90,10 @@ class THModelImpl(override var broker: Broker) extends THModel {
                 runningTH = th
             }
         }
+    }
+
+    override def isTHRunning(): Boolean = {
+        THStarted
     }
 
     def toMessage(string: String): Message = Json.parse(string).as[Message]

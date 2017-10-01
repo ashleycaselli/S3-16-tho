@@ -101,12 +101,19 @@ public class MapView extends JFrame implements OrganizerView {
             JOptionPane.showMessageDialog(dialog, "Treasure Hunt started.\nDon't forget to create a code.");
         }));
         this.buttonList.add(startHuntButton);
-        JButton showPlayersButton = new JButton(Strings.SHOW_PLAYERS_BUTTON);
-        showPlayersButton.setPreferredSize(new Dimension(300, 45));
-        showPlayersButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
-
+        JButton stopHuntButton = new JButton(Strings.STOP_HUNT_BUTTON);
+        stopHuntButton.setPreferredSize(new Dimension(300, 45));
+        stopHuntButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
+            if (controller.isTHRunning()) {
+                controller.stopHunt();
+                JFrame dialog = new JFrame();
+                JOptionPane.showMessageDialog(dialog, "Treasure Hunt stopped.");
+            } else {
+                JFrame dialog = new JFrame();
+                JOptionPane.showMessageDialog(dialog, "Already stopped.");
+            }
         }));
-        this.buttonList.add(showPlayersButton);
+        this.buttonList.add(stopHuntButton);
         c.anchor = GridBagConstraints.LINE_START;
         this.buttonList.forEach(button -> {
             button.setFont(Resources.DEFAULT_FONT);
