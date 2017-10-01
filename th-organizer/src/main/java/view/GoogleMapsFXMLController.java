@@ -8,9 +8,7 @@ import com.lynden.gmapsfx.service.geocoding.GeocoderStatus;
 import com.lynden.gmapsfx.service.geocoding.GeocodingResult;
 import com.lynden.gmapsfx.service.geocoding.GeocodingService;
 import controller.THOrganizer$;
-import domain.POIImpl;
-import domain.PositionImpl;
-import domain.TreasureHunt;
+import domain.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -70,24 +68,43 @@ public class GoogleMapsFXMLController implements Initializable, MapComponentInit
         this.map = this.mapView.createMap(mapOptions);
         this.map.addMouseEventHandler(UIEventType.click, mouseEvent -> {
             String name;
+            String clue;
+            String quiz;
+            String answer;
             TextInputDialog dialog = new TextInputDialog("Insert POI name");
             dialog.initStyle(StageStyle.UTILITY);
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
                 name = result.get();
-                LatLong poiLocation = mouseEvent.getLatLong();
-                MarkerOptions poiMarkerOptions = new MarkerOptions();
-                poiMarkerOptions.position(poiLocation);
-                Marker poiMarker = new Marker(poiMarkerOptions);
-                this.map.addMarker(poiMarker);
-                InfoWindowOptions infoWindowOptions = new InfoWindowOptions();
-                infoWindowOptions.content("<h4>" + name + "</h4>");
-                InfoWindow poiWindow = new InfoWindow(infoWindowOptions);
-                poiWindow.open(this.map, poiMarker);
-                THOrganizer$.MODULE$.instance().addPoi(new POIImpl(new PositionImpl(poiLocation.getLatitude(), poiLocation.getLongitude()), name, this.currentTreasureHunt.ID(), null, null));
+                dialog = new TextInputDialog("Clue");
+                result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    clue = result.get();
+                    dialog = new TextInputDialog("Quiz");
+                    result = dialog.showAndWait();
+                    if (result.isPresent()) {
+                        quiz = result.get();
+                        dialog = new TextInputDialog("Answer");
+                        result = dialog.showAndWait();
+                        if (result.isPresent()) {
+                            answer = result.get();
+                            LatLong poiLocation = mouseEvent.getLatLong();
+                            MarkerOptions poiMarkerOptions = new MarkerOptions();
+                            poiMarkerOptions.position(poiLocation);
+                            Marker poiMarker = new Marker(poiMarkerOptions);
+                            GoogleMapsFXMLController.this.map.addMarker(poiMarker);
+                            InfoWindowOptions infoWindowOptions = new InfoWindowOptions();
+                            infoWindowOptions.content("<h4>" + name + "</h4>");
+                            InfoWindow poiWindow = new InfoWindow(infoWindowOptions);
+                            poiWindow.open(GoogleMapsFXMLController.this.map, poiMarker);
+                            THOrganizer$.MODULE$.instance().addPoi(new POIImpl(new PositionImpl(poiLocation.getLatitude(), poiLocation.getLongitude()), name, GoogleMapsFXMLController.this.currentTreasureHunt.ID(), new QuizImpl(quiz, answer), new ClueImpl(clue)));
+                        }
+                    }
+                }
             }
         });
     }
+
 
     @Override
     public void initialize(final URL location, final ResourceBundle resources) {
