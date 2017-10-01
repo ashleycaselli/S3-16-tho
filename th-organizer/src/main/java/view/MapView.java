@@ -112,8 +112,10 @@ public class MapView extends JFrame implements OrganizerView {
             button.setFont(Resources.DEFAULT_FONT);
             c.gridy++;
             this.add(button, c);
-            button.setEnabled(false);
         });
+        if (this.currentTreasureHunt.location() == null) {
+            this.buttonList.forEach(button -> button.setEnabled(false));
+        }
 
         this.googleMapsPanel = new GoogleMapsPanel(this.googleMapsController);
         c.fill = GridBagConstraints.HORIZONTAL;

@@ -116,6 +116,10 @@ public class GoogleMapsFXMLController implements Initializable, MapComponentInit
             this.addressTextField.setDisable(true);
             THOrganizer$.MODULE$.instance().createTreasureHunt(this.currentTreasureHunt);
         });
+        if (this.currentTreasureHunt.location() != null) {
+            this.confirmButton.setDisable(true);
+            this.addressTextField.setDisable(true);
+        }
     }
 
 }
