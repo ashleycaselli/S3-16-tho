@@ -51,11 +51,11 @@ class THModelImpl(override var broker: Broker) extends THModel {
     override def addTreasureHunt(th: TreasureHunt): Unit = {
         require(ths != null && !ths.contains(th))
         val thMsg = TreasureHuntMsgImpl(organizerID, th defaultRepresentation).defaultRepresentation
-        val ID = broker call thMsg
-        th.ID = ID.toInt
+        val ID = (broker call thMsg).toInt
+        th.ID = ID
         ths = ths :+ th
-        setRunningTH(ID.toInt)
-        notifyObservers(thMsg)
+        setRunningTH(ID)
+        notifyObservers(TreasureHuntMsgImpl(organizerID, th defaultRepresentation).defaultRepresentation)
     }
 
     override def getTreasureHunts: List[TreasureHunt] = ths
