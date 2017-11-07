@@ -35,7 +35,7 @@ class NewQuizDBTest extends FunSuite with BeforeAndAfter {
         /*---CHECK IF INSERT IS CORRECT---*/
         rs = statement.executeQuery(s"SELECT * FROM quiz WHERE id_quiz = ${idQuiz}")
         while (rs.next) {
-            assert(rs.getString("text") == question)
+            assert(rs.getString("question") == question)
             assert(rs.getString("answer") == answer)
             assert(rs.getInt("id_organizer") == idOrganizer)
         }

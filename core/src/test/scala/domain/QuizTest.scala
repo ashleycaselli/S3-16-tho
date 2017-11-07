@@ -9,7 +9,7 @@ class QuizTest extends FunSuite {
 
     val question = "What time is it?"
     val answer = "Who cares."
-    val quiz = QuizImpl(question, answer)
+    val quiz = QuizImpl(question = question, answer = answer)
 
     test("Question must be not empty") {
         assert(quiz.question.nonEmpty)

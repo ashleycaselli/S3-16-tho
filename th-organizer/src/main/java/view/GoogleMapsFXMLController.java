@@ -97,7 +97,7 @@ public class GoogleMapsFXMLController implements Initializable, MapComponentInit
                             infoWindowOptions.content("<h4>" + name + "</h4>");
                             InfoWindow poiWindow = new InfoWindow(infoWindowOptions);
                             poiWindow.open(GoogleMapsFXMLController.this.map, poiMarker);
-                            THOrganizer$.MODULE$.instance().addPoi(new POIImpl(new PositionImpl(poiLocation.getLatitude(), poiLocation.getLongitude()), name, GoogleMapsFXMLController.this.currentTreasureHunt.ID(), new QuizImpl(quiz, answer), new ClueImpl(clue)));
+                            THOrganizer$.MODULE$.instance().addPoi(new POIImpl(0, new PositionImpl(poiLocation.getLatitude(), poiLocation.getLongitude()), name, GoogleMapsFXMLController.this.currentTreasureHunt.ID(), new QuizImpl(0, quiz, answer), new ClueImpl(0, clue)));
                         }
                     }
                 }

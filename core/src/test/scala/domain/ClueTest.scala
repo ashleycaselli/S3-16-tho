@@ -12,7 +12,7 @@ class ClueTest extends FunSuite with BeforeAndAfter {
     val logger = Logger(LoggerFactory.getLogger("test"))
 
     before {
-        clue = ClueImpl(clueText)
+        clue = ClueImpl(content = clueText)
     }
 
     test("Clue content must be a String") {

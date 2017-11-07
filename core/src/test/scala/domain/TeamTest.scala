@@ -5,8 +5,8 @@ import org.scalatest.FunSuite
 class TeamTest extends FunSuite {
 
     val name = "TestTeam"
-    val players = Seq(PlayerImpl("Player0"), PlayerImpl("Player1"))
-    val poi: POI = POIImpl(PositionImpl(45.467255, 9.1896145), "POI-0", 0)
+    val players = Seq(PlayerImpl(name = "Mario", surname = "Super", email = "mario@super.bros"), PlayerImpl(name = "Luigi", surname = "Super", email = "luigi@super.bros"))
+    val poi: POI = POIImpl(position = PositionImpl(45.467255, 9.1896145), name = "POI-0", treasureHuntID = 0)
     val team = TeamImpl(name, poi)
 
     test("Checking the Team's name") {
@@ -27,11 +27,11 @@ class TeamTest extends FunSuite {
     }
 
     test("Checking player addition to the team") {
-        val newPlayer = PlayerImpl("Player2")
+        val newPlayer = PlayerImpl(name = "Peach", surname = "Super", email = "peach@super.bros")
         assert(team.players.isEmpty)
         team.addPlayer(newPlayer)
         assert(team.players.nonEmpty)
-        val newPlayer2 = PlayerImpl("Player3")
+        val newPlayer2 = PlayerImpl(name = "Turtle", surname = "Super", email = "turtle@super.bros")
         team.addPlayer(newPlayer2)
         assert(team.players.contains(newPlayer))
         assert(team.players.contains(newPlayer2))

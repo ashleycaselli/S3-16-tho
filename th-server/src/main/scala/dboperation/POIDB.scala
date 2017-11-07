@@ -2,18 +2,19 @@ package dboperation
 
 import java.sql.Connection
 
+import domain._
 import utils.{DBConnectionManager, DBConnectionManagerImpl}
+
+import scala.collection.mutable.ListBuffer
 
 trait POIDB {
     /**
       * Method to insert a new POI in the DB
       *
-      * @param name        name of the POI
-      * @param latitude    Latitude of the POI
-      * @param longitude   Longitude of the POI
+      * @param poi         the POI that we have to insert in the DB
       * @param idOrganizer organizer that have created this quiz
       */
-    def insertNewPOI(name: String, latitude: Double, longitude: Double, idOrganizer: Int): Int
+    def insertNewPOI(poi: POI, idOrganizer: Int): Int
 
     /**
       * Method to assign a Clue to a POI in the DB
@@ -31,6 +32,14 @@ trait POIDB {
       */
     def setQuiz(idPOI: Int, idQuiz: Int)
 
+    /**
+      * Method to get a list of POIs of a treasure hunt (with their quiz and clue)
+      *
+      * @param idTreasureHunt identifier of the selected Treasure Hunt
+      * @return a list of POIs
+      */
+    def getPOIsList(idTreasureHunt: Int): ListBuffer[POI]
+
 
 }
 
@@ -38,16 +47,14 @@ case class POIDBImpl() extends POIDB {
     /**
       * Method to insert a new POI in the DB
       *
-      * @param name        name of the POI
-      * @param latitude    Latitude of the POI
-      * @param longitude   Longitude of the POI
-      * @param idOrganizer organizer that have created this quiz
+      * @param poi         the POI that we have to insert in the DB
+      * @param idOrganizer organizer that have created this POI
       */
-    override def insertNewPOI(name: String, latitude: Double, longitude: Double, idOrganizer: Int): Int = {
+    override def insertNewPOI(poi: POI, idOrganizer: Int): Int = {
         val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
         val connection: Connection = connectionManager.establishConnection
         val statement = connection.createStatement
-        var query = s"INSERT INTO point_of_interest (name,latitude,longitude,id_organizer) VALUES ('${name}',${latitude},${longitude},${idOrganizer})"
+        var query = s"INSERT INTO point_of_interest (name,latitude,longitude,id_organizer) VALUES ('${poi.name}',${poi.position.latitude},${poi.position.longitude},${idOrganizer})"
         statement.executeUpdate(query)
         query = s"SELECT MAX(id_poi) FROM point_of_interest"
         val rs = statement.executeQuery(query)
@@ -55,6 +62,8 @@ case class POIDBImpl() extends POIDB {
         while (rs.next) {
             idNewPOI = rs.getInt(1)
         }
+        query = s"INSERT INTO poi_in_treasure_hunt (id_poi, id_treasure_hunt) VALUES (${idNewPOI},${poi.treasureHuntID})"
+        statement.executeUpdate(query)
         connection.close()
         idNewPOI
     }
@@ -87,5 +96,48 @@ case class POIDBImpl() extends POIDB {
         val query = s"UPDATE point_of_interest SET id_quiz = ${idQuiz} WHERE id_poi = ${idPOI}"
         statement.executeUpdate(query)
         connection.close()
+    }
+
+    /**
+      * Method to get a list of POIs of a treasure hunt (with their quiz and clue)
+      *
+      * @param idTreasureHunt identifier of the selected Treasure Hunt
+      * @return a list of POIs
+      */
+    override def getPOIsList(idTreasureHunt: Int) = {
+        var poisList: ListBuffer[POI] = ListBuffer.empty
+        val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
+        val connection: Connection = connectionManager.establishConnection
+        val statement = connection.createStatement
+        val query = s"SELECT " +
+            s"p.id_poi AS idPoi, " +
+            s"p.name AS poiName, " +
+            s"p.latitude AS latitude, " +
+            s"p.longitude AS longitude, " +
+            s"p.id_quiz AS idQuiz, " +
+            s"q.question AS question, " +
+            s"q.answer AS answer, " +
+            s"p.id_clue AS idClue, " +
+            s"c.clue_text AS clueText " +
+            s"FROM " +
+            s"point_of_interest p, " +
+            s"poi_in_treasure_hunt pth, " +
+            s"clue c, " +
+            s"quiz q " +
+            s"WHERE pth.id_poi = p.id_poi " +
+            s"AND pth.id_treasure_hunt = ${idTreasureHunt} " +
+            s"AND p.id_quiz = q.id_quiz " +
+            s"AND p.id_clue = c.id_clue;"
+        val rs = statement.executeQuery(query)
+        while (rs.next) {
+            val idPoi = rs.getInt("idPoi")
+            val position = PositionImpl(rs.getDouble("latitude"), rs.getDouble("longitude"))
+            val name = rs.getString("poiName")
+            val quiz = QuizImpl(rs.getInt("idQuiz"), rs.getString("question"), rs.getString("answer"))
+            val clue = ClueImpl(rs.getInt("idClue"), rs.getString("clueText"))
+            poisList += POIImpl(idPoi, position, name, idTreasureHunt, quiz, clue)
+        }
+        connection.close()
+        poisList
     }
 }
