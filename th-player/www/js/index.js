@@ -28,6 +28,7 @@ var app = {
 
     // deviceready Event Handler
     onDeviceReady: function () {
+        stompJS();
         this.resumeTreasureHuntButton();
         this.leaveTreasureHuntButton();
     },
@@ -52,6 +53,20 @@ var app = {
     }
 
 };
+
+function stompJS() {
+    var ws = new WebSocket('ws://127.0.0.1:15674/ws');
+    var client = Stomp.over(ws);
+    var on_connect = function () {
+        console.log('connected');
+        client.send('/amq/queue/hello', {"content-type": "text/plain"}, "prova stomp client");
+        // var subscription = client.subscribe("/queue/test", callback);
+    };
+    var on_error = function () {
+        console.log('error');
+    };
+    client.connect('guest', 'guest', on_connect, on_error, '/');
+}
 
 //-----------------------------select-tho-----------------------------------
 function showCurrentTreasureHunt() {
