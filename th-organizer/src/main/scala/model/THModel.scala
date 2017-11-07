@@ -63,8 +63,9 @@ class THModelImpl(override var broker: Broker) extends THModel {
     override def addPOI(poi: POI): Unit = {
         require(pois != null && !pois.contains(poi))
         val poiMsg = PoiMsgImpl(organizerID, poi defaultRepresentation).defaultRepresentation
-        broker send poiMsg
-        pois = pois :+ poi
+        val message = toMessage(broker call poiMsg)
+        val poiWithIDs = Json.parse(message.payload).as[POI]
+        pois = pois :+ poiWithIDs
         notifyObservers(poiMsg)
     }
 

@@ -15,7 +15,7 @@ class QuizMsgTest extends FunSuite with BeforeAndAfter {
     val logger = Logger[QuizMsgTest]
 
     before {
-        quiz = QuizImpl(quizQuestion, quizAnswer)
+        quiz = QuizImpl(question = quizQuestion, answer = quizAnswer)
         quizMessage = QuizMsgImpl(sender, quiz.defaultRepresentation)
     }
 

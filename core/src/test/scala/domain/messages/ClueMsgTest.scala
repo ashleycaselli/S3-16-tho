@@ -14,7 +14,7 @@ class ClueMsgTest extends FunSuite with BeforeAndAfter {
     val logger = Logger[ClueMsgTest]
 
     before {
-        clue = ClueImpl(clueText)
+        clue = ClueImpl(content = clueText)
         clueMessage = ClueMsgImpl(sender, clue.defaultRepresentation)
     }
 

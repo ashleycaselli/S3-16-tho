@@ -27,7 +27,7 @@ case class NewQuizDBImpl() extends NewQuizDB {
         val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
         val connection: Connection = connectionManager.establishConnection
         val statement = connection.createStatement
-        var query = s"INSERT INTO quiz (text,answer,id_organizer) VALUES ('${question}','${answer}',${idOrganizer})"
+        var query = s"INSERT INTO quiz (question,answer,id_organizer) VALUES ('${question}','${answer}',${idOrganizer})"
         statement.executeUpdate(query)
         query = s"SELECT MAX(id_quiz) FROM quiz"
         val rs = statement.executeQuery(query)

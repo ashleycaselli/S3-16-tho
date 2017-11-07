@@ -37,13 +37,13 @@ public class Send {
     }
 
     public String sendClue() throws Exception {
-        String message1 = new ClueMsgImpl(this.sender, new ClueImpl("contenuto").defaultRepresentation()).defaultRepresentation();
+        String message1 = new ClueMsgImpl(this.sender, new ClueImpl(0, "contenuto").defaultRepresentation()).defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message1.getBytes());
         return message1;
     }
 
     public String sendQuiz() throws Exception {
-        String message2 = new QuizMsgImpl(this.sender, new QuizImpl("domanda", "risposta").defaultRepresentation()).defaultRepresentation();
+        String message2 = new QuizMsgImpl(this.sender, new QuizImpl(0, "domanda", "risposta").defaultRepresentation()).defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message2.getBytes());
         return message2;
     }
@@ -61,7 +61,7 @@ public class Send {
     }
 
     public String sendPoi() throws Exception {
-        POI poi = new POIImpl(new PositionImpl(44.55432, 45.83654), "test POI", 0, new QuizImpl("question", "answer"), new ClueImpl("clue"));
+        POI poi = new POIImpl(0, new PositionImpl(44.55432, 45.83654), "test POI", 0, new QuizImpl(0, "question", "answer"), new ClueImpl(0, "clue"));
         String message = new PoiMsgImpl("sender", poi.defaultRepresentation()).defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message.getBytes());
         return message;

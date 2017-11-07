@@ -1,11 +1,25 @@
 package domain
 
-import play.api.libs.json.{JsPath, Json, Reads}
+import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
 /** An Entity that contains a Question and an Answer
   *
   */
 trait Quiz extends Serializable {
+
+    /**
+      * Property to get the Quiz's ID.
+      *
+      * @return the Quiz's ID
+      */
+    def ID: Int
+
+    /**
+      * Property to set the Quiz's ID.
+      *
+      * @param ID a numeric Identifier
+      */
+    def ID_=(ID: Int): Unit
 
     /**
       * Property to get Question.
@@ -38,9 +52,31 @@ trait Quiz extends Serializable {
 }
 
 
-case class QuizImpl(override var question: String, override var answer: String) extends Quiz {
+case class QuizImpl(private var _ID: Int = 0, override var question: String, override var answer: String) extends Quiz {
 
-    implicit val quizWrites = Json.writes[QuizImpl]
+    implicit val quizWrites = new Writes[QuizImpl] {
+        def writes(quiz: QuizImpl) = Json.obj(
+            "ID" -> ID,
+            "question" -> question,
+            "answer" -> answer)
+    }
+
+    /**
+      * Property to get the Quiz's ID
+      *
+      * @return an Int that contains the Quiz's ID
+      */
+    override def ID: Int = _ID
+
+    /**
+      * Property to set the Quiz's ID
+      *
+      * @param ID the Quiz's ID
+      */
+    override def ID_=(ID: Int): Unit = {
+        require(ID >= 0)
+        _ID = ID
+    }
 
     /**
       * Property for getting an entity's String representation.
@@ -53,13 +89,14 @@ case class QuizImpl(override var question: String, override var answer: String) 
 
 object Quiz {
 
-    def apply(question: String, answer: String): Quiz = QuizImpl(question, answer)
+    def apply(ID: Int, question: String, answer: String): Quiz = QuizImpl(ID, question, answer)
 
     import play.api.libs.functional.syntax._
 
     implicit val quizReads: Reads[Quiz] = (
+        (JsPath \ "ID").read[Int] and
             (JsPath \ "question").read[String] and
-                    (JsPath \ "answer").read[String]
-            ) (Quiz.apply _)
+            (JsPath \ "answer").read[String]
+        ) (Quiz.apply _)
 
 }

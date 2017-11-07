@@ -1,11 +1,28 @@
 package domain
 
-import play.api.libs.json.{JsPath, Json, Reads}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 /** An Entity that contains a Clue.
   *
   */
 trait Clue extends Serializable {
+
+
+    /**
+      * Property to get the clue ID.
+      *
+      * @return a Int containing the Clue ID
+      */
+    def ID: Int
+
+    /**
+      * Property to set the clue ID.
+      *
+      * @param ID the value for the Clue ID
+      */
+    def ID_=(ID: Int): Unit
+
     /**
       * Property to get the clue value.
       *
@@ -27,9 +44,31 @@ trait Clue extends Serializable {
   *
   * @param content a string that contains the clue
   */
-case class ClueImpl(override var content: String) extends Clue {
+case class ClueImpl(private var _ID: Int = 0, override var content: String) extends Clue {
 
-    implicit val clueWrites = Json.writes[ClueImpl]
+    implicit val clueWrites = new Writes[ClueImpl] {
+        def writes(quiz: ClueImpl) = Json.obj(
+            "ID" -> ID,
+            "content" -> content)
+    }
+
+    /**
+      * Property to get the Clue's ID
+      *
+      * @return an Int that contains the Clue's ID
+      */
+    override def ID: Int = _ID
+
+    /**
+      * Property to set the Clue's ID
+      *
+      * @param ID the Clue's ID
+      */
+    override def ID_=(ID: Int): Unit = {
+        require(ID >= 0)
+        _ID = ID
+    }
+
 
     /**
       * Property for getting an entity's String representation.
@@ -42,8 +81,11 @@ case class ClueImpl(override var content: String) extends Clue {
 
 object Clue {
 
-    def apply(content: String): ClueImpl = ClueImpl(content)
+    def apply(ID: Int, content: String): ClueImpl = ClueImpl(ID, content)
 
-    implicit val clueReads: Reads[Clue] = (JsPath \ "content").read[String].map(Clue.apply)
+    implicit val clueReads: Reads[Clue] = (
+        (JsPath \ "ID").read[Int] and
+            (JsPath \ "content").read[String]
+        ) (Clue.apply _)
 
 }

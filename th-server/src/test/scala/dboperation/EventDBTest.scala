@@ -48,7 +48,7 @@ class EventDBTest extends FunSuite with BeforeAndAfter {
         val idTH: Int = 1
         val idTeam: Int = 1
         val eventType = 2
-        val idPOI: Int = 6
+        val idPOI: Int = 1
 
         eventDB.teamReachPOI(idTH, idTeam, idPOI)
 

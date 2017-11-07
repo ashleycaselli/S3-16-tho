@@ -7,6 +7,21 @@ import play.api.libs.json._
   *
   */
 trait POI extends Positionable with Serializable {
+
+    /**
+      * Property to get the POI's ID
+      *
+      * @return an Int that contains the POI's ID
+      */
+    def ID: Int
+
+    /**
+      * Property to set the POI's ID
+      *
+      * @param ID the POI's ID
+      */
+    def ID_=(ID: Int): Unit
+
     /**
       * Property to get the POI's name
       *
@@ -58,15 +73,33 @@ trait POI extends Positionable with Serializable {
   * @param _quiz    a Quiz for POI. null if not specified
   * @param _clue    a Clue for POI. null if not specified
   */
-case class POIImpl(override var position: Position, override val name: String, override val treasureHuntID: Int, private var _quiz: Quiz = null, private var _clue: Clue = null) extends POI {
+case class POIImpl(private var _ID: Int = 0, override var position: Position, override val name: String, override val treasureHuntID: Int, private var _quiz: Quiz = null, private var _clue: Clue = null) extends POI {
 
     implicit val poiWrites = new Writes[POIImpl] {
         def writes(poi: POIImpl) = Json.obj(
+            "id" -> ID,
             "name" -> name,
             "treasureHuntID" -> treasureHuntID,
             "position" -> position.defaultRepresentation,
             "quiz" -> quiz.defaultRepresentation,
             "clue" -> clue.defaultRepresentation)
+    }
+
+    /**
+      * Property to get the POI's ID
+      *
+      * @return an Int that contains the POI's ID
+      */
+    override def ID: Int = _ID
+
+    /**
+      * Property to set the POI's ID
+      *
+      * @param ID the POI's ID
+      */
+    override def ID_=(ID: Int): Unit = {
+        require(ID >= 0)
+        _ID = ID
     }
 
     /**
@@ -114,15 +147,16 @@ case class POIImpl(override var position: Position, override val name: String, o
 
 object POI {
 
-    def apply(name: String, treasureHuntID: Int, position: String, quiz: String, clue: String): POIImpl = POIImpl(Json.parse(position).as[Position], name, treasureHuntID, Json.parse(quiz).as[Quiz], Json.parse(clue).as[Clue])
+    def apply(ID: Int, name: String, treasureHuntID: Int, position: String, quiz: String, clue: String): POIImpl = POIImpl(ID, Json.parse(position).as[Position], name, treasureHuntID, Json.parse(quiz).as[Quiz], Json.parse(clue).as[Clue])
 
     implicit val poiReads: Reads[POI] = (
+        (JsPath \ "ID").read[Int] and
             (JsPath \ "name").read[String] and
-                    (JsPath \ "treasureHuntID").read[Int] and
-                    (JsPath \ "position").read[String] and
-                    (JsPath \ "quiz").read[String] and
-                    (JsPath \ "clue").read[String]
-            ) (POI.apply _)
+            (JsPath \ "treasureHuntID").read[Int] and
+            (JsPath \ "position").read[String] and
+            (JsPath \ "quiz").read[String] and
+            (JsPath \ "clue").read[String]
+        ) (POI.apply _)
 
 }
 
@@ -148,6 +182,7 @@ case class ListPOIsImpl(override val list: List[POI]) extends ListPOIs {
             "list" -> Json.toJson(list)(
                 (list: List[POI]) => JsArray(list.map(e => Json.toJson(e)(
                     (poi: POI) => Json.obj(
+                        "ID" -> poi.ID,
                         "name" -> poi.name,
                         "treasureHuntID" -> poi.treasureHuntID,
                         "position" -> poi.position.defaultRepresentation,

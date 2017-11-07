@@ -62,7 +62,6 @@ case class TreasureHuntDBImpl() extends TreasureHuntDB {
       */
     override def viewTreasureHuntList(idOrganizer: Int) = {
         var thList: ListBuffer[TreasureHunt] = ListBuffer.empty
-
         val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
         val connection: Connection = connectionManager.establishConnection
         val statement = connection.createStatement
