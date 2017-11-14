@@ -2,70 +2,56 @@
 var lastClueText = "text text text text text text text text text text text text text text text text text text ";
 var loggedTeam;
 var currentHunt;
-var app = {
-    // Application Constructor
-    initialize: function () {
-        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
 
-        //load saved data
-        loggedTeam = localStorage.getItem('loggedTeam');
-        currentHunt = localStorage.getItem('currentHunt');
+document.addEventListener("deviceready", onDeviceReady, false);
 
-        //check if logged team exists
-        if (loggedTeam != null) {
-            showLoggedTeamName();
-        } else {
-            showNotLoggedUser();
-        }
+function onDeviceReady() {
+    //load saved data
+    loggedTeam = localStorage.getItem('loggedTeam');
+    currentHunt = localStorage.getItem('currentHunt');
 
-        //check if a TH is running
+    //check if logged team exists
+    if (loggedTeam != null) {
+        showLoggedTeamName();
         if (currentHunt != null) {
             showCurrentTreasureHunt();
         } else {
             showNearTreasureHunt()
         }
-    },
-
-    // deviceready Event Handler
-    onDeviceReady: function () {
-        stompJS();
-        this.resumeTreasureHuntButton();
-        this.leaveTreasureHuntButton();
-    },
-
-    // Update DOM on a Received Event
-    resumeTreasureHuntButton: function () {
-        var resume = document.getElementById("resumeButton");
-        resume.onclick = function () {
-            document.getElementById("selectTreasureHuntPage").style.display = "none";
-            document.getElementById("mapPage").style.display = "block";
-            document.getElementById("currentTreasureHunt").style.display = "none";
-        }
-    },
-    leaveTreasureHuntButton: function () {
-        var leave = document.getElementById("leaveButton");
-        leave.onclick = function () {
-            localStorage.removeItem('currentHunt');
-            currentHunt = "";
-            document.getElementById("currentTreasureHunt").style.display = "none";
-            showNearTreasureHunt();
-        }
+    } else {
+        showNotLoggedUser();
     }
 
-};
+    stompJS("test");
+}
 
-function stompJS() {
-    var ws = new WebSocket('ws://127.0.0.1:15674/ws');
+function stompJS(message) {
+    var ws = new WebSocket('ws://52.14.140.101:15674/ws');
     var client = Stomp.over(ws);
     var on_connect = function () {
         console.log('connected');
-        client.send('/amq/queue/hello', {"content-type": "text/plain"}, "prova stomp client");
+        client.send('/amq/queue/rpc-queue', {"content-type": "text/plain"}, message);
+        alert("sent");
         // var subscription = client.subscribe("/queue/test", callback);
     };
     var on_error = function () {
-        console.log('error');
+        alert('error');
     };
-    client.connect('guest', 'guest', on_connect, on_error, '/');
+    client.connect('guest', 'guest', on_connect, on_error, "/");
+}
+
+function resumeTreasureHunt() {
+    document.getElementById("selectTreasureHuntPage").style.display = "none";
+    document.getElementById("mapPage").style.display = "block";
+    document.getElementById("mapPageTitle").innerText = currentHunt;
+    document.getElementById("currentTreasureHunt").style.display = "none";
+}
+
+function leaveTreasureHunt() {
+    localStorage.removeItem('currentHunt');
+    currentHunt = "";
+    document.getElementById("currentTreasureHunt").style.display = "none";
+    showNearTreasureHunt();
 }
 
 //-----------------------------select-tho-----------------------------------
@@ -133,14 +119,17 @@ function checkScanResults(selectedTH, result) {
 
 //-------------------------------MAP----------------------------------------
 function loadMapPage() {
-    var mapScript = document.createElement('script');
-    mapScript.setAttribute('src', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBNQr4YcrvttSMIgWOX68kJnigaI0Cir9c&callback=mapLoadedCallback');
-    document.head.appendChild(mapScript);
-    document.getElementById("mapPageTitle").innerText = currentHunt;
     document.getElementById("mapPage").style.display = "block";
+    document.getElementById("googleMap").style.display = "block";
+    document.getElementById("mapPageTitle").innerText = currentHunt;
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBNQr4YcrvttSMIgWOX68kJnigaI0Cir9c&callback=mapLoadedCallback';
+    document.head.appendChild(script);
 }
 
 function mapLoadedCallback() {
+    alert("cb");
     getLocation(function (firstLatitude, firstLongitude) {
         var mapProp = {
             center: new google.maps.LatLng(firstLatitude, firstLongitude),
@@ -276,6 +265,12 @@ function createTeam() {
         //TODO create team
     }
     showLoggedTeamName()
+    //check if a TH is running
+    if (currentHunt != null) {
+        showCurrentTreasureHunt();
+    } else {
+        showNearTreasureHunt()
+    }
 }
 
 function showLoginTeamPage() {
@@ -288,11 +283,16 @@ function loginTeam() {
     document.getElementById("notLoggedUserPage").style.display = "none";
     //TODO check correct data
     loggedTeam = document.getElementById("loginTeamNameInput").value;
+    localStorage.setItem('loggedTeam', loggedTeam);
     showLoggedTeamName()
+    //check if a TH is running
+    if (currentHunt != null) {
+        showCurrentTreasureHunt();
+    } else {
+        showNearTreasureHunt()
+    }
 }
 
 function logoutTeam() {
     document.getElementById("createOrLogin").style.display = "block";
 }
-
-app.initialize();
