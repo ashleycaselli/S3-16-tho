@@ -3,6 +3,8 @@ package domain
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+import scala.collection.mutable.ListBuffer
+
 /** A point of interest on the map
   *
   */
@@ -77,7 +79,7 @@ case class POIImpl(private var _ID: Int = 0, override var position: Position, ov
 
     implicit val poiWrites = new Writes[POIImpl] {
         def writes(poi: POIImpl) = Json.obj(
-            "id" -> ID,
+            "ID" -> ID,
             "name" -> name,
             "treasureHuntID" -> treasureHuntID,
             "position" -> position.defaultRepresentation,
@@ -166,7 +168,7 @@ trait ListPOIs extends Serializable {
       *
       * @return
       */
-    def list: scala.collection.immutable.List[POI]
+    def list: scala.collection.mutable.ListBuffer[POI]
 
 }
 
@@ -175,12 +177,12 @@ trait ListPOIs extends Serializable {
   *
   * @param list a string that contains the list
   */
-case class ListPOIsImpl(override val list: List[POI]) extends ListPOIs {
+case class ListPOIsImpl(override val list: ListBuffer[POI]) extends ListPOIs {
 
     implicit val listPOIsWrites = new Writes[ListPOIsImpl] {
         def writes(listPOIs: ListPOIsImpl) = Json.obj(
             "list" -> Json.toJson(list)(
-                (list: List[POI]) => JsArray(list.map(e => Json.toJson(e)(
+                (list: ListBuffer[POI]) => JsArray(list.map(e => Json.toJson(e)(
                     (poi: POI) => Json.obj(
                         "ID" -> poi.ID,
                         "name" -> poi.name,
@@ -205,7 +207,7 @@ case class ListPOIsImpl(override val list: List[POI]) extends ListPOIs {
 
 object ListPOIs {
 
-    def apply(list: JsArray): ListPOIsImpl = ListPOIsImpl(list.as[List[POI]])
+    def apply(list: JsArray): ListPOIsImpl = ListPOIsImpl(list.as[ListBuffer[POI]])
 
     implicit val listPOIsReads: Reads[ListPOIs] = (JsPath \ "list").read[JsArray].map(ListPOIs.apply)
 

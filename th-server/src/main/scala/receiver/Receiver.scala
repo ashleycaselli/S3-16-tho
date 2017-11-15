@@ -39,51 +39,53 @@ class ReceiverImpl extends Receiver {
                 val sender = message.sender.toInt
                 val mType = message.messageType
                 val payload = message.payload
-                if (mType == msgType.TreasureHunt) { // received if organizer creates a new TreasureHunt
-                    val idOrganizer = sender
-                    val th = Json.parse(payload).as[TreasureHunt]
-                    //TODO generate th ID
-                    val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
-                    val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, idOrganizer)
-                    channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, thID.toString.getBytes)
+                mType match {
+                    case msgType.TreasureHunt => {
+                        val idOrganizer = sender
+                        val th = Json.parse(payload).as[TreasureHunt]
+                        val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
+                        val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, idOrganizer)
+                        channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, thID.toString.getBytes)
+                    }
+                    case msgType.ListTHs => {
+                        val idOrganizer = sender
+                        val treasureHuntDB = new TreasureHuntDBImpl
+                        val list = treasureHuntDB.viewTreasureHuntList(idOrganizer)
+                        val message: String = ListTHsMsgImpl("0", ListTHsImpl(list).defaultRepresentation).defaultRepresentation
+                        channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
+                    }
+                    case msgType.ListPOIs => {
+                        val poiDB = new POIDBImpl
+                        val list = poiDB.getPOIsList(payload.toInt)
+                        val message: String = new ListPOIsMsgImpl("0", new ListPOIsImpl(list).defaultRepresentation).defaultRepresentation
+                        channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
+                    }
+                    case msgType.Poi => {
+                        //TODO controllare se sto aggiungendo o eliminando il poi (in base all'id)
+                        val idOrganizer = sender
+                        val poi = Json.parse(payload).as[POI]
+                        val newQuiz: NewQuizDB = new NewQuizDBImpl
+                        val newClue: NewClueDB = new NewClueDBImpl
+                        val poiDB: POIDB = new POIDBImpl
+
+                        val idQuiz = newQuiz.insertNewQuiz(poi.quiz.question, poi.quiz.answer, idOrganizer)
+                        val idClue = newClue.insertNewClue(poi.clue.content, idOrganizer)
+                        val idPOI = poiDB.insertNewPOI(poi, idOrganizer)
+
+                        poiDB.setQuiz(idPOI, idQuiz)
+                        poiDB.setClue(idPOI, idClue)
+
+                        poi.ID = idPOI
+                        poi.quiz.ID = idQuiz
+                        poi.clue.ID = idClue
+
+                        val message: String = PoiMsgImpl("0", poi.defaultRepresentation).defaultRepresentation
+                        channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
+                    }
+                    case _ => {
+                        channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.KO_RESPONSE.getBytes)
+                    }
                 }
-                if (mType == msgType.ListTHs) { // received if organizer requires the Treasure Hunt's list
-                    val idOrganizer = sender
-                    val treasureHuntDB = new TreasureHuntDBImpl
-                    val list = treasureHuntDB.viewTreasureHuntList(idOrganizer)
-                    val message: String = ListTHsMsgImpl("0", ListTHsImpl(list).defaultRepresentation).defaultRepresentation
-                    channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
-                }
-                if (mType == msgType.ListPOIs) { // received if organizer requires the Poi's list
-                    val pois = Json.parse(payload).as[ListPOIs] //TODO delete this line if var pois is not used (probably)
-                    //TODO generate poi list
-                    //val list = List(poi1, poi2, ...)
-                    //val message: String = new ListPOIsMsgImpl("sender", new ListPOIsImpl(list).defaultRepresentation).defaultRepresentation
-                    //channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
-                }
-                if (mType == msgType.Poi) { // received if organizer creates a new POI
-                    val idOrganizer = sender
-                    val poi = Json.parse(payload).as[POI]
-                    val newQuiz: NewQuizDB = new NewQuizDBImpl
-                    val newClue: NewClueDB = new NewClueDBImpl
-                    val poiDB: POIDB = new POIDBImpl
-
-                    val idQuiz = newQuiz.insertNewQuiz(poi.quiz.question, poi.quiz.answer, idOrganizer)
-                    val idClue = newClue.insertNewClue(poi.clue.content, idOrganizer)
-                    val idPOI = poiDB.insertNewPOI(poi, idOrganizer)
-
-                    poiDB.setQuiz(idPOI, idQuiz)
-                    poiDB.setClue(idPOI, idClue)
-
-                    poi.ID = idPOI
-                    poi.quiz.ID = idQuiz
-                    poi.clue.ID = idClue
-
-                    val message: String = PoiMsgImpl("0", poi.defaultRepresentation).defaultRepresentation
-                    channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
-
-                }
-                channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.KO_RESPONSE.getBytes)
             }
         }
         channel.basicConsume(RabbitInfo.QUEUE_NAME, true, consumer)

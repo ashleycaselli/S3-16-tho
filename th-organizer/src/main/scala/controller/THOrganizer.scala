@@ -1,5 +1,6 @@
 package controller
 
+import com.lynden.gmapsfx.javascript.`object`.Marker
 import com.typesafe.scalalogging.Logger
 import domain._
 import model.THModel
@@ -11,15 +12,23 @@ sealed trait THOrganizer {
 
     def createTreasureHunt(treasureHunt: TreasureHunt): Unit
 
-    def addPoi(poi: POI): Unit
+    def addPoi(poi: POI, poiMarker: Marker): Unit
+
+    def deletePoi(poi: POI): Unit
 
     def getPois: Seq[POI]
+
+    def addPoiMarker(poiMarker: Marker, poi: POI): Unit
+
+    def getPoiMarker(poi: POI): Option[Marker]
 
     def getCode: Int
 
     def startHunt(): Unit
 
     def isTHRunning(): Boolean
+
+    def setTHRunning(ID: Int): Unit
 
     def stopHunt(): Unit
 
@@ -43,10 +52,24 @@ class THOrganizerImpl(_model: THModel) extends THOrganizer {
         logger info s"${treasureHunt.name} creation successfully!"
     }
 
-    override def addPoi(poi: POI): Unit = {
+    override def addPoi(poi: POI, poiMarker: Marker): Unit = {
         logger info s"Creating a POI: ${poi.name}"
-        _model addPOI poi
+        _model addPOI (poi)
+        _model addPoiMarker(poiMarker, poi)
         logger info s"${poi.name} added to ${poi.treasureHuntID}"
+    }
+
+    override def deletePoi(poi: POI): Unit = {
+        _model deletePOI (poi)
+        logger info s"POI ${poi.name} deleted"
+    }
+
+    override def addPoiMarker(poiMarker: Marker, poi: POI): Unit = {
+        _model addPoiMarker(poiMarker, poi)
+    }
+
+    override def getPoiMarker(poi: POI): Option[Marker] = {
+        _model getPoiMarker (poi)
     }
 
     override def getPois: Seq[POI] = _model getPOIs
@@ -60,6 +83,8 @@ class THOrganizerImpl(_model: THModel) extends THOrganizer {
     override def stopHunt(): Unit = _model stopHunt()
 
     override def isTHRunning(): Boolean = _model isTHRunning()
+
+    override def setTHRunning(ID: Int): Unit = _model setRunningTH (ID)
 
     def getTreasureHunts: List[TreasureHunt] = _model getTreasureHunts
 

@@ -21,6 +21,8 @@ import javafx.stage.StageStyle;
 import utils.Strings;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -58,6 +60,7 @@ public class GoogleMapsFXMLController implements Initializable, MapComponentInit
     public void mapInitialized() {
         this.geocodingService = new GeocodingService();
         MapOptions mapOptions = new MapOptions();
+
         mapOptions.overviewMapControl(false)
                 .panControl(false)
                 .rotateControl(false)
@@ -65,44 +68,81 @@ public class GoogleMapsFXMLController implements Initializable, MapComponentInit
                 .streetViewControl(false)
                 .zoom(DEFAULT_ZOOM)
                 .center(new LatLong(DEFAULT_LAT, DEFAULT_LONG));
+
+        if (this.currentTreasureHunt.location() != null) {
+            this.geocodingService.geocode(this.currentTreasureHunt.location(), (GeocodingResult[] results, GeocoderStatus status) -> {
+                LatLong latLong;
+                if (status != GeocoderStatus.ZERO_RESULTS) {
+                    latLong = new LatLong(results[0].getGeometry().getLocation().getLatitude(), results[0].getGeometry().getLocation().getLongitude());
+                    this.map.setCenter(latLong);
+                }
+            });
+        }
+
         this.map = this.mapView.createMap(mapOptions);
         this.map.addMouseEventHandler(UIEventType.click, mouseEvent -> {
+
+            //showing POI's marker
+            LatLong poiLocation = mouseEvent.getLatLong();
+            Marker poiMarker = showMarker(poiLocation);
+
+            int count = 0;
             String name;
             String clue;
             String quiz;
             String answer;
             TextInputDialog dialog = new TextInputDialog("Insert POI name");
             dialog.initStyle(StageStyle.UTILITY);
+            dialog.setHeaderText("POI Name");
+            dialog.setTitle("POI");
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
+                count++;
                 name = result.get();
-                dialog = new TextInputDialog("Clue");
+                dialog = new TextInputDialog("Insert Clue");
+                dialog.setHeaderText("Clue Text");
+                dialog.setTitle("Clue");
                 result = dialog.showAndWait();
                 if (result.isPresent()) {
+                    count++;
                     clue = result.get();
-                    dialog = new TextInputDialog("Quiz");
+                    dialog = new TextInputDialog("Insert Question");
+                    dialog.setHeaderText("Question Text");
+                    dialog.setTitle("Question");
                     result = dialog.showAndWait();
                     if (result.isPresent()) {
+                        count++;
                         quiz = result.get();
-                        dialog = new TextInputDialog("Answer");
+                        dialog = new TextInputDialog("Insert Answer");
+                        dialog.setHeaderText("Answer Text");
+                        dialog.setTitle("Answer");
                         result = dialog.showAndWait();
                         if (result.isPresent()) {
+                            count++;
                             answer = result.get();
-                            LatLong poiLocation = mouseEvent.getLatLong();
-                            MarkerOptions poiMarkerOptions = new MarkerOptions();
-                            poiMarkerOptions.position(poiLocation);
-                            Marker poiMarker = new Marker(poiMarkerOptions);
-                            GoogleMapsFXMLController.this.map.addMarker(poiMarker);
-                            InfoWindowOptions infoWindowOptions = new InfoWindowOptions();
-                            infoWindowOptions.content("<h4>" + name + "</h4>");
-                            InfoWindow poiWindow = new InfoWindow(infoWindowOptions);
-                            poiWindow.open(GoogleMapsFXMLController.this.map, poiMarker);
-                            THOrganizer$.MODULE$.instance().addPoi(new POIImpl(0, new PositionImpl(poiLocation.getLatitude(), poiLocation.getLongitude()), name, GoogleMapsFXMLController.this.currentTreasureHunt.ID(), new QuizImpl(0, quiz, answer), new ClueImpl(0, clue)));
+                            setMarkerTitle(poiMarker, name);
+                            POI poi = new POIImpl(0, new PositionImpl(poiLocation.getLatitude(), poiLocation.getLongitude()), name, GoogleMapsFXMLController.this.currentTreasureHunt.ID(), new QuizImpl(0, quiz, answer), new ClueImpl(0, clue));
+                            THOrganizer$.MODULE$.instance().addPoi(poi, poiMarker);
                         }
                     }
                 }
             }
+            if (count < 4) {
+                deleteMarker(poiMarker);
+            }
         });
+
+        //loading old POI
+        List<POI> poisList = convertList(THOrganizer$.MODULE$.instance().getPois());
+        for (POI poi :
+                poisList) {
+            THOrganizer$.MODULE$.instance().addPoiMarker(showMarker(new LatLong(poi.position().latitude(), poi.position().longitude())), poi);
+
+        }
+    }
+
+    private ArrayList<POI> convertList(scala.collection.Seq<POI> seq) {
+        return new ArrayList<>(scala.collection.JavaConversions.seqAsJavaList(seq));
     }
 
 
@@ -137,6 +177,24 @@ public class GoogleMapsFXMLController implements Initializable, MapComponentInit
             this.confirmButton.setDisable(true);
             this.addressTextField.setDisable(true);
         }
+
     }
+
+
+    //MARKERS OPERATION
+    private Marker showMarker(LatLong poiLocation) {
+        Marker poiMarker = new Marker(new MarkerOptions().position(poiLocation));
+        GoogleMapsFXMLController.this.map.addMarker(poiMarker);
+        return poiMarker;
+    }
+
+    public void deleteMarker(Marker poiMarker) {
+        this.map.removeMarker(poiMarker);
+    }
+
+    private void setMarkerTitle(Marker poiMarker, String poiName) {
+        poiMarker.setTitle(poiName);
+    }
+
 
 }

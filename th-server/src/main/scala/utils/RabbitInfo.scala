@@ -7,6 +7,6 @@ object RabbitInfo {
     val MESSAGE_ENCODING = "UTF-8"
     val OK_RESPONSE = "200"
     val KO_RESPONSE = "500"
-    val USERNAME = "guest"
-    val PASSWORD = "guest"
+    val USERNAME = "guest" //"user"
+    val PASSWORD = "guest" //"JXWdfVTxVGr7"
 }

@@ -31,7 +31,7 @@ public class Strings {
 
     public final static String SHOW_PLAYERS_BUTTON = "Show Players on Map";
 
-    public final static String SHOW_POIS_BUTTON = "Show existing pois";
+    public final static String EDIT_EXISTING_POIS = "Edit Existing POIs";
 
     public final static String NEW_TH_TITLE_JOPTIONPANE = "New Treasure Hunt";
 

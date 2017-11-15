@@ -1,10 +1,13 @@
 package model
 
+import com.lynden.gmapsfx.javascript.`object`.Marker
 import core.Observable
 import domain._
 import domain.messages._
 import play.api.libs.json.Json
 
+import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
 
 trait THModel extends Observable[String] {
@@ -19,7 +22,13 @@ trait THModel extends Observable[String] {
 
     def addPOI(poi: POI): Unit
 
+    def addPoiMarker(poiMarker: Marker, poi: POI): Unit
+
+    def deletePOI(poi: POI): Unit
+
     def getPOIs: Seq[POI]
+
+    def getPoiMarker(poi: POI): Option[Marker]
 
     def getCode: Int
 
@@ -28,6 +37,8 @@ trait THModel extends Observable[String] {
     def stopHunt(): Unit
 
     def isTHRunning(): Boolean
+
+    def setRunningTH(ID: Int)
 }
 
 class THModelImpl(override var broker: Broker) extends THModel {
@@ -38,7 +49,8 @@ class THModelImpl(override var broker: Broker) extends THModel {
     private var runningTH: TreasureHunt = null
     private var THStarted = false //TODO ask to server
     private var ths: List[TreasureHunt] = List empty
-    private var pois: List[POI] = List empty
+    private var pois: ListBuffer[POI] = ListBuffer empty
+    private val markerList: mutable.HashMap[POI, Marker] = mutable.HashMap.empty
 
     new Thread() {
         override def run() {
@@ -54,7 +66,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
         val ID = (broker call thMsg).toInt
         th.ID = ID
         ths = ths :+ th
-        setRunningTH(ID)
+        setRunningTH(th.ID)
         notifyObservers(TreasureHuntMsgImpl(organizerID, th defaultRepresentation).defaultRepresentation)
     }
 
@@ -69,7 +81,33 @@ class THModelImpl(override var broker: Broker) extends THModel {
         notifyObservers(poiMsg)
     }
 
-    override def getPOIs: Seq[POI] = pois
+    override def addPoiMarker(poiMarker: Marker, poi: POI): Unit = {
+        markerList.put(poi, poiMarker)
+    }
+
+    override def deletePOI(poi: POI): Unit = {
+        require(pois.contains(poi))
+        val poiMsg = PoiMsgImpl(organizerID, poi defaultRepresentation).defaultRepresentation
+        broker send poiMsg
+        pois -= poi
+        markerList.remove(poi)
+    }
+
+    override def getPoiMarker(poi: POI): Option[Marker] = {
+        markerList.get(poi)
+    }
+
+    override def getPOIs: Seq[POI] = {
+        if (pois.isEmpty) {
+            pois = getPOIsFromDB
+        }
+        pois
+    }
+
+    def getPOIsFromDB: ListBuffer[POI] = {
+        val listMsg = broker.call(ListPOIsMsgImpl(organizerID, runningTH.ID.toString).defaultRepresentation)
+        Json.parse(toMessage(listMsg).payload).as[ListPOIs].list
+    }
 
     override def getCode: Int = runningTH.ID
 
@@ -85,7 +123,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
         THStarted = false
     }
 
-    def setRunningTH(ID: Int): Unit = {
+    override def setRunningTH(ID: Int): Unit = {
         for (th <- ths) {
             if (th.ID == ID) {
                 runningTH = th
@@ -98,5 +136,4 @@ class THModelImpl(override var broker: Broker) extends THModel {
     }
 
     def toMessage(string: String): Message = Json.parse(string).as[Message]
-
 }
