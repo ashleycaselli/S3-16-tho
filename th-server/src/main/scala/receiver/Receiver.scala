@@ -121,7 +121,7 @@ class ReceiverImpl extends Receiver {
                     //TODO call database function
                 }
                 if (mType == msgType.TreasureHunt) { // received if organizer creates a new TreasureHunt
-                    var th = Json.parse(payload).as[TreasureHunt]
+                    val th = Json.parse(payload).as[TreasureHunt]
                     val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
                     val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, sender.toInt)
                 }
@@ -138,9 +138,4 @@ class ReceiverImpl extends Receiver {
 
     override def getLastMessage: String = lastMessage
 
-}
-
-object Server extends App {
-    val receiver: Receiver = new ReceiverImpl
-    receiver startRecv()
 }
