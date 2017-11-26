@@ -33,6 +33,8 @@ class ModelBroker extends Broker {
 
     private val factory = new ConnectionFactory
     this host "localhost"
+    factory.setUsername("test")
+    factory.setPassword("test")
     connection = factory newConnection()
     channelRPC = connection createChannel()
     replyQueueName = channelRPC queueDeclare() getQueue
