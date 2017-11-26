@@ -1,91 +1,161 @@
 //--------------------------GLOBAL-VARIABLES--------------------------------
-var lastClueText = "text text text text text text text text text text text text text text text text text text ";
-var loggedTeam;
-var currentHunt;
+var lastClueText = "No clue available";     //active clue
+var poiToReach = "";                        //name of the next poi
+var longitudeToReach = "";                  //longitude of the next poi
+var latitudeToReach = "";                   //latitude of the next poi
+var loggedTeam = "";                        //name of logged team
+var currentHunt = "";                       //current hunt ID
+var currentHuntName = "";                   //current hunt name
+var currentQuiz = "";
+var currentQuizAnswer = "";
+var googleScriptLoaded = false;
 
+//----------------------------EVENT-LISTENERS--------------------------------
 document.addEventListener("deviceready", onDeviceReady, false);
-
 function onDeviceReady() {
     //load saved data
     loggedTeam = localStorage.getItem('loggedTeam');
     currentHunt = localStorage.getItem('currentHunt');
+    currentHuntName = localStorage.getItem('currentHuntName');
+    connect();
+}
 
-    //check if logged team exists
-    if (loggedTeam != null) {
-        showLoggedTeamName();
-        if (currentHunt != null) {
-            showCurrentTreasureHunt();
+//-------------------------connection-variables------------------------------
+var mq_username = "test";
+var mq_password = "test";
+var mq_vhost = "/";
+//var mq_url = 'http://52.14.140.101:15674/stomp';
+var mq_url = 'http://localhost:15674/stomp';
+var mq_queue = "/exchange/organizer-message";
+var ws;
+var client;
+var firstConnection = true;
+
+//--------------------------server-comunication------------------------------
+function connect() {
+    Stomp.WebSocketClass = SockJS;
+    ws = new SockJS(mq_url);
+    client = Stomp.over(ws);
+    client.heartbeat.outgoing = 0;
+    client.heartbeat.incoming = 0;
+    client.onreceive = onReceive
+    client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
+}
+
+function on_connect() {
+    console.log("connected to server");
+    if (firstConnection == true) {
+        //check if logged team exists
+        if (loggedTeam != "") {
+            showLoggedTeamName();
+            if (currentHunt != "") {
+                showCurrentTreasureHuntPage();
+            } else {
+                requireTHlist();
+            }
         } else {
-            showNearTreasureHunt()
+            showNotLoggedUser();
         }
-    } else {
-        showNotLoggedUser();
+        firstConnection = false;
     }
-
-    stompJS("test");
 }
 
-function stompJS(message) {
-    var ws = new WebSocket('ws://52.14.140.101:15674/ws');
-    var client = Stomp.over(ws);
-    var on_connect = function () {
-        console.log('connected');
-        client.send('/amq/queue/rpc-queue', {"content-type": "text/plain"}, message);
-        alert("sent");
-        // var subscription = client.subscribe("/queue/test", callback);
-    };
-    var on_error = function () {
-        alert('error');
-    };
-    client.connect('guest', 'guest', on_connect, on_error, "/");
+function on_message(m) {
 }
 
-function resumeTreasureHunt() {
-    document.getElementById("selectTreasureHuntPage").style.display = "none";
-    document.getElementById("mapPage").style.display = "block";
-    document.getElementById("mapPageTitle").innerText = currentHunt;
+function on_connect_error() {
+    console.log("connection error");
+    connect();
+}
+
+var onReceive = function (m) {
+    var msg = JSON.parse(m.body);
+    var messageType = msg.messageType;
+    var payload = JSON.parse(msg.payload);
+    console.log(payload);
+    if (messageType == "LoginMsg") {
+        loginResult(payload);
+    }
+    if (messageType == "RegistrationMsg") {
+        registrationResult(payload);
+    }
+    if (messageType == "ListTHsMsg") {
+        showNearTreasureHunt(payload.list);
+    }
+    if (messageType == "PoiMsg") {
+        var poiID = payload.ID;
+        var poiName = payload.name;
+        var treasureHuntID = payload.treasureHuntID;
+        var position = JSON.parse(payload.position);
+        var latitude = position.latitude;
+        var longitude = position.longitude;
+        var quiz = JSON.parse(payload.quiz);
+        var question = quiz.question;
+        var answer = quiz.answer;
+        var clue = JSON.parse(payload.clue);
+        var clueText = clue.content;
+
+        lastClueText = clueText;
+        currentQuiz = question;
+        currentQuizAnswer = answer;
+        latitudeToReach = latitude;
+        longitudeToReach = longitude;
+        if (poiToReach == "") {
+            alert("Try to find the first point of interest named: " + poiName + ".\nThe clue will help you.");
+        } else {
+            alert("Poi: " + poiToReach + " found.\nNext Poi is: " + poiName + ".\nThe clue will help you.");
+        }
+        poiToReach = poiName;
+    }
+}
+
+function send(m) {
+    client.send(mq_queue, {'reply-to': '/temp-queue/foo', "content-type": "text/plain"}, m);
+}
+
+//-----------------------------select-th-----------------------------------
+function showSelectTreasureHuntContainer() {     // Shows the container and hides all the contents
+    document.getElementById("selectTreasureHuntPage").style.display = "block";
+    document.getElementById("codeButtons").style.display = "none";
+    document.getElementById("insertCodeManually").style.display = "none";
     document.getElementById("currentTreasureHunt").style.display = "none";
+    document.getElementById("nearTreasureHunt").innerHTML = "";
+    document.getElementById("nearTreasureHunt").style.display = "none";
 }
 
-function leaveTreasureHunt() {
-    localStorage.removeItem('currentHunt');
-    currentHunt = "";
-    document.getElementById("currentTreasureHunt").style.display = "none";
-    showNearTreasureHunt();
-}
-
-//-----------------------------select-tho-----------------------------------
-function showCurrentTreasureHunt() {
+function showCurrentTreasureHuntPage() {        // Shows leave/resume buttons in SelectTreasureHuntContainer
+    showSelectTreasureHuntContainer();          // empty container
+    document.getElementById("treasureHuntName").innerHTML = currentHuntName;
     document.getElementById("currentTreasureHunt").style.display = "block";
-    document.getElementById("treasureHuntName").innerHTML = currentHunt;
 }
 
-function showNearTreasureHunt() {
+function showNearTreasureHunt(list) {           // Shows list of available THs
+    showSelectTreasureHuntContainer();          // empty container
     var div = document.getElementById("nearTreasureHunt");
     var content = "<ul>";
-    content += '<li onclick=\'showScanButtons("Available")\' >Available</li>';
-    content += '<li onclick=\'showScanButtons("Hunt")\' >Hunt</li>';
-    content += '<li onclick=\'showScanButtons("List")\' >List</li>';
+    for (var i = 0; i < list.length; i++) {
+        content += '<li onclick=\'showScanButtons("' + list[i].ID + '","' + list[i].name + '")\' >' + list[i].name + '</li>';
+    }
     div.innerHTML = content + "</ul>";
     div.style.display = "block";
 }
 
-function showScanButtons(selectedTH) {
-    document.getElementById("nearTreasureHunt").style.display = "none"
+function showScanButtons(selectedTH, selectedTHname) { // Shows scan/type buttons in SelectTreasureHuntContainer
+    showSelectTreasureHuntContainer();          // empty container
     document.getElementById("scanQR").onclick = function () {
-        scanQRCode("" + selectedTH)
+        scanQRCode("" + selectedTH, selectedTHname)
     };
     document.getElementById("writeCode").onclick = function () {
-        writeQRCode("" + selectedTH)
+        writeQRCode("" + selectedTH, selectedTHname)
     };
-    document.getElementById("codeButtonsLabel").innerHTML = selectedTH;
+    document.getElementById("codeButtonsLabel").innerHTML = selectedTHname;
     document.getElementById("codeButtons").style.display = "block";
 }
 
-function scanQRCode(selectedTH) {
+function scanQRCode(selectedTH, selectedTHname) {
     cordova.plugins.barcodeScanner.scan(
         function (result) {
-            checkScanResults(selectedTH, result.text);
+            checkScanResults(selectedTH, result.text, selectedTHname);
         },
         function (error) {
             alert("Scanning failed: " + error);
@@ -93,14 +163,13 @@ function scanQRCode(selectedTH) {
     );
 }
 
-function writeQRCode(selectedTH) {
-    document.getElementById("codeButtons").style.display = "none";
+function writeQRCode(selectedTH, selectedTHname) {
+    showSelectTreasureHuntContainer();          // empty container
     document.getElementById("saveCodeButton").onclick = function () {
-        checkScanResults(selectedTH, document.getElementById("insertCodeInput").value);
-        document.getElementById("insertCodeManually").style.display = "none";
+        checkScanResults(selectedTH, document.getElementById("insertCodeInput").value, selectedTHname);
     }
     document.getElementById("cancelCodeButton").onclick = function () {
-        document.getElementById("insertCodeManually").style.display = "none";
+        showSelectTreasureHuntContainer();          // empty container
         document.getElementById("codeButtons").style.display = "block";
     }
     document.getElementById("insertCodeInput").value = "";
@@ -108,28 +177,60 @@ function writeQRCode(selectedTH) {
     document.getElementById("insertCodeInput").focus()
 }
 
-function checkScanResults(selectedTH, result) {
-    if (true) {//TODO check if result is valid
+function checkScanResults(selectedTH, result, selectedTHname) {
+    if (result == selectedTH) {
         currentHunt = selectedTH;
-        localStorage.setItem("currentHunt", selectedTH)
+        currentHuntName = selectedTHname;
+        localStorage.setItem("currentHunt", selectedTH);
+        localStorage.setItem("currentHuntName", selectedTHname);
         document.getElementById("selectTreasureHuntPage").style.display = "none";
+        document.getElementById("insertCodeManually").style.display = "none";
         loadMapPage();
+        send('{"messageType":"PositionMsg","sender":"0","payload":""}');
+    } else {
+        alert("invalid code");
     }
+}
+
+function resumeTreasureHunt() {
+    addGoogleMapsScript();
+    showSelectTreasureHuntContainer();
+    document.getElementById("selectTreasureHuntPage").style.display = "none";
+    document.getElementById("mapPage").style.display = "block";
+    document.getElementById("mapPageTitle").innerText = currentHuntName;
+}
+
+function leaveTreasureHunt() {
+    //clean variables
+    currentHunt = "";
+    currentHuntName = "";
+    //clean saved data
+    localStorage.removeItem('currentHunt');
+    localStorage.removeItem('currentHuntName');
+    //go to available treasure hunt list
+    showSelectTreasureHuntContainer();
+    requireTHlist();
 }
 
 //-------------------------------MAP----------------------------------------
 function loadMapPage() {
     document.getElementById("mapPage").style.display = "block";
     document.getElementById("googleMap").style.display = "block";
-    document.getElementById("mapPageTitle").innerText = currentHunt;
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBNQr4YcrvttSMIgWOX68kJnigaI0Cir9c&callback=mapLoadedCallback';
-    document.head.appendChild(script);
+    document.getElementById("mapPageTitle").innerText = currentHuntName;
+    addGoogleMapsScript();
+}
+
+function addGoogleMapsScript() {
+    if (!googleScriptLoaded) {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBNQr4YcrvttSMIgWOX68kJnigaI0Cir9c&callback=mapLoadedCallback';
+        document.head.appendChild(script);
+        googleScriptLoaded = true;
+    }
 }
 
 function mapLoadedCallback() {
-    alert("cb");
     getLocation(function (firstLatitude, firstLongitude) {
         var mapProp = {
             center: new google.maps.LatLng(firstLatitude, firstLongitude),
@@ -145,21 +246,28 @@ function mapLoadedCallback() {
             getLocation(function (latitude, longitude) {
                 //map.setCenter(new google.maps.LatLng(latitude, longitude));
                 marker.setPosition({lat: latitude, lng: longitude});
+                var error = 0.0002;
+                if (latitudeToReach != "" && longitudeToReach != "") {
+                    if (latitude * 1 >= latitudeToReach * 1 - error * 1 && latitude * 1 <= latitudeToReach * 1 + error * 1) {
+                        if (longitude * 1 >= longitudeToReach * 1 - error * 1 && longitude * 1 <= longitudeToReach * 1 + error * 1) {
+                            if (currentQuiz == "") {
+                                send('{"messageType":"PositionMsg","sender":"' + loggedTeam + '","payload":"{\\"latitude\\":' + latitudeToReach + ',\\"longitude\\":' + longitudeToReach + '}"}');
+                            }
+                        }
+                    }
+                }
             })
         }, 3000);
     })
 }
 
 function getLocation(callback) {
-    var onSuccess = function (position) {
+    function onSuccess(position) {
         callback(position.coords.latitude, position.coords.longitude)
-    };
-
-    function onError(error) {
-        alert('code: ' + error.code + '\n' +
-            'message: ' + error.message + '\n');
     }
-
+    function onError(error) {
+        alert('Code: ' + error.code + '\nMessage: ' + error.message + '\n');
+    }
     navigator.geolocation.getCurrentPosition(onSuccess, onError);
 }
 
@@ -167,31 +275,23 @@ function exitFromMap() {
     document.getElementById("mapPage").style.display = "none";
     document.getElementById("selectTreasureHuntPage").style.display = "block";
     document.getElementById("codeButtons").style.display = "none";
-    document.getElementById("treasureHuntName").innerHTML = currentHunt;
+    document.getElementById("treasureHuntName").innerHTML = currentHuntName;
     document.getElementById("currentTreasureHunt").style.display = "block";
 }
 
 //-------------------------------CLUE----------------------------------------
-function showLastClue() {
-    showClue(lastClueText);
-}
 
-function showNewClue(text) {
-    showClue(text);
-    setLastClueText(text);
-}
-
-function setLastClueText(text) {
-    var lastClueText = text;
-}
-
-function showClue(clueText) {
-    var container = document.getElementById("mapPageClue");
-    var content = '<h1>CLUE</h1>';
-    content += '<p>' + clueText + '</p>';
-    content += '<div onClick="closeClue()" class="clue-quiz-button"><span>HIDE</span></div>';
-    container.innerHTML = content;
-    container.style.display = "block";
+function showClue() {
+    if (currentQuiz == "") {
+        var container = document.getElementById("mapPageClue");
+        var content = '<h1>CLUE</h1>';
+        content += '<p>' + lastClueText + '</p>';
+        content += '<div onClick="closeClue()" class="clue-quiz-button"><span>HIDE</span></div>';
+        container.innerHTML = content;
+        container.style.display = "block";
+    } else {
+        showQuizAlert();
+    }
 }
 
 function closeClue() {
@@ -200,19 +300,33 @@ function closeClue() {
 
 //---------------------------------QUIZ------------------------------------
 
-function showQuiz(question, answer) {
+function showQuizAlert() {
     var container = document.getElementById("mapPageQuiz");
-    var content = '<h1>QUIZ</h1>';
-    content += '<p>' + question + '</p>';
-    content += '<input class="quiz-input" id="quizInput" type="text" />'
-    content += '<div onClick="checkQuiz(\'' + answer + '\')" class="clue-quiz-button"><span>CHECK</span></div>';
+    var content = '<h1>NOT YET</h1>';
+    content += '<p>Clues are precious, you must solve a quiz befor!</p>';
+    content += '<div onClick="showQuiz();" class="clue-quiz-button"><span>OK</span></div>';
     container.innerHTML = content;
     container.style.display = "block";
 }
 
-function checkQuiz(answer) {
-    if (document.getElementById("quizInput").value.trim() === answer) {
+function showQuiz() {
+    var container = document.getElementById("mapPageQuiz");
+    var content = '<h1>QUIZ</h1>';
+    content += '<p>' + currentQuiz + '</p>';
+    content += '<input class="quiz-input" id="quizInput" type="text" />'
+    content += '<div onClick="checkQuiz();" class="clue-quiz-button"><span>CHECK</span></div>';
+    container.innerHTML = content;
+    container.style.display = "block";
+}
+
+function checkQuiz() {
+    if (document.getElementById("quizInput").value.trim().toUpperCase() === currentQuizAnswer.toUpperCase()) {
         document.getElementById("mapPageQuiz").style.display = "none";
+        alert("clue unlocked");
+        currentQuiz = "";
+        showClue();
+    } else {
+        alert("wrong answer");
     }
 }
 
@@ -241,7 +355,7 @@ function closeProgress() {
 //---------------------------------LOGIN---------------------------------
 function showLoggedTeamName() {
     userInfo = document.getElementById("userInfo");
-    userInfo.innerHTML = '<span>Team: ' + loggedTeam + '</span>';
+    userInfo.innerHTML = '<span onclick="logoutTeam();">Team: ' + loggedTeam + '</span>';
     userInfo.style.display = "block";
 }
 
@@ -260,16 +374,33 @@ function showCreateTeamPage() {
 
 function createTeam() {
     document.getElementById("notLoggedUserPage").style.display = "none";
-    loggedTeam = document.getElementById("createTeamNameInput").value;
-    if (document.getElementById("createTeamPassInput").value === document.getElementById("createTeamConfirmPassInput").value) {
-        //TODO create team
+    var username = document.getElementById("createTeamNameInput").value;
+    var password = document.getElementById("createTeamPassInput").value;
+    if (password === document.getElementById("createTeamConfirmPassInput").value) {
+        send('{"messageType":"RegistrationMsg","sender":"0","payload":"{\\"username\\":\\"' + username + '\\",\\"password\\":\\"' + password + '\\"}"}');
     }
     showLoggedTeamName()
     //check if a TH is running
-    if (currentHunt != null) {
-        showCurrentTreasureHunt();
+    if (currentHunt != "") {
+        showCurrentTreasureHuntPage();
     } else {
-        showNearTreasureHunt()
+        requireTHlist();
+    }
+}
+
+function registrationResult(value) {
+    if (value == "200") {
+        loggedTeam = document.getElementById("createTeamNameInput").value;
+        localStorage.setItem('loggedTeam', loggedTeam);
+        showLoggedTeamName()
+        //check if a TH is running
+        if (currentHunt != "") {
+            showCurrentTreasureHuntPage();
+        } else {
+            requireTHlist();
+        }
+    } else {
+        alert("This name is no longer available");
     }
 }
 
@@ -281,18 +412,41 @@ function showLoginTeamPage() {
 
 function loginTeam() {
     document.getElementById("notLoggedUserPage").style.display = "none";
-    //TODO check correct data
-    loggedTeam = document.getElementById("loginTeamNameInput").value;
-    localStorage.setItem('loggedTeam', loggedTeam);
-    showLoggedTeamName()
-    //check if a TH is running
-    if (currentHunt != null) {
-        showCurrentTreasureHunt();
+    var username = document.getElementById("loginTeamNameInput").value;
+    var password = document.getElementById("loginTeamPassInput").value;
+    send('{"messageType":"LoginMsg","sender":"0","payload":"{\\"username\\":\\"' + username + '\\",\\"password\\":\\"' + password + '\\"}"}');
+}
+
+function loginResult(value) {
+    if (value == "200") {
+        loggedTeam = document.getElementById("loginTeamNameInput").value;
+        localStorage.setItem('loggedTeam', loggedTeam);
+        showLoggedTeamName()
+        //check if a TH is running
+        if (currentHunt != "") {
+            showCurrentTreasureHuntPage();
+        } else {
+            requireTHlist();
+        }
     } else {
-        showNearTreasureHunt()
+        alert("error");
     }
 }
 
-function logoutTeam() {
-    document.getElementById("createOrLogin").style.display = "block";
+function requireTHlist() {
+    send('{"messageType":"ListTHsMsg","sender":"1","payload":"{\\"list\\":[]}"}');
 }
+
+function logoutTeam() {
+    var r = confirm("Logout?");
+    if (r == true) {
+        loggedTeam = "";
+        localStorage.removeItem('loggedTeam');
+        currentHunt = "";
+        localStorage.removeItem('currentHunt');
+        currentHuntName = "";
+        localStorage.removeItem('currentHuntName');
+        showNotLoggedUser();
+    }
+}
+
