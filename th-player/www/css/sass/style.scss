@@ -255,6 +255,10 @@ label {
     @include border-radius(5px);
 }
 
+.quiz-input {
+    border: 1px black solid;
+}
+
 .left-button {
     span {
         text-align: right;
