@@ -44,5 +44,5 @@ configure(subprojects.findAll()) {
 }
 
 defaultTasks(
-        'clean', 'build', 'scalaTest', 'mainSass', 'cordovaBuild'
+        'clean', 'build', 'scalaTest', 'mainSass', 'cordovaBuild', 'jar'
 )

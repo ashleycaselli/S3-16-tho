@@ -176,9 +176,3 @@ class ReceiverImpl extends Receiver {
     override def getLastMessage: String = lastMessage
 
 }
-
-object Server extends App {
-    val receiver: Receiver = new ReceiverImpl
-    receiver startRecv()
-    println(PoiMsgImpl("0", POIImpl(0, PositionImpl(0, 0), "", 999, QuizImpl(0, "", ""), ClueImpl(0, "")).defaultRepresentation).defaultRepresentation)
-}
