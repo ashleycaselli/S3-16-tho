@@ -2,11 +2,11 @@ package receiver
 
 import java.io.IOException
 
-import com.rabbitmq.client._
+import com.rabbitmq.client.{AMQP, ConnectionFactory, DefaultConsumer, Envelope}
 import dboperation._
+import domain._
 import domain.messages._
-import domain.{State, _}
-import play.api.libs.json._
+import play.api.libs.json.Json
 import utils.RabbitInfo
 
 trait Receiver {
@@ -24,9 +24,9 @@ class ReceiverImpl extends Receiver {
     override def startRecv(): Unit = {
         println("Receiver started")
         val factory = new ConnectionFactory
-        factory.setHost(RabbitInfo.HOST)
-        factory.setUsername(RabbitInfo.USERNAME)
-        factory.setPassword(RabbitInfo.PASSWORD)
+        factory setHost RabbitInfo.HOST
+        factory setUsername RabbitInfo.USERNAME
+        factory setPassword RabbitInfo.PASSWORD
         val connection = factory.newConnection
         val channel = connection.createChannel
         channel.queueDeclare(RabbitInfo.QUEUE_NAME, false, false, false, null)
@@ -34,9 +34,11 @@ class ReceiverImpl extends Receiver {
             @throws[IOException]
             override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, body: Array[Byte]): Unit = {
                 val data = new String(body, RabbitInfo.MESSAGE_ENCODING)
+                println("received: " + body)
                 lastMessage = data
+                println("received: " + data)
                 val message = Json.parse(data).as[Message]
-                val sender = message.sender.toInt
+                val sender = message.sender toInt
                 val mType = message.messageType
                 val payload = message.payload
                 mType match {
@@ -82,12 +84,17 @@ class ReceiverImpl extends Receiver {
                         val message: String = PoiMsgImpl("0", poi.defaultRepresentation).defaultRepresentation
                         channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
                     }
+                    case msgType.Position => {
+                        var position = Json.parse(payload).as[Position]
+                        println("posirtion")
+                    }
                     case _ => {
                         channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.KO_RESPONSE.getBytes)
                     }
                 }
             }
         }
+
         channel.basicConsume(RabbitInfo.QUEUE_NAME, true, consumer)
 
 
@@ -100,40 +107,63 @@ class ReceiverImpl extends Receiver {
             override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, body: Array[Byte]): Unit = {
                 val data = new String(body, RabbitInfo.MESSAGE_ENCODING)
                 lastMessage = data
+                println(data)
                 val message = Json.parse(data).as[Message]
                 val sender = message.sender
                 val mType = message.messageType
                 val payload = message.payload
-                if (mType == msgType.Clue) {
-                    var clue = Json.parse(payload).as[Clue]
-                    //TODO call database function
-                }
-                if (mType == msgType.Quiz) {
-                    var quiz = Json.parse(payload).as[Quiz]
-                    //TODO call database function
-                }
-                if (mType == msgType.Position) {
-                    var position = Json.parse(payload).as[Position]
-                    //TODO call database function
-                }
-                if (mType == msgType.State) {
-                    var state = Json.parse(payload).as[State]
-                    //TODO call database function
-                }
-                if (mType == msgType.TreasureHunt) { // received if organizer creates a new TreasureHunt
-                    var th = Json.parse(payload).as[TreasureHunt]
-                    val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
-                    val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, sender.toInt)
-                }
-                if (mType == msgType.ListTHs) { // received if organizer require TH list
-                    //TODO
-                }
-                if (mType == msgType.ListPOIs) {
-                    //TODO
+                mType match {
+                    case msgType.Position => {
+                        if (payload == "") {
+                            //TODO return the first poi of the hunt
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, "{\"messageType\":\"PoiMsg\",\"sender\":\"0\",\"payload\":\"{\\\"ID\\\":333,\\\"name\\\":\\\"nomePOI\\\",\\\"treasureHuntID\\\":44,\\\"position\\\":\\\"{\\\\\\\"latitude\\\\\\\":44.218699,\\\\\\\"longitude\\\\\\\":12.057483}\\\",\\\"quiz\\\":\\\"{\\\\\\\"ID\\\\\\\":0,\\\\\\\"question\\\\\\\":\\\\\\\"domanda\\\\\\\",\\\\\\\"answer\\\\\\\":\\\\\\\"risposta\\\\\\\"}\\\",\\\"clue\\\":\\\"{\\\\\\\"ID\\\\\\\":0,\\\\\\\"content\\\\\\\":\\\\\\\"indizio\\\\\\\"}\\\"}\"}".getBytes())
+                        } else { //TODO find the poi with this position and send the next POI
+                            var position = Json.parse(payload).as[Position]
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, "{\"messageType\":\"PoiMsg\",\"sender\":\"0\",\"payload\":\"{\\\"ID\\\":333,\\\"name\\\":\\\"nomePOI\\\",\\\"treasureHuntID\\\":44,\\\"position\\\":\\\"{\\\\\\\"latitude\\\\\\\":44.218699,\\\\\\\"longitude\\\\\\\":12.057483}\\\",\\\"quiz\\\":\\\"{\\\\\\\"ID\\\\\\\":0,\\\\\\\"question\\\\\\\":\\\\\\\"domanda\\\\\\\",\\\\\\\"answer\\\\\\\":\\\\\\\"risposta\\\\\\\"}\\\",\\\"clue\\\":\\\"{\\\\\\\"ID\\\\\\\":0,\\\\\\\"content\\\\\\\":\\\\\\\"indizio\\\\\\\"}\\\"}\"}".getBytes())
+                        }
+                    }
+                    case msgType.TreasureHunt => { // received if organizer creates a new TreasureHunt
+                        var th = Json.parse(payload).as[TreasureHunt]
+                        val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
+                        val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, sender.toInt)
+                    }
+                    case msgType.ListTHs => { // received if player require TH list
+                        val idOrganizer = sender
+                        val treasureHuntDB = new TreasureHuntDBImpl
+                        val list = treasureHuntDB.viewTreasureHuntList(idOrganizer toInt)
+                        val message: String = ListTHsMsgImpl("0", ListTHsImpl(list).defaultRepresentation).defaultRepresentation
+                        channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
+                    }
+                    case msgType.Login => {
+                        var login = Json.parse(payload).as[Login]
+                        var user = login.username;
+                        var pass = login.password;
+                        // TODO verificare se user e pass corrispondono
+                        if (true) {
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, ("{\"messageType\":\"LoginMsg\",\"sender\":\"0\",\"payload\":\"" + RabbitInfo.OK_RESPONSE + "\"}").getBytes())
+                        } else {
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, ("{\"messageType\":\"LoginMsg\",\"sender\":\"0\",\"payload\":\"" + RabbitInfo.KO_RESPONSE + "\"}").getBytes())
+                        }
+                    }
+                    case msgType.Registration => {
+                        var reg = Json.parse(payload).as[Registration]
+                        var user = reg.username;
+                        var pass = reg.password;
+                        // TODO verificare se esiste gia un iser con questo nome, se non c'è salvarlo
+                        if (true) {
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, ("{\"messageType\":\"RegistrationMsg\",\"sender\":\"0\",\"payload\":\"" + RabbitInfo.OK_RESPONSE + "\"}").getBytes())
+                        } else {
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, ("{\"messageType\":\"RegistrationMsg\",\"sender\":\"0\",\"payload\":\"" + RabbitInfo.KO_RESPONSE + "\"}").getBytes())
+                        }
+                    }
+                    case _ => {
+                        channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.KO_RESPONSE.getBytes)
+                    }
                 }
             }
         }
-        channelPS.basicConsume(queueName, true, consumer2)
+
+        channelPS.basicConsume(queueName, false, consumer2)
     }
 
     override def getLastMessage: String = lastMessage
