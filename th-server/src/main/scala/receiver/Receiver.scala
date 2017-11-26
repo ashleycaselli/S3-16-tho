@@ -113,13 +113,20 @@ class ReceiverImpl extends Receiver {
                 val mType = message.messageType
                 val payload = message.payload
                 mType match {
-                    case msgType.Position => {
-                        if (payload == "") {
-                            //TODO return the first poi of the hunt
-                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, "{\"messageType\":\"PoiMsg\",\"sender\":\"0\",\"payload\":\"{\\\"ID\\\":333,\\\"name\\\":\\\"nomePOI\\\",\\\"treasureHuntID\\\":44,\\\"position\\\":\\\"{\\\\\\\"latitude\\\\\\\":44.218699,\\\\\\\"longitude\\\\\\\":12.057483}\\\",\\\"quiz\\\":\\\"{\\\\\\\"ID\\\\\\\":0,\\\\\\\"question\\\\\\\":\\\\\\\"domanda\\\\\\\",\\\\\\\"answer\\\\\\\":\\\\\\\"risposta\\\\\\\"}\\\",\\\"clue\\\":\\\"{\\\\\\\"ID\\\\\\\":0,\\\\\\\"content\\\\\\\":\\\\\\\"indizio\\\\\\\"}\\\"}\"}".getBytes())
-                        } else { //TODO find the poi with this position and send the next POI
-                            var position = Json.parse(payload).as[Position]
-                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, "{\"messageType\":\"PoiMsg\",\"sender\":\"0\",\"payload\":\"{\\\"ID\\\":333,\\\"name\\\":\\\"nomePOI\\\",\\\"treasureHuntID\\\":44,\\\"position\\\":\\\"{\\\\\\\"latitude\\\\\\\":44.218699,\\\\\\\"longitude\\\\\\\":12.057483}\\\",\\\"quiz\\\":\\\"{\\\\\\\"ID\\\\\\\":0,\\\\\\\"question\\\\\\\":\\\\\\\"domanda\\\\\\\",\\\\\\\"answer\\\\\\\":\\\\\\\"risposta\\\\\\\"}\\\",\\\"clue\\\":\\\"{\\\\\\\"ID\\\\\\\":0,\\\\\\\"content\\\\\\\":\\\\\\\"indizio\\\\\\\"}\\\"}\"}".getBytes())
+                    case msgType.Poi => {
+                        val poi = Json.parse(payload).as[POI]
+                        val poiDB: POIDB = new POIDBImpl
+                        if (poi.ID == 0) {
+                            val nextPoi = poiDB getFirstPoi (poi.treasureHuntID)
+                            val message: String = PoiMsgImpl("0", nextPoi.defaultRepresentation).defaultRepresentation
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes())
+                        } else {
+                            var poi = Json.parse(payload).as[POI]
+                            val nextPoi = poiDB getSubsequentPoi (poi)
+                            if (nextPoi != null) {
+                                val message: String = PoiMsgImpl("0", nextPoi.defaultRepresentation).defaultRepresentation
+                                channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes())
+                            }
                         }
                     }
                     case msgType.TreasureHunt => { // received if organizer creates a new TreasureHunt
@@ -173,4 +180,5 @@ class ReceiverImpl extends Receiver {
 object Server extends App {
     val receiver: Receiver = new ReceiverImpl
     receiver startRecv()
+    println(PoiMsgImpl("0", POIImpl(0, PositionImpl(0, 0), "", 999, QuizImpl(0, "", ""), ClueImpl(0, "")).defaultRepresentation).defaultRepresentation)
 }
