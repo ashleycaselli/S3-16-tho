@@ -9,6 +9,7 @@ var currentHuntName = "";                   //current hunt name
 var currentQuiz = "";
 var currentQuizAnswer = "";
 var googleScriptLoaded = false;
+var poiToBeSent = "";
 
 //----------------------------EVENT-LISTENERS--------------------------------
 document.addEventListener("deviceready", onDeviceReady, false);
@@ -17,6 +18,13 @@ function onDeviceReady() {
     loggedTeam = localStorage.getItem('loggedTeam');
     currentHunt = localStorage.getItem('currentHunt');
     currentHuntName = localStorage.getItem('currentHuntName');
+    poiToBeSent = localStorage.getItem('poiToBeSent');
+    poiToReach = localStorage.getItem('poiToReach');
+    longitudeToReach = localStorage.getItem('poiToBeSent');
+    latitudeToReach = localStorage.getItem('latitudeToReach');
+    currentQuiz = localStorage.getItem('currentQuiz');
+    currentQuizAnswer = localStorage.getItem('currentQuizAnswer');
+    lastClueText = localStorage.getItem('poiToBeSent');
     connect();
 }
 
@@ -48,7 +56,7 @@ function on_connect() {
         //check if logged team exists
         if (loggedTeam != "") {
             showLoggedTeamName();
-            if (currentHunt != "") {
+            if (isThRunning()) {
                 showCurrentTreasureHuntPage();
             } else {
                 requireTHlist();
@@ -83,9 +91,9 @@ var onReceive = function (m) {
         showNearTreasureHunt(payload.list);
     }
     if (messageType == "PoiMsg") {
-        var poiID = payload.ID;
+        //var poiID = payload.ID;
         var poiName = payload.name;
-        var treasureHuntID = payload.treasureHuntID;
+        //var treasureHuntID = payload.treasureHuntID;
         var position = JSON.parse(payload.position);
         var latitude = position.latitude;
         var longitude = position.longitude;
@@ -95,17 +103,25 @@ var onReceive = function (m) {
         var clue = JSON.parse(payload.clue);
         var clueText = clue.content;
 
+        poiToBeSent = m.body;
+        localStorage.setItem('poiToBeSent', poiToBeSent);
         lastClueText = clueText;
+        localStorage.setItem('lastClueText', lastClueText);
         currentQuiz = question;
+        localStorage.setItem('currentQuiz', currentQuiz);
         currentQuizAnswer = answer;
+        localStorage.setItem('currentQuizAnswer', currentQuizAnswer);
         latitudeToReach = latitude;
+        localStorage.setItem('latitudeToReach', latitudeToReach);
         longitudeToReach = longitude;
+        localStorage.setItem('longitudeToReach', longitudeToReach);
         if (poiToReach == "") {
             alert("Try to find the first point of interest named: " + poiName + ".\nThe clue will help you.");
         } else {
             alert("Poi: " + poiToReach + " found.\nNext Poi is: " + poiName + ".\nThe clue will help you.");
         }
         poiToReach = poiName;
+        localStorage.setItem('poiToReach', poiToReach);
     }
 }
 
@@ -186,7 +202,7 @@ function checkScanResults(selectedTH, result, selectedTHname) {
         document.getElementById("selectTreasureHuntPage").style.display = "none";
         document.getElementById("insertCodeManually").style.display = "none";
         loadMapPage();
-        send('{"messageType":"PositionMsg","sender":"0","payload":""}');
+        send('{"messageType":"PoiMsg","sender":"0","payload":"{\\"ID\\":0,\\"name\\":\\"\\",\\"treasureHuntID\\":' + currentHunt + ',\\"position\\":\\"{\\\\\\"latitude\\\\\\":0,\\\\\\"longitude\\\\\\":0}\\",\\"quiz\\":\\"{\\\\\\"ID\\\\\\":0,\\\\\\"question\\\\\\":\\\\\\"\\\\\\",\\\\\\"answer\\\\\\":\\\\\\"\\\\\\"}\\",\\"clue\\":\\"{\\\\\\"ID\\\\\\":0,\\\\\\"content\\\\\\":\\\\\\"\\\\\\"}\\"}"}');
     } else {
         alert("invalid code");
     }
@@ -204,9 +220,19 @@ function leaveTreasureHunt() {
     //clean variables
     currentHunt = "";
     currentHuntName = "";
+    poiToReach = "";
+    poiToBeSent = "";
+    latitudeToReach = "";
+    currentQuiz = "";
+    currentQuizAnswer = "";
     //clean saved data
     localStorage.removeItem('currentHunt');
     localStorage.removeItem('currentHuntName');
+    localStorage.removeItem('poiToReach');
+    localStorage.removeItem('poiToBeSent');
+    localStorage.removeItem('latitudeToReach');
+    localStorage.removeItem('currentQuiz');
+    localStorage.removeItem('currentQuizAnswer');
     //go to available treasure hunt list
     showSelectTreasureHuntContainer();
     requireTHlist();
@@ -251,7 +277,7 @@ function mapLoadedCallback() {
                     if (latitude * 1 >= latitudeToReach * 1 - error * 1 && latitude * 1 <= latitudeToReach * 1 + error * 1) {
                         if (longitude * 1 >= longitudeToReach * 1 - error * 1 && longitude * 1 <= longitudeToReach * 1 + error * 1) {
                             if (currentQuiz == "") {
-                                send('{"messageType":"PositionMsg","sender":"' + loggedTeam + '","payload":"{\\"latitude\\":' + latitudeToReach + ',\\"longitude\\":' + longitudeToReach + '}"}');
+                                send(poiToBeSent);
                             }
                         }
                     }
@@ -353,38 +379,31 @@ function closeProgress() {
 }
 
 //---------------------------------LOGIN---------------------------------
-function showLoggedTeamName() {
+function showLoggedTeamName() {             // shows bottom bar containing team name
     userInfo = document.getElementById("userInfo");
     userInfo.innerHTML = '<span onclick="logoutTeam();">Team: ' + loggedTeam + '</span>';
     userInfo.style.display = "block";
 }
 
-function showNotLoggedUser() {
+function showNotLoggedUser() {              // shows choice login/create-team
     document.getElementById("notLoggedUserPage").style.display = "block";
     document.getElementById("createOrLogin").style.display = "block";
     document.getElementById("loginTeam").style.display = "none";
     document.getElementById("createTeam").style.display = "none";
 }
 
-function showCreateTeamPage() {
+function showCreateTeamPage() {             // shows create-team form
     document.getElementById("createOrLogin").style.display = "none";
     document.getElementById("createTeam").style.display = "block";
     document.getElementById("createTeamNameInput").focus();
 }
 
-function createTeam() {
+function createTeam() {                     //creates the team
     document.getElementById("notLoggedUserPage").style.display = "none";
     var username = document.getElementById("createTeamNameInput").value;
     var password = document.getElementById("createTeamPassInput").value;
     if (password === document.getElementById("createTeamConfirmPassInput").value) {
         send('{"messageType":"RegistrationMsg","sender":"0","payload":"{\\"username\\":\\"' + username + '\\",\\"password\\":\\"' + password + '\\"}"}');
-    }
-    showLoggedTeamName()
-    //check if a TH is running
-    if (currentHunt != "") {
-        showCurrentTreasureHuntPage();
-    } else {
-        requireTHlist();
     }
 }
 
@@ -392,9 +411,10 @@ function registrationResult(value) {
     if (value == "200") {
         loggedTeam = document.getElementById("createTeamNameInput").value;
         localStorage.setItem('loggedTeam', loggedTeam);
-        showLoggedTeamName()
+        showLoggedTeamName();
+        showSelectTreasureHuntContainer();
         //check if a TH is running
-        if (currentHunt != "") {
+        if (isThRunning()) {
             showCurrentTreasureHuntPage();
         } else {
             requireTHlist();
@@ -402,6 +422,13 @@ function registrationResult(value) {
     } else {
         alert("This name is no longer available");
     }
+}
+
+function isThRunning() {
+    if (currentHunt != "" && currentHunt != null) {
+        return true;
+    }
+    return false;
 }
 
 function showLoginTeamPage() {
@@ -421,9 +448,9 @@ function loginResult(value) {
     if (value == "200") {
         loggedTeam = document.getElementById("loginTeamNameInput").value;
         localStorage.setItem('loggedTeam', loggedTeam);
-        showLoggedTeamName()
-        //check if a TH is running
-        if (currentHunt != "") {
+        showLoggedTeamName();
+        showSelectTreasureHuntContainer();
+        if (isThRunning()) {
             showCurrentTreasureHuntPage();
         } else {
             requireTHlist();
@@ -446,6 +473,16 @@ function logoutTeam() {
         localStorage.removeItem('currentHunt');
         currentHuntName = "";
         localStorage.removeItem('currentHuntName');
+        poiToBeSent = "";
+        localStorage.removeItem('poiToBeSent');
+        poiToReach = "";
+        localStorage.removeItem('poiToReach');
+        latitudeToReach = "";
+        localStorage.removeItem('latitudeToReach');
+        currentQuiz = "";
+        localStorage.removeItem('currentQuiz');
+        currentQuizAnswer = "";
+        localStorage.removeItem('currentQuizAnswer');
         showNotLoggedUser();
     }
 }
