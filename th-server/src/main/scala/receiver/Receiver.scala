@@ -169,8 +169,3 @@ class ReceiverImpl extends Receiver {
     override def getLastMessage: String = lastMessage
 
 }
-
-object Server extends App {
-    val receiver: Receiver = new ReceiverImpl
-    receiver startRecv()
-}
