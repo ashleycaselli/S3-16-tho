@@ -31,7 +31,7 @@ public class Send {
     }
 
     public String callTreasureHunt() throws Exception {
-        String message1 = new TreasureHuntMsgImpl(this.sender, new TreasureHuntImpl(0, "name", "location", "2017-09-04", "time", null).defaultRepresentation()).defaultRepresentation();
+        String message1 = new TreasureHuntMsgImpl(this.sender, new TreasureHuntImpl(1, "name", "location", "2017-09-04", "time", null).defaultRepresentation()).defaultRepresentation();
         this.channel.basicPublish(RabbitInfo.EXCHANGE_NAME(), "", null, message1.getBytes());
         return message1;
     }
