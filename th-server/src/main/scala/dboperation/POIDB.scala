@@ -40,7 +40,9 @@ trait POIDB {
       */
     def getPOIsList(idTreasureHunt: Int): ListBuffer[POI]
 
+    def getFirstPoi(idTreasureHunt: Int): POI
 
+    def getSubsequentPoi(poi: POI): POI
 }
 
 case class POIDBImpl() extends POIDB {
@@ -139,5 +141,18 @@ case class POIDBImpl() extends POIDB {
         }
         connection.close()
         poisList
+    }
+
+    override def getFirstPoi(idTreasureHunt: Int): POI = {
+        println("getFirstPoi")
+        getPOIsList(idTreasureHunt)(0)
+    }
+
+    override def getSubsequentPoi(poi: POI): POI = {
+        println("getsubPoi")
+        val list = getPOIsList(poi.treasureHuntID)
+        if (list.indexOf(poi) == list.length - 1)
+            return null;
+        list(list.indexOf(poi) + 1)
     }
 }
