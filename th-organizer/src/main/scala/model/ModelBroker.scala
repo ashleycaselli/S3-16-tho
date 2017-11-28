@@ -32,7 +32,7 @@ class ModelBroker extends Broker {
     private val logger = Logger[ModelBroker]
 
     private val factory = new ConnectionFactory
-    this host "localhost"
+    this host "52.14.140.101"
     factory.setUsername("test")
     factory.setPassword("test")
     connection = factory newConnection()
