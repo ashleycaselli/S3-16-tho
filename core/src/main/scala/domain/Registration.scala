@@ -45,7 +45,7 @@ object Registration {
 
     import play.api.libs.functional.syntax._
 
-    implicit val loginReads: Reads[Registration] = (
+    implicit val registrationReads: Reads[Registration] = (
       (JsPath \ "username").read[String] and
         (JsPath \ "password").read[String]
       ) (Registration.apply _)

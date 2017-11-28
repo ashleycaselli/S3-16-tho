@@ -10,21 +10,34 @@ var currentQuiz = "";
 var currentQuizAnswer = "";
 var googleScriptLoaded = false;
 var poiToBeSent = "";
+var poiFound = 0;
 
 //----------------------------EVENT-LISTENERS--------------------------------
 document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
     //load saved data
     loggedTeam = localStorage.getItem('loggedTeam');
+    if (loggedTeam = null) loggedTeam = "";
     currentHunt = localStorage.getItem('currentHunt');
+    if (currentHunt = null) currentHunt = "";
     currentHuntName = localStorage.getItem('currentHuntName');
+    if (currentHuntName = null) currentHuntName = "";
     poiToBeSent = localStorage.getItem('poiToBeSent');
+    if (poiToBeSent = null) poiToBeSent = "";
     poiToReach = localStorage.getItem('poiToReach');
+    if (poiToReach = null) poiToReach = "";
     longitudeToReach = localStorage.getItem('poiToBeSent');
+    if (poiToBeSent = null) poiToBeSent = "";
     latitudeToReach = localStorage.getItem('latitudeToReach');
+    if (latitudeToReach = null) latitudeToReach = "";
     currentQuiz = localStorage.getItem('currentQuiz');
+    if (currentQuiz = null) currentQuiz = "";
     currentQuizAnswer = localStorage.getItem('currentQuizAnswer');
+    if (currentQuizAnswer = null) currentQuizAnswer = "";
     lastClueText = localStorage.getItem('poiToBeSent');
+    if (poiToBeSent = null) poiToBeSent = "";
+    poiFound = localStorage.getItem('poiFound');
+    if (poiFound = null) poiFound = 0;
     connect();
 }
 
@@ -46,7 +59,7 @@ function connect() {
     client = Stomp.over(ws);
     client.heartbeat.outgoing = 0;
     client.heartbeat.incoming = 0;
-    client.onreceive = onReceive
+    client.onreceive = onReceive;
     client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
 }
 
@@ -73,7 +86,8 @@ function on_message(m) {
 
 function on_connect_error() {
     console.log("connection error");
-    connect();
+    //connect();
+    alert("no connection");
 }
 
 var onReceive = function (m) {
@@ -278,6 +292,8 @@ function mapLoadedCallback() {
                         if (longitude * 1 >= longitudeToReach * 1 - error * 1 && longitude * 1 <= longitudeToReach * 1 + error * 1) {
                             if (currentQuiz == "") {
                                 send(poiToBeSent);
+                                poiFound++;
+                                localStorage.setItem('poiFound', poiFound);
                             }
                         }
                     }
