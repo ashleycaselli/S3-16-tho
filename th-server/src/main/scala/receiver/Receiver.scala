@@ -143,10 +143,11 @@ class ReceiverImpl extends Receiver {
                     }
                     case msgType.Login => {
                         var login = Json.parse(payload).as[Login]
-                        var user = login.username;
-                        var pass = login.password;
-                        // TODO verificare se user e pass corrispondono
-                        if (true) {
+                        var teamName = login.username
+                        var password = login.password
+
+                        val teamDB: TeamDB = new TeamDBImpl
+                        if (teamDB.login(teamName, password)) {
                             channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, ("{\"messageType\":\"LoginMsg\",\"sender\":\"0\",\"payload\":\"" + RabbitInfo.OK_RESPONSE + "\"}").getBytes())
                         } else {
                             channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, ("{\"messageType\":\"LoginMsg\",\"sender\":\"0\",\"payload\":\"" + RabbitInfo.KO_RESPONSE + "\"}").getBytes())
@@ -154,10 +155,12 @@ class ReceiverImpl extends Receiver {
                     }
                     case msgType.Registration => {
                         var reg = Json.parse(payload).as[Registration]
-                        var user = reg.username;
-                        var pass = reg.password;
-                        // TODO verificare se esiste gia un iser con questo nome, se non c'è salvarlo
-                        if (true) {
+                        var teamName = reg.username
+                        var password = reg.password
+
+                        val teamDB: TeamDB = new TeamDBImpl
+                        if (teamDB.checkTeamNameAvailability(teamName)) {
+                            teamDB.createNewTeam(teamName, password)
                             channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, ("{\"messageType\":\"RegistrationMsg\",\"sender\":\"0\",\"payload\":\"" + RabbitInfo.OK_RESPONSE + "\"}").getBytes())
                         } else {
                             channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, ("{\"messageType\":\"RegistrationMsg\",\"sender\":\"0\",\"payload\":\"" + RabbitInfo.KO_RESPONSE + "\"}").getBytes())
