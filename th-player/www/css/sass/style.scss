@@ -8,7 +8,11 @@
 }
 
 /*------------Generic CSS-------------*/
-
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
 body {
     background-color: $color-white;
 }
@@ -186,6 +190,17 @@ label {
             border-bottom: 0;
         }
     }
+}
+
+.available-hunts-label {
+    text-align: center;
+    margin: 4px 0;
+    width: 100%;
+    display: block;
+}
+
+.near-treasure-hunt ul {
+    margin: 0 35px;
 }
 
 /*--------------------------4th Page: Map Page------------------------*/

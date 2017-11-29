@@ -10,21 +10,34 @@ var currentQuiz = "";
 var currentQuizAnswer = "";
 var googleScriptLoaded = false;
 var poiToBeSent = "";
+var poiFound = 0;
 
 //----------------------------EVENT-LISTENERS--------------------------------
 document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
     //load saved data
     loggedTeam = localStorage.getItem('loggedTeam');
+    if (loggedTeam == null) loggedTeam = "";
     currentHunt = localStorage.getItem('currentHunt');
+    if (currentHunt == null) currentHunt = "";
     currentHuntName = localStorage.getItem('currentHuntName');
+    if (currentHuntName == null) currentHuntName = "";
     poiToBeSent = localStorage.getItem('poiToBeSent');
+    if (poiToBeSent == null) poiToBeSent = "";
     poiToReach = localStorage.getItem('poiToReach');
+    if (poiToReach == null) poiToReach = "";
     longitudeToReach = localStorage.getItem('poiToBeSent');
+    if (poiToBeSent == null) poiToBeSent = "";
     latitudeToReach = localStorage.getItem('latitudeToReach');
+    if (latitudeToReach == null) latitudeToReach = "";
     currentQuiz = localStorage.getItem('currentQuiz');
+    if (currentQuiz == null) currentQuiz = "";
     currentQuizAnswer = localStorage.getItem('currentQuizAnswer');
-    lastClueText = localStorage.getItem('poiToBeSent');
+    if (currentQuizAnswer == null) currentQuizAnswer = "";
+    lastClueText = localStorage.getItem('lastClueText');
+    if (poiToBeSent == null) poiToBeSent = "";
+    poiFound = localStorage.getItem('poiFound');
+    if (poiFound == null) poiFound = 0;
     connect();
 }
 
@@ -46,7 +59,7 @@ function connect() {
     client = Stomp.over(ws);
     client.heartbeat.outgoing = 0;
     client.heartbeat.incoming = 0;
-    client.onreceive = onReceive
+    client.onreceive = onReceive;
     client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
 }
 
@@ -73,7 +86,8 @@ function on_message(m) {
 
 function on_connect_error() {
     console.log("connection error");
-    connect();
+    //connect();
+    alert("no connection");
 }
 
 var onReceive = function (m) {
@@ -91,42 +105,50 @@ var onReceive = function (m) {
         showNearTreasureHunt(payload.list);
     }
     if (messageType == "PoiMsg") {
-        //var poiID = payload.ID;
-        var poiName = payload.name;
-        //var treasureHuntID = payload.treasureHuntID;
-        var position = JSON.parse(payload.position);
-        var latitude = position.latitude;
-        var longitude = position.longitude;
-        var quiz = JSON.parse(payload.quiz);
-        var question = quiz.question;
-        var answer = quiz.answer;
-        var clue = JSON.parse(payload.clue);
-        var clueText = clue.content;
-
-        poiToBeSent = m.body;
-        localStorage.setItem('poiToBeSent', poiToBeSent);
-        lastClueText = clueText;
-        localStorage.setItem('lastClueText', lastClueText);
-        currentQuiz = question;
-        localStorage.setItem('currentQuiz', currentQuiz);
-        currentQuizAnswer = answer;
-        localStorage.setItem('currentQuizAnswer', currentQuizAnswer);
-        latitudeToReach = latitude;
-        localStorage.setItem('latitudeToReach', latitudeToReach);
-        longitudeToReach = longitude;
-        localStorage.setItem('longitudeToReach', longitudeToReach);
-        if (poiToReach == "") {
-            alert("Try to find the first point of interest named: " + poiName + ".\nThe clue will help you.");
-        } else {
-            alert("Poi: " + poiToReach + " found.\nNext Poi is: " + poiName + ".\nThe clue will help you.");
-        }
-        poiToReach = poiName;
-        localStorage.setItem('poiToReach', poiToReach);
+        handlePoiMsg(payload);
     }
+}
+
+function handlePoiMsg(m, payload) {
+    //var poiID = payload.ID;
+    var poiName = payload.name;
+    //var treasureHuntID = payload.treasureHuntID;
+    var position = JSON.parse(payload.position);
+    var latitude = position.latitude;
+    var longitude = position.longitude;
+    var quiz = JSON.parse(payload.quiz);
+    var question = quiz.question;
+    var answer = quiz.answer;
+    var clue = JSON.parse(payload.clue);
+    var clueText = clue.content;
+
+    poiToBeSent = m.body;
+    localStorage.setItem('poiToBeSent', poiToBeSent);
+    lastClueText = clueText;
+    localStorage.setItem('lastClueText', lastClueText);
+    currentQuiz = question;
+    localStorage.setItem('currentQuiz', currentQuiz);
+    currentQuizAnswer = answer;
+    localStorage.setItem('currentQuizAnswer', currentQuizAnswer);
+    latitudeToReach = latitude;
+    localStorage.setItem('latitudeToReach', latitudeToReach);
+    longitudeToReach = longitude;
+    localStorage.setItem('longitudeToReach', longitudeToReach);
+    if (poiToReach == "") {
+        alert("Try to find the first point of interest named: " + poiName + ".\nThe clue will help you.");
+    } else {
+        alert("Poi: " + poiToReach + " found.\nNext Poi is: " + poiName + ".\nThe clue will help you.");
+    }
+    poiToReach = poiName;
+    localStorage.setItem('poiToReach', poiToReach);
 }
 
 function send(m) {
     client.send(mq_queue, {'reply-to': '/temp-queue/foo', "content-type": "text/plain"}, m);
+}
+
+function requireTHlist() {
+    send('{"messageType":"ListTHsMsg","sender":"1","payload":"{\\"list\\":[]}"}');
 }
 
 //-----------------------------select-th-----------------------------------
@@ -148,11 +170,17 @@ function showCurrentTreasureHuntPage() {        // Shows leave/resume buttons in
 function showNearTreasureHunt(list) {           // Shows list of available THs
     showSelectTreasureHuntContainer();          // empty container
     var div = document.getElementById("nearTreasureHunt");
-    var content = "<ul>";
-    for (var i = 0; i < list.length; i++) {
-        content += '<li onclick=\'showScanButtons("' + list[i].ID + '","' + list[i].name + '")\' >' + list[i].name + '</li>';
+    var content = "";
+    if (list.length > 0) {
+        content += '<p class="available-hunts-label">Available treasure hunts</p><ul>';
+        for (var i = 0; i < list.length; i++) {
+            content += '<li onclick=\'showScanButtons("' + list[i].ID + '","' + list[i].name + '")\' >' + list[i].name + '</li>';
+        }
+        content += "</ul>";
+    } else {
+        content += "No available treasure hunt.\nTry again later.";
     }
-    div.innerHTML = content + "</ul>";
+    div.innerHTML = content;
     div.style.display = "block";
 }
 
@@ -278,6 +306,8 @@ function mapLoadedCallback() {
                         if (longitude * 1 >= longitudeToReach * 1 - error * 1 && longitude * 1 <= longitudeToReach * 1 + error * 1) {
                             if (currentQuiz == "") {
                                 send(poiToBeSent);
+                                poiFound++;
+                                localStorage.setItem('poiFound', poiFound);
                             }
                         }
                     }
@@ -358,20 +388,11 @@ function checkQuiz() {
 
 //---------------------------------PROGRESS---------------------------------
 function viewProgress() {
-    getProgress(function (totalPOI, reachedPOI) {
         var div = document.getElementById("mapPageProgress");
         var content = "";
-        var value = totalPOI / reachedPOI * 10 + 20;
-        content += '<div class="close-progress" onclick="closeProgress()">X</div><div class="progress-percent">' + Math.round(value) + '%</div><div class="out-of-progress">' + reachedPOI + '</br>POI</br>reached</br>out of</br>' + totalPOI + '</div><div class="progress-bar"><div class="progress-bar-content animated bounceInDown" style="height:' + value + '%;"></div></div>';
+    content += '<div class="close-progress" onclick="closeProgress()">X</div><div class="out-of-progress">' + poiFound + '</br>POI</br>reached</div>';
         div.innerHTML = content;
         div.style.display = "block";
-    });
-}
-
-function getProgress(callback) {
-    var totalPOI = 10;
-    var reachedPOI = 4;
-    callback(totalPOI, reachedPOI);
 }
 
 function closeProgress() {
@@ -399,11 +420,13 @@ function showCreateTeamPage() {             // shows create-team form
 }
 
 function createTeam() {                     //creates the team
-    document.getElementById("notLoggedUserPage").style.display = "none";
     var username = document.getElementById("createTeamNameInput").value;
     var password = document.getElementById("createTeamPassInput").value;
     if (password === document.getElementById("createTeamConfirmPassInput").value) {
         send('{"messageType":"RegistrationMsg","sender":"0","payload":"{\\"username\\":\\"' + username + '\\",\\"password\\":\\"' + password + '\\"}"}');
+        document.getElementById("notLoggedUserPage").style.display = "none";
+    } else {
+        alert("Password error");
     }
 }
 
@@ -456,12 +479,9 @@ function loginResult(value) {
             requireTHlist();
         }
     } else {
-        alert("error");
+        showNotLoggedUser();
+        alert("Wrong credentials");
     }
-}
-
-function requireTHlist() {
-    send('{"messageType":"ListTHsMsg","sender":"1","payload":"{\\"list\\":[]}"}');
 }
 
 function logoutTeam() {

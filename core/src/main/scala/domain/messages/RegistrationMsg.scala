@@ -6,7 +6,7 @@ import play.api.libs.json.{Json, Writes}
   *
   */
 trait RegistrationMsg extends Message {
-    def messageType = msgType.Login
+    def messageType = msgType.Registration
 }
 
 /**
