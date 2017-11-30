@@ -11,9 +11,13 @@ var currentQuizAnswer = "";
 var googleScriptLoaded = false;
 var poiToBeSent = "";
 var poiFound = 0;
+var thID = 0;
+var loggedTeamID = 0;                       //ID of the logged Team
+var clueID = 0;                             //ID of the clue saved in memory
 
 //----------------------------EVENT-LISTENERS--------------------------------
 document.addEventListener("deviceready", onDeviceReady, false);
+
 function onDeviceReady() {
     //load saved data
     loggedTeam = localStorage.getItem('loggedTeam');
@@ -38,6 +42,12 @@ function onDeviceReady() {
     if (poiToBeSent == null) poiToBeSent = "";
     poiFound = localStorage.getItem('poiFound');
     if (poiFound == null) poiFound = 0;
+    thID = localStorage.getItem('thID');
+    if (thID == null) thID = 0;
+    loggedTeamID = localStorage.getItem('loggedTeamID');
+    if (loggedTeamID == null) loggedTeamID = 0;
+    clueID = localStorage.getItem('clueID');
+    if (clueID == null) clueID = 0;
     connect();
 }
 
@@ -45,8 +55,8 @@ function onDeviceReady() {
 var mq_username = "test";
 var mq_password = "test";
 var mq_vhost = "/";
-//var mq_url = 'http://52.14.140.101:15674/stomp';
-var mq_url = 'http://localhost:15674/stomp';
+var mq_url = 'http://52.14.140.101:15674/stomp';
+//var mq_url = 'http://localhost:15674/stomp';
 var mq_queue = "/exchange/organizer-message";
 var ws;
 var client;
@@ -64,6 +74,18 @@ function connect() {
 }
 
 function on_connect() {
+    client.subscribe('/topic/win', function (d) {
+        var p = JSON.parse(d.body);
+        var th = p.th;
+        var team = p.team;
+        if (th == thID) {
+            if (team == loggedTeam) {
+                alert("hai vinto");
+            } else {
+                alert("Qualcuno ha vinto. Non tu.");
+            }
+        }
+    });
     console.log("connected to server");
     if (firstConnection == true) {
         //check if logged team exists
@@ -94,6 +116,7 @@ var onReceive = function (m) {
     var msg = JSON.parse(m.body);
     var messageType = msg.messageType;
     var payload = JSON.parse(msg.payload);
+    var sender = JSON.parse(msg.sender);
     console.log(payload);
     if (messageType == "LoginMsg") {
         loginResult(payload);
@@ -105,14 +128,14 @@ var onReceive = function (m) {
         showNearTreasureHunt(payload.list);
     }
     if (messageType == "PoiMsg") {
-        handlePoiMsg(payload);
+        handlePoiMsg(m, payload, sender);
     }
 }
 
-function handlePoiMsg(m, payload) {
+function handlePoiMsg(m, payload, sender) {
     //var poiID = payload.ID;
     var poiName = payload.name;
-    //var treasureHuntID = payload.treasureHuntID;
+    var treasureHuntID = payload.treasureHuntID;
     var position = JSON.parse(payload.position);
     var latitude = position.latitude;
     var longitude = position.longitude;
@@ -122,6 +145,14 @@ function handlePoiMsg(m, payload) {
     var clue = JSON.parse(payload.clue);
     var clueText = clue.content;
 
+    if (thID == 0) {
+        thID = treasureHuntID;
+        localStorage.setItem('thID', thID);
+    }
+    if (loggedTeamID == 0) {
+        loggedTeamID = sender;
+        localStorage.setItem('loggedTeamID', loggedTeamID);
+    }
     poiToBeSent = m.body;
     localStorage.setItem('poiToBeSent', poiToBeSent);
     lastClueText = clueText;
@@ -141,6 +172,8 @@ function handlePoiMsg(m, payload) {
     }
     poiToReach = poiName;
     localStorage.setItem('poiToReach', poiToReach);
+    clueID = clue.ID;
+    localStorage.setItem('clueID', clueID);
 }
 
 function send(m) {
@@ -148,7 +181,7 @@ function send(m) {
 }
 
 function requireTHlist() {
-    send('{"messageType":"ListTHsMsg","sender":"1","payload":"{\\"list\\":[]}"}');
+    send('{"messageType":"ListTHsMsg","sender":"2","payload":"{\\"list\\":[]}"}');
 }
 
 //-----------------------------select-th-----------------------------------
@@ -159,6 +192,7 @@ function showSelectTreasureHuntContainer() {     // Shows the container and hide
     document.getElementById("currentTreasureHunt").style.display = "none";
     document.getElementById("nearTreasureHunt").innerHTML = "";
     document.getElementById("nearTreasureHunt").style.display = "none";
+    document.getElementById("notLoggedUserPage").style.display = "none";
 }
 
 function showCurrentTreasureHuntPage() {        // Shows leave/resume buttons in SelectTreasureHuntContainer
@@ -178,7 +212,8 @@ function showNearTreasureHunt(list) {           // Shows list of available THs
         }
         content += "</ul>";
     } else {
-        content += "No available treasure hunt.\nTry again later.";
+        content += "<p class='available-hunts-label'>No available treasure hunt.<br>Try again later.</p>" +
+            "<div class='refresh-button'><input type='button' value='refresh' onclick='requireTHlist()'></div>";
     }
     div.innerHTML = content;
     div.style.display = "block";
@@ -230,7 +265,7 @@ function checkScanResults(selectedTH, result, selectedTHname) {
         document.getElementById("selectTreasureHuntPage").style.display = "none";
         document.getElementById("insertCodeManually").style.display = "none";
         loadMapPage();
-        send('{"messageType":"PoiMsg","sender":"0","payload":"{\\"ID\\":0,\\"name\\":\\"\\",\\"treasureHuntID\\":' + currentHunt + ',\\"position\\":\\"{\\\\\\"latitude\\\\\\":0,\\\\\\"longitude\\\\\\":0}\\",\\"quiz\\":\\"{\\\\\\"ID\\\\\\":0,\\\\\\"question\\\\\\":\\\\\\"\\\\\\",\\\\\\"answer\\\\\\":\\\\\\"\\\\\\"}\\",\\"clue\\":\\"{\\\\\\"ID\\\\\\":0,\\\\\\"content\\\\\\":\\\\\\"\\\\\\"}\\"}"}');
+        send('{"messageType":"PoiMsg","sender":"0","payload":"{\\"ID\\":0,\\"name\\":\\"' + loggedTeam + '\\",\\"treasureHuntID\\":' + currentHunt + ',\\"position\\":\\"{\\\\\\"latitude\\\\\\":0,\\\\\\"longitude\\\\\\":0}\\",\\"quiz\\":\\"{\\\\\\"ID\\\\\\":0,\\\\\\"question\\\\\\":\\\\\\"\\\\\\",\\\\\\"answer\\\\\\":\\\\\\"\\\\\\"}\\",\\"clue\\":\\"{\\\\\\"ID\\\\\\":0,\\\\\\"content\\\\\\":\\\\\\"\\\\\\"}\\"}"}');
     } else {
         alert("invalid code");
     }
@@ -245,6 +280,7 @@ function resumeTreasureHunt() {
 }
 
 function leaveTreasureHunt() {
+    unsubscribeTreasureHunt();
     //clean variables
     currentHunt = "";
     currentHuntName = "";
@@ -253,7 +289,9 @@ function leaveTreasureHunt() {
     latitudeToReach = "";
     currentQuiz = "";
     currentQuizAnswer = "";
+    thID = 0;
     //clean saved data
+    localStorage.removeItem('thID');
     localStorage.removeItem('currentHunt');
     localStorage.removeItem('currentHuntName');
     localStorage.removeItem('poiToReach');
@@ -321,9 +359,11 @@ function getLocation(callback) {
     function onSuccess(position) {
         callback(position.coords.latitude, position.coords.longitude)
     }
+
     function onError(error) {
         alert('Code: ' + error.code + '\nMessage: ' + error.message + '\n');
     }
+
     navigator.geolocation.getCurrentPosition(onSuccess, onError);
 }
 
@@ -359,7 +399,7 @@ function closeClue() {
 function showQuizAlert() {
     var container = document.getElementById("mapPageQuiz");
     var content = '<h1>NOT YET</h1>';
-    content += '<p>Clues are precious, you must solve a quiz befor!</p>';
+    content += '<p>Clues are precious, you must solve a quiz before!</p>';
     content += '<div onClick="showQuiz();" class="clue-quiz-button"><span>OK</span></div>';
     container.innerHTML = content;
     container.style.display = "block";
@@ -378,6 +418,8 @@ function showQuiz() {
 function checkQuiz() {
     if (document.getElementById("quizInput").value.trim().toUpperCase() === currentQuizAnswer.toUpperCase()) {
         document.getElementById("mapPageQuiz").style.display = "none";
+        //registro l'evento sul DB
+        send('{"messageType":"ClueMsg","sender":"' + loggedTeamID + '","payload":"' + clueID + '-' + thID + '"}');
         alert("clue unlocked");
         currentQuiz = "";
         showClue();
@@ -388,11 +430,11 @@ function checkQuiz() {
 
 //---------------------------------PROGRESS---------------------------------
 function viewProgress() {
-        var div = document.getElementById("mapPageProgress");
-        var content = "";
+    var div = document.getElementById("mapPageProgress");
+    var content = "";
     content += '<div class="close-progress" onclick="closeProgress()">X</div><div class="out-of-progress">' + poiFound + '</br>POI</br>reached</div>';
-        div.innerHTML = content;
-        div.style.display = "block";
+    div.innerHTML = content;
+    div.style.display = "block";
 }
 
 function closeProgress() {
@@ -424,9 +466,8 @@ function createTeam() {                     //creates the team
     var password = document.getElementById("createTeamPassInput").value;
     if (password === document.getElementById("createTeamConfirmPassInput").value) {
         send('{"messageType":"RegistrationMsg","sender":"0","payload":"{\\"username\\":\\"' + username + '\\",\\"password\\":\\"' + password + '\\"}"}');
-        document.getElementById("notLoggedUserPage").style.display = "none";
     } else {
-        alert("Password error");
+        alert("Password Mismatch");
     }
 }
 
@@ -443,6 +484,7 @@ function registrationResult(value) {
             requireTHlist();
         }
     } else {
+        showNotLoggedUser();
         alert("This name is no longer available");
     }
 }
@@ -487,6 +529,9 @@ function loginResult(value) {
 function logoutTeam() {
     var r = confirm("Logout?");
     if (r == true) {
+        if (isThRunning()) {
+            unsubscribeTreasureHunt();
+        }
         loggedTeam = "";
         localStorage.removeItem('loggedTeam');
         currentHunt = "";
@@ -503,7 +548,18 @@ function logoutTeam() {
         localStorage.removeItem('currentQuiz');
         currentQuizAnswer = "";
         localStorage.removeItem('currentQuizAnswer');
+        loggedTeamID = 0;
+        localStorage.removeItem('loggedTeamID');
+        thID = 0;
+        localStorage.removeItem('thID');
+        clueID = 0;
+        localStorage.removeItem('clueID');
         showNotLoggedUser();
     }
+}
+
+function unsubscribeTreasureHunt() {
+    send('{"messageType":"UnsubscriptionMsg","sender":"' + loggedTeamID + '","payload":"' + thID + '"}');
+    console.log('Unsubscription from "' + currentHuntName + '" done!')
 }
 

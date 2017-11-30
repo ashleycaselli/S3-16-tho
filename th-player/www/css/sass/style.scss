@@ -13,6 +13,7 @@ html, body {
     height: 100%;
     overflow: hidden;
 }
+
 body {
     background-color: $color-white;
 }
@@ -201,6 +202,11 @@ label {
 
 .near-treasure-hunt ul {
     margin: 0 35px;
+}
+
+.refresh-button {
+    margin: 25px auto;
+    text-align: center;
 }
 
 /*--------------------------4th Page: Map Page------------------------*/
