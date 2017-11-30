@@ -20,6 +20,8 @@ trait THModel extends Observable[String] {
 
     def getTreasureHunts: List[TreasureHunt]
 
+    def deleteTreasureHunt(th: TreasureHunt): Unit
+
     def addPOI(poi: POI): Unit
 
     def addPoiMarker(poiMarker: Marker, poi: POI): Unit
@@ -72,6 +74,16 @@ class THModelImpl(override var broker: Broker) extends THModel {
 
     override def getTreasureHunts: List[TreasureHunt] = ths
 
+    override def deleteTreasureHunt(th: TreasureHunt): Unit = {
+        require(ths != null && ths.contains(th))
+        val thMsg = TreasureHuntMsgImpl(organizerID, th defaultRepresentation).defaultRepresentation
+        val ID = (broker call thMsg).toInt
+        th.ID = ID
+        ths = ths :+ th
+        setRunningTH(th.ID)
+        notifyObservers(TreasureHuntMsgImpl(organizerID, th defaultRepresentation).defaultRepresentation)
+    }
+
     override def addPOI(poi: POI): Unit = {
         require(pois != null && !pois.contains(poi))
         val poiMsg = PoiMsgImpl(organizerID, poi defaultRepresentation).defaultRepresentation
@@ -88,7 +100,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
     override def deletePOI(poi: POI): Unit = {
         require(pois.contains(poi))
         val poiMsg = PoiMsgImpl(organizerID, poi defaultRepresentation).defaultRepresentation
-        broker send poiMsg
+        broker call poiMsg
         pois -= poi
         markerList.remove(poi)
     }
@@ -105,15 +117,18 @@ class THModelImpl(override var broker: Broker) extends THModel {
     }
 
     def getPOIsFromDB: ListBuffer[POI] = {
-        val listMsg = broker.call(ListPOIsMsgImpl(organizerID, runningTH.ID.toString).defaultRepresentation)
-        Json.parse(toMessage(listMsg).payload).as[ListPOIs].list
+        if (runningTH != null) {
+            val listMsg = broker.call(ListPOIsMsgImpl(organizerID, runningTH.ID.toString).defaultRepresentation)
+            return Json.parse(toMessage(listMsg).payload).as[ListPOIs].list
+        }
+        return ListBuffer.empty
     }
 
     override def getCode: Int = runningTH.ID
 
     override def startHunt(): Unit = {
         require(runningTH != null)
-        broker send (StateMsgImpl(organizerID, StateImpl(StateType.Start, runningTH.ID).defaultRepresentation) defaultRepresentation)
+        broker call (StateMsgImpl(organizerID, StateImpl(StateType.Start, runningTH.ID).defaultRepresentation) defaultRepresentation)
         THStarted = true
     }
 

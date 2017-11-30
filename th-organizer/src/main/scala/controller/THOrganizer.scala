@@ -12,6 +12,8 @@ sealed trait THOrganizer {
 
     def createTreasureHunt(treasureHunt: TreasureHunt): Unit
 
+    def deleteTreasureHunt(treasureHunt: TreasureHunt): Unit
+
     def addPoi(poi: POI, poiMarker: Marker): Unit
 
     def deletePoi(poi: POI): Unit
@@ -50,6 +52,12 @@ class THOrganizerImpl(_model: THModel) extends THOrganizer {
         logger info s"Creating a Treasure Hunt: ${treasureHunt.name}"
         _model addTreasureHunt treasureHunt
         logger info s"${treasureHunt.name} creation successfully!"
+    }
+
+    def deleteTreasureHunt(treasureHunt: TreasureHunt): Unit = {
+        logger info s"Deleting a Treasure Hunt: ${treasureHunt.name}"
+        _model deleteTreasureHunt treasureHunt
+        logger info s"${treasureHunt.name} deleted successfully!"
     }
 
     override def addPoi(poi: POI, poiMarker: Marker): Unit = {

@@ -130,6 +130,16 @@ public class MainView extends JFrame implements OrganizerView {
             this.loadButton.setFont(Resources.DEFAULT_FONT);
 
             this.loadButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> new MapView(this.selectedTH, this.controller)));
+            //this.deleteButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() ->)));
+
+            /*
+                this.existingPOIList = new JList(convertList(controller.getPois()).toArray());
+                existingPOIList.addListSelectionListener(arg -> {
+                    if (!arg.getValueIsAdjusting()) {
+                        this.selectedPOI = (POI) existingPOIList.getSelectedValue();
+                    }
+                });
+            */
         }
     }
 

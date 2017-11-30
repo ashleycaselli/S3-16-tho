@@ -32,6 +32,8 @@ public class MapView extends JFrame implements OrganizerView {
     private TreasureHunt currentTreasureHunt;
     private final THOrganizer controller;
     private POI selectedPOI;
+    private JScrollPane existingPOIScrollPane;
+    private JList existingPOIList;
 
     public MapView(final TreasureHunt currentTreasureHunt, final THOrganizer controller) {
         THOrganizer$.MODULE$.instance().model().addObserver(this);
@@ -84,19 +86,22 @@ public class MapView extends JFrame implements OrganizerView {
             JOptionPane.showMessageDialog(dialog, "Treasure Hunt started.\nDon't forget to create a code.");
         }));
         this.buttonList.add(startHuntButton);
-        JButton stopHuntButton = new JButton(Strings.STOP_HUNT_BUTTON);
-        stopHuntButton.setPreferredSize(new Dimension(400, 45));
-        stopHuntButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
-            if (controller.isTHRunning()) {
-                controller.stopHunt();
-                JFrame dialog = new JFrame();
-                JOptionPane.showMessageDialog(dialog, "Treasure Hunt stopped.");
-            } else {
-                JFrame dialog = new JFrame();
-                JOptionPane.showMessageDialog(dialog, "Already stopped.");
-            }
-        }));
-        this.buttonList.add(stopHuntButton);
+
+        /*
+            JButton stopHuntButton = new JButton(Strings.STOP_HUNT_BUTTON);
+            stopHuntButton.setPreferredSize(new Dimension(400, 45));
+            stopHuntButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
+                if (controller.isTHRunning()) {
+                    controller.stopHunt();
+                    JFrame dialog = new JFrame();
+                    JOptionPane.showMessageDialog(dialog, "Treasure Hunt stopped.");
+                } else {
+                    JFrame dialog = new JFrame();
+                    JOptionPane.showMessageDialog(dialog, "Already stopped.");
+                }
+            }));
+            this.buttonList.add(stopHuntButton);
+        */
         c.anchor = GridBagConstraints.LINE_START;
         this.buttonList.forEach(button -> {
             button.setFont(Resources.DEFAULT_FONT);
@@ -114,39 +119,50 @@ public class MapView extends JFrame implements OrganizerView {
         c.gridheight = 2;
         this.add(this.googleMapsPanel, c);
 
-
-        ArrayList<POI> poiList = convertList(controller.getPois());
-        JList existingPOIList = new JList(poiList.toArray());
-        existingPOIList.addListSelectionListener(arg -> {
-            if (!arg.getValueIsAdjusting()) {
-                this.selectedPOI = (POI) existingPOIList.getSelectedValue();
-            }
-        });
-        JScrollPane existingPOIScrollPane = new JScrollPane(existingPOIList);
-        existingPOIList.setFixedCellWidth(50);
-        existingPOIList.setCellRenderer(new THListCellRenderer());
-        existingPOIList.setVisibleRowCount(20);
-        existingPOIList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         existingPOIScrollPane = new JScrollPane(existingPOIList);
         c.gridy += 2;
         existingPOIScrollPane.setPreferredSize(new Dimension(300, 150));
         this.add(existingPOIScrollPane, c);
+        refreshPoisListPane();
 
         JButton deletePoiButton = new JButton("DELETE");
         deletePoiButton.setPreferredSize(new Dimension(300, 45));
         deletePoiButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
             //elimino il marker
-            this.googleMapsController.deleteMarker(controller.getPoiMarker(selectedPOI).get());
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    googleMapsController.deleteMarker(controller.getPoiMarker(selectedPOI).get());
+                }
+            });
             //elimino il poi dal DB
             this.controller.deletePoi(this.selectedPOI);
+            //elimino il poi dalla lista riassociandole la nuova lista senza poi
+            refreshPoisListPane();
         }));
         c.gridheight = 1;
         c.gridy += 2;
         this.add(deletePoiButton, c);
+        c.gridy -= 2;
     }
 
     private ArrayList<POI> convertList(scala.collection.Seq<POI> seq) {
         return new ArrayList<>(scala.collection.JavaConversions.seqAsJavaList(seq));
+    }
+
+    private void refreshPoisListPane() {
+        this.existingPOIList = new JList(convertList(controller.getPois()).toArray());
+        existingPOIList.addListSelectionListener(arg -> {
+            if (!arg.getValueIsAdjusting()) {
+                this.selectedPOI = (POI) existingPOIList.getSelectedValue();
+            }
+        });
+        existingPOIList.setCellRenderer(new THListCellRenderer());
+        existingPOIList.setFixedCellWidth(50);
+        existingPOIList.setVisibleRowCount(20);
+        existingPOIList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        existingPOIScrollPane.setViewportView(existingPOIList);
+        existingPOIScrollPane.repaint();
     }
 
     @Override
@@ -157,6 +173,8 @@ public class MapView extends JFrame implements OrganizerView {
             this.buttonList.forEach(button -> button.setEnabled(true));
             this.currentTreasureHunt = Json.parse(payload).as(TreasureHunt$.MODULE$.thReads());
         }
-        // TODO method implementation
+        if (msg.messageType().equals(msgType.Poi())) {
+            refreshPoisListPane();
+        }
     }
 }
