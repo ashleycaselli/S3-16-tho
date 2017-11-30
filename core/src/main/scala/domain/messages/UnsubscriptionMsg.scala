@@ -2,7 +2,7 @@ package domain.messages
 
 import play.api.libs.json.{Json, Writes}
 
-trait UnsubscriptionMessage extends Message {
+trait UnsubscriptionMsg extends Message {
     def messageType = msgType.Unsubscription
 }
 
@@ -12,10 +12,10 @@ trait UnsubscriptionMessage extends Message {
   * @param sender  a string that contains the team ID
   * @param payload a string that contains the treasure hunt ID
   */
-case class TreasureHuntMsgImpl(override val sender: String, override val payload: String) extends TreasureHuntMsg {
+case class UnsubscriptionMsgImpl(override val sender: String, override val payload: String) extends UnsubscriptionMsg {
 
-    implicit val thMsgWrites = new Writes[TreasureHuntMsgImpl] {
-        def writes(th: TreasureHuntMsgImpl) = Json.obj(
+    implicit val UnsubMsgWrites = new Writes[UnsubscriptionMsgImpl] {
+        def writes(unsub: UnsubscriptionMsgImpl) = Json.obj(
             "messageType" -> messageType,
             "sender" -> sender,
             "payload" -> payload)
