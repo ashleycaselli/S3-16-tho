@@ -8,10 +8,11 @@ trait TeamDB {
     /**
       * Method to subscribe a Team in a TH and insert a record in the DB
       *
-      * @param idTH   ID of the Treasure Hunt the team want to join
-      * @param idTeam ID of the team that want to join the Treasure Hunt
+      * @param idTH     ID of the Treasure Hunt the team want to join
+      * @param teamName name of the team that want to join the Treasure Hunt
+      * @return ID of the team
       */
-    def subscribeTreasureHunt(idTH: Int, idTeam: Int): Unit
+    def subscribeTreasureHunt(idTH: Int, teamName: String): Int
 
     /**
       * Method to unsubscribe a Team in a TH and delete a record in the DB
@@ -49,16 +50,25 @@ case class TeamDBImpl() extends TeamDB {
     /**
       * Method to subscribe a Team in a TH and insert a record in the DB
       *
-      * @param idTH   ID of the Treasure Hunt the team want to join
-      * @param idTeam ID of the team that want to join the Treasure Hunt
+      * @param idTH     ID of the Treasure Hunt the team want to join
+      * @param teamName name of the team that want to join the Treasure Hunt
+      * @return ID of the team
       */
-    def subscribeTreasureHunt(idTH: Int, idTeam: Int): Unit = {
+    def subscribeTreasureHunt(idTH: Int, teamName: String): Int = {
         val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
         val connection: Connection = connectionManager.establishConnection
         val statement = connection.createStatement
-        val query = s"INSERT INTO team_in_treasure_hunt (id_treasure_hunt, id_team) VALUES (${idTH},${idTeam})"
+        //cerco l'id del team
+        var query = s"SELECT id_team FROM team WHERE name = '${teamName}'"
+        val rs = statement.executeQuery(query)
+        var idTeam = 0
+        while (rs.next) {
+            idTeam = rs.getInt(1)
+        }
+        query = s"INSERT INTO team_in_treasure_hunt (id_treasure_hunt, id_team) VALUES (${idTH},${idTeam})"
         statement.executeUpdate(query)
         connection.close()
+        idTeam
     }
 
     /**
@@ -71,7 +81,7 @@ case class TeamDBImpl() extends TeamDB {
         val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
         val connection: Connection = connectionManager.establishConnection
         val statement = connection.createStatement
-        val query = s"DELETE FROM team_in_treasure_hunt WHERE id_treasure_hunt = (${idTH} AND id_team = ${idTeam})"
+        var query = s"DELETE FROM team_in_treasure_hunt WHERE id_treasure_hunt = ${idTH} AND id_team = ${idTeam}"
         statement.executeUpdate(query)
         connection.close()
     }

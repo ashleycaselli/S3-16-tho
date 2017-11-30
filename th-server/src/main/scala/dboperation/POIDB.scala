@@ -43,6 +43,13 @@ trait POIDB {
     def getFirstPoi(idTreasureHunt: Int): POI
 
     def getSubsequentPoi(poi: POI): POI
+
+    /**
+      * Method to remove a POI from DB (and its quiz anc clue)
+      *
+      * @param poi the poi to delete
+      */
+    def deletePoi(poi: POI): Unit
 }
 
 case class POIDBImpl() extends POIDB {
@@ -145,14 +152,38 @@ case class POIDBImpl() extends POIDB {
 
     override def getFirstPoi(idTreasureHunt: Int): POI = {
         println("getFirstPoi")
-        getPOIsList(idTreasureHunt)(0)
+        getPOIsList(idTreasureHunt) head
     }
 
     override def getSubsequentPoi(poi: POI): POI = {
         println("getsubPoi")
         val list = getPOIsList(poi.treasureHuntID)
         if (list.indexOf(poi) == list.length - 1)
-            return null;
+            return null
         list(list.indexOf(poi) + 1)
+    }
+
+    /**
+      * Method to remove a POI from DB (and its quiz anc clue)
+      *
+      * @param poi the poi to delete
+      */
+    override def deletePoi(poi: POI): Unit = {
+        val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
+        val connection: Connection = connectionManager.establishConnection
+        val statement = connection.createStatement
+        val idPoi: Int = poi.ID
+        val idQuiz: Int = poi.quiz.ID
+        val idClue: Int = poi.clue.ID
+        val idTH: Int = poi.treasureHuntID
+        var query = s"DELETE FROM poi_in_treasure_hunt WHERE id_poi = ${idPoi} AND id_treasure_hunt = ${idTH};"
+        statement.executeUpdate(query)
+        query = s"DELETE FROM point_of_interest WHERE id_poi = ${idPoi};"
+        statement.executeUpdate(query)
+        query = s"DELETE FROM quiz WHERE id_quiz = ${idQuiz};"
+        statement.executeUpdate(query)
+        query = s"DELETE FROM clue WHERE id_clue = ${idClue};"
+        statement.executeUpdate(query)
+        connection.close()
     }
 }

@@ -11,8 +11,10 @@ public class Recv {
     public void startRecv(String response) throws Exception {
         System.out.println("recv running");
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        
+        factory.setHost("52.14.140.101");
+        factory.setUsername("test");
+        factory.setPassword("test");
+
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
         channel.queueDeclare(QUEUE_NAME, false, false, false, null);
@@ -21,7 +23,7 @@ public class Recv {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
                 channel.basicPublish("", properties.getReplyTo(), new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId()).build(), response.getBytes());
-                lastMessage = message;
+                lastMessage = new String(body, "UTF-8");
             }
         };
         channel.basicConsume(QUEUE_NAME, true, consumer);

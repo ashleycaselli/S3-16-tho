@@ -30,7 +30,7 @@ class ReceiverImpl extends Receiver {
         val connection = factory.newConnection
         val channel = connection.createChannel
         channel.queueDeclare(RabbitInfo.QUEUE_NAME, false, false, false, null)
-        val consumer = new DefaultConsumer(channel) {
+        val organizerConsumer = new DefaultConsumer(channel) {
             @throws[IOException]
             override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, body: Array[Byte]): Unit = {
                 val data = new String(body, RabbitInfo.MESSAGE_ENCODING)
@@ -46,13 +46,18 @@ class ReceiverImpl extends Receiver {
                         val idOrganizer = sender
                         val th = Json.parse(payload).as[TreasureHunt]
                         val treasureHuntDB: TreasureHuntDB = new TreasureHuntDBImpl
-                        val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, idOrganizer)
-                        channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, thID.toString.getBytes)
+
+                        if (th.ID == 0) {
+                            val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, idOrganizer)
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, thID.toString.getBytes)
+                        } else {
+
+                        }
                     }
                     case msgType.ListTHs => {
                         val idOrganizer = sender
                         val treasureHuntDB = new TreasureHuntDBImpl
-                        val list = treasureHuntDB.viewTreasureHuntList(idOrganizer)
+                        val list = treasureHuntDB.viewTreasureHuntListByOrganizer(idOrganizer)
                         val message: String = ListTHsMsgImpl("0", ListTHsImpl(list).defaultRepresentation).defaultRepresentation
                         channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
                     }
@@ -63,30 +68,43 @@ class ReceiverImpl extends Receiver {
                         channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
                     }
                     case msgType.Poi => {
-                        //TODO controllare se sto aggiungendo o eliminando il poi (in base all'id)
+
                         val idOrganizer = sender
                         val poi = Json.parse(payload).as[POI]
-                        val newQuiz: NewQuizDB = new NewQuizDBImpl
-                        val newClue: NewClueDB = new NewClueDBImpl
                         val poiDB: POIDB = new POIDBImpl
 
-                        val idQuiz = newQuiz.insertNewQuiz(poi.quiz.question, poi.quiz.answer, idOrganizer)
-                        val idClue = newClue.insertNewClue(poi.clue.content, idOrganizer)
-                        val idPOI = poiDB.insertNewPOI(poi, idOrganizer)
+                        if (poi.ID.toInt == 0) {
+                            val newQuiz: NewQuizDB = new NewQuizDBImpl
+                            val newClue: NewClueDB = new NewClueDBImpl
+                            val idQuiz = newQuiz.insertNewQuiz(poi.quiz.question, poi.quiz.answer, idOrganizer)
+                            val idClue = newClue.insertNewClue(poi.clue.content, idOrganizer)
+                            val idPOI = poiDB.insertNewPOI(poi, idOrganizer)
 
-                        poiDB.setQuiz(idPOI, idQuiz)
-                        poiDB.setClue(idPOI, idClue)
+                            poiDB.setQuiz(idPOI, idQuiz)
+                            poiDB.setClue(idPOI, idClue)
 
-                        poi.ID = idPOI
-                        poi.quiz.ID = idQuiz
-                        poi.clue.ID = idClue
+                            poi.ID = idPOI
+                            poi.quiz.ID = idQuiz
+                            poi.clue.ID = idClue
 
-                        val message: String = PoiMsgImpl("0", poi.defaultRepresentation).defaultRepresentation
-                        channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
+                            val message: String = PoiMsgImpl("0", poi.defaultRepresentation).defaultRepresentation
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
+                        } else {
+                            poiDB.deletePoi(poi)
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.OK_RESPONSE.getBytes)
+                        }
+
                     }
-                    case msgType.Position => {
-                        var position = Json.parse(payload).as[Position]
-                        println("posirtion")
+                    case msgType.State => {
+                        val idOrganizer = sender
+                        val stateOfTH = Json.parse(payload).as[State]
+                        if (stateOfTH.state == StateType.Start) {
+                            val eventDB: EventDB = EventDBImpl()
+                            eventDB.organizerStartTreasureHunt(stateOfTH.treasureHuntID, idOrganizer)
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.OK_RESPONSE.getBytes)
+                        } else {
+                            channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.KO_RESPONSE.getBytes)
+                        }
                     }
                     case _ => {
                         channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.KO_RESPONSE.getBytes)
@@ -95,14 +113,14 @@ class ReceiverImpl extends Receiver {
             }
         }
 
-        channel.basicConsume(RabbitInfo.QUEUE_NAME, true, consumer)
+        channel.basicConsume(RabbitInfo.QUEUE_NAME, true, organizerConsumer)
 
 
         val channelPS = connection.createChannel
         channelPS.exchangeDeclare(RabbitInfo.EXCHANGE_NAME, "fanout")
         val queueName = channelPS.queueDeclare.getQueue
         channelPS.queueBind(queueName, RabbitInfo.EXCHANGE_NAME, "")
-        val consumer2 = new DefaultConsumer(channelPS) {
+        val playerConsumer = new DefaultConsumer(channelPS) {
             @throws[IOException]
             override def handleDelivery(consumerTag: String, envelope: Envelope, properties: AMQP.BasicProperties, body: Array[Byte]): Unit = {
                 val data = new String(body, RabbitInfo.MESSAGE_ENCODING)
@@ -118,14 +136,30 @@ class ReceiverImpl extends Receiver {
                         val poiDB: POIDB = new POIDBImpl
                         if (poi.ID == 0) {
                             val nextPoi = poiDB getFirstPoi (poi.treasureHuntID)
-                            val message: String = PoiMsgImpl("0", nextPoi.defaultRepresentation).defaultRepresentation
+
+                            //iscrivo la squadra alla caccia al tesoro
+                            val teamDB: TeamDB = TeamDBImpl()
+                            val idTeam = teamDB.subscribeTreasureHunt(poi.treasureHuntID, poi.name)
+                            //faccio iniziare a quella squadra la sua caccia al tesoro
+                            val eventDB: EventDB = EventDBImpl()
+                            eventDB.teamStartTreasureHunt(poi.treasureHuntID, idTeam)
+                            //il player riceve il quiz
+                            eventDB.teamReceiveQuiz(nextPoi.treasureHuntID, idTeam, nextPoi.quiz.ID, "Primo POI")
+
+                            val message: String = PoiMsgImpl(idTeam.toString, nextPoi.defaultRepresentation).defaultRepresentation
                             channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes())
+
                         } else {
                             var poi = Json.parse(payload).as[POI]
                             val nextPoi = poiDB getSubsequentPoi (poi)
                             if (nextPoi != null) {
-                                val message: String = PoiMsgImpl("0", nextPoi.defaultRepresentation).defaultRepresentation
+                                val message: String = PoiMsgImpl(sender, nextPoi.defaultRepresentation).defaultRepresentation
                                 channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes())
+                                val eventDB: EventDB = EventDBImpl()
+                                eventDB.teamReceiveQuiz(nextPoi.treasureHuntID, sender.toInt, nextPoi.quiz.ID, "POI Generico")
+                            } else {
+                                //avviso tutti i giocatore che c'è stato un vincitore
+                                //TODO send a publish message or a topic
                             }
                         }
                     }
@@ -135,9 +169,8 @@ class ReceiverImpl extends Receiver {
                         val thID = treasureHuntDB.insertNewTreasureHunt(th.name, th.location, th.date, th.time, sender.toInt)
                     }
                     case msgType.ListTHs => { // received if player require TH list
-                        val idOrganizer = sender
                         val treasureHuntDB = new TreasureHuntDBImpl
-                        val list = treasureHuntDB.viewTreasureHuntList(idOrganizer toInt)
+                        val list = treasureHuntDB.viewTreasureHuntListByPlayer()
                         val message: String = ListTHsMsgImpl("0", ListTHsImpl(list).defaultRepresentation).defaultRepresentation
                         channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes)
                     }
@@ -166,6 +199,22 @@ class ReceiverImpl extends Receiver {
                             channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, ("{\"messageType\":\"RegistrationMsg\",\"sender\":\"0\",\"payload\":\"" + RabbitInfo.KO_RESPONSE + "\"}").getBytes())
                         }
                     }
+                    case msgType.Clue => {
+                        val teamID = sender.toInt
+                        val payloadIDs = payload.split("-")
+                        val clueID = payloadIDs(0).toInt
+                        val thID = payloadIDs(1).toInt
+
+                        val eventDB: EventDB = EventDBImpl()
+                        eventDB.teamReceiveClue(thID, teamID, clueID)
+                    }
+                    case msgType.Unsubscription => {
+                        val teamID = sender.toInt
+                        val treasureHuntID = payload.toInt
+
+                        val teamDB: TeamDB = TeamDBImpl()
+                        teamDB.unsubscribeTreasureHunt(treasureHuntID, teamID)
+                    }
                     case _ => {
                         channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, RabbitInfo.KO_RESPONSE.getBytes)
                     }
@@ -173,7 +222,7 @@ class ReceiverImpl extends Receiver {
             }
         }
 
-        channelPS.basicConsume(queueName, false, consumer2)
+        channelPS.basicConsume(queueName, false, playerConsumer)
     }
 
     override def getLastMessage: String = lastMessage

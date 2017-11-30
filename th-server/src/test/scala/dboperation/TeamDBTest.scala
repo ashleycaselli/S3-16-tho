@@ -19,9 +19,9 @@ class TeamDBTest extends FunSuite with BeforeAndAfter {
         var statement = connection.createStatement
 
         val idTH: Int = 1
-        val idTeam: Int = 1
+        val teamName: String = "team ammut"
 
-        teamDB.subscribeTreasureHunt(idTH, idTeam)
+        val idTeam = teamDB.subscribeTreasureHunt(idTH, teamName)
 
         /*---CHECK IF INSERT IS CORRECT---*/
         var rs = statement.executeQuery(s"SELECT COUNT(*) FROM team_in_treasure_hunt WHERE id_treasure_hunt = ${idTH} AND id_team = ${idTeam}")
@@ -44,10 +44,10 @@ class TeamDBTest extends FunSuite with BeforeAndAfter {
         var statement = connection.createStatement
 
         val idTH: Int = 1
-        val idTeam: Int = 1
+        val teamName: String = "team ammut"
 
         //first of all subscribe a team in order to unsubscribe that team
-        teamDB.subscribeTreasureHunt(idTH, idTeam)
+        val idTeam = teamDB.subscribeTreasureHunt(idTH, teamName)
 
         teamDB.unsubscribeTreasureHunt(idTH, idTeam)
 

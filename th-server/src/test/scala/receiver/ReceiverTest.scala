@@ -13,7 +13,7 @@ class ReceiverTest extends FunSuite with BeforeAndAfter {
         receiver.startRecv()
     }
 
-    test("TH message test") {
+    /*test("TH message test") {
         Thread.sleep(5000)
         val msg = sender.callTreasureHunt()
         var pass: Boolean = false
@@ -25,8 +25,9 @@ class ReceiverTest extends FunSuite with BeforeAndAfter {
         }
         if (pass) assert(true)
         else assert(false)
-    }
+    }*/
 
+    /*
     test("ListTH message test") {
         Thread.sleep(5000)
         val msg = sender.callListTHs()
@@ -109,6 +110,6 @@ class ReceiverTest extends FunSuite with BeforeAndAfter {
         }
         if (pass4) assert(true)
         else assert(false)
-    }
+    }*/
 
 }

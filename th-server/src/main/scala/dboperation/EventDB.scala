@@ -50,17 +50,7 @@ trait EventDB {
     def teamReceiveQuiz(idTH: Int, idTeam: Int, idQuiz: Int, description: String = "No description provided"): Unit
 
     /**
-      * Method to register that a team resolved a Quiz  and insert a record in the DB (event type: 4)
-      *
-      * @param idTH        identifier of the Treasure Hunt
-      * @param idTeam      identifier of the team
-      * @param idQuiz      identifier of the Quiz solved
-      * @param description event description (optional parameter)
-      */
-    def teamSolveQuiz(idTH: Int, idTeam: Int, idQuiz: Int, description: String = "No description provided"): Unit
-
-    /**
-      * Method to register that a team received a Clue  and insert a record in the DB (event type: 5)
+      * Method to register that a team received a Clue  and insert a record in the DB (event type: 4)
       *
       * @param idTH        identifier of the Treasure Hunt
       * @param idTeam      identifier of the team
@@ -70,7 +60,7 @@ trait EventDB {
     def teamReceiveClue(idTH: Int, idTeam: Int, idClue: Int, description: String = "No description provided"): Unit
 
     /**
-      * Method to register that a team finish a TH and insert a record in the DB (event type: 6)
+      * Method to register that a team finish a TH and insert a record in the DB (event type: 5)
       *
       * @param idTH        identifier of the Treasure Hunt
       * @param idTeam      identifier of the team
@@ -89,31 +79,13 @@ trait EventDB {
     def organizerOperation(idTH: Int, idTeam: Int, description: String, eventType: Int): Unit
 
     /**
-      * Method to open treasure hunt subscription and insert a record in the DB (event type: 7)
-      *
-      * @param idTH        identifier of the Treasure Hunt
-      * @param idOrganizer identifier of the Organizer
-      * @param description event description (optional parameter)
-      */
-    def organizerOpenTreasureHuntSubscription(idTH: Int, idOrganizer: Int, description: String = "No description provided"): Unit
-
-    /**
-      * Method to start a treasure hunt and insert a record in the DB (event type: 8)
+      * Method to open treasure hunt subscription and insert a record in the DB (event type: 6)
       *
       * @param idTH        identifier of the Treasure Hunt
       * @param idOrganizer identifier of the Organizer
       * @param description event description (optional parameter)
       */
     def organizerStartTreasureHunt(idTH: Int, idOrganizer: Int, description: String = "No description provided"): Unit
-
-    /**
-      * Method to close a treasure hunt and insert a record in the DB (event type: 9)
-      *
-      * @param idTH        identifier of the Treasure Hunt
-      * @param idOrganizer identifier of the Organizer
-      * @param description event description (optional parameter)
-      */
-    def organizerCloseTreasureHunt(idTH: Int, idOrganizer: Int, description: String = "No description provided"): Unit
 
     /**
       * Method to get the correct timestamp
@@ -149,7 +121,7 @@ case class EventDBImpl() extends EventDB {
         val idQuizValue = if (idQuiz > 0) idQuiz else "NULL"
         val idClueValue = if (idClue > 0) idClue else "NULL"
         val query = s"INSERT INTO event_log (timestamp, event_type, id_treasure_hunt, id_team, id_poi, id_quiz, id_clue, event_description) " +
-                s"VALUES ('$getCorrectTimestamp',$eventType,$idTH,$idTeamValue, $idPoiValue, $idQuizValue, $idClueValue,'$description')"
+            s"VALUES ('$getCorrectTimestamp',$eventType,$idTH,$idTeamValue, $idPoiValue, $idQuizValue, $idClueValue,'$description')"
         statement.executeUpdate(query)
         connection.close
     }
@@ -193,20 +165,7 @@ case class EventDBImpl() extends EventDB {
     }
 
     /**
-      * Method to register that a team resolved a Quiz  and insert a record in the DB (event type: 4)
-      *
-      * @param idTH        identifier of the Treasure Hunt
-      * @param idTeam      identifier of the team
-      * @param idQuiz      identifier of the Quiz solved
-      * @param description event description (optional parameter)
-      */
-    override def teamSolveQuiz(idTH: Int, idTeam: Int, idQuiz: Int, description: String): Unit = {
-        val eventType = 4
-        teamOperation(idTH, idTeam, description, ID_POI_NULL, idQuiz, ID_CLUE_NULL, eventType)
-    }
-
-    /**
-      * Method to register that a team received a Clue  and insert a record in the DB (event type: 5)
+      * Method to register that a team received a Clue  and insert a record in the DB (event type: 4)
       *
       * @param idTH        identifier of the Treasure Hunt
       * @param idTeam      identifier of the team
@@ -214,19 +173,19 @@ case class EventDBImpl() extends EventDB {
       * @param description event description (optional parameter)
       */
     override def teamReceiveClue(idTH: Int, idTeam: Int, idClue: Int, description: String): Unit = {
-        val eventType = 5
+        val eventType = 4
         teamOperation(idTH, idTeam, description, ID_POI_NULL, ID_QUIZ_NULL, idClue, eventType)
     }
 
     /**
-      * Method to register that a team finish a TH and insert a record in the DB (event type: 6)
+      * Method to register that a team finish a TH and insert a record in the DB (event type: 5)
       *
       * @param idTH        identifier of the Treasure Hunt
       * @param idTeam      identifier of the team
       * @param description event description (optional parameter)
       */
     override def teamFinishTreasureHunt(idTH: Int, idTeam: Int, description: String): Unit = {
-        val eventType = 6
+        val eventType = 5
         teamOperation(idTH, idTeam, description, ID_POI_NULL, ID_QUIZ_NULL, ID_CLUE_NULL, eventType)
     }
 
@@ -248,38 +207,14 @@ case class EventDBImpl() extends EventDB {
     }
 
     /**
-      * Method to open treasure hunt subscription and insert a record in the DB (event type: 7)
-      *
-      * @param idTH        identifier of the Treasure Hunt
-      * @param idOrganizer identifier of the Organizer
-      * @param description event description (optional parameter)
-      */
-    override def organizerOpenTreasureHuntSubscription(idTH: Int, idOrganizer: Int, description: String): Unit = {
-        val eventType = 7
-        organizerOperation(idTH, idOrganizer, description, eventType)
-    }
-
-    /**
-      * Method to start a treasure hunt and insert a record in the DB (event type: 8)
+      * Method to open treasure hunt subscription and insert a record in the DB (event type: 6)
       *
       * @param idTH        identifier of the Treasure Hunt
       * @param idOrganizer identifier of the Organizer
       * @param description event description (optional parameter)
       */
     override def organizerStartTreasureHunt(idTH: Int, idOrganizer: Int, description: String): Unit = {
-        val eventType = 8
-        organizerOperation(idTH, idOrganizer, description, eventType)
-    }
-
-    /**
-      * Method to close a treasure hunt and insert a record in the DB (event type: 9)
-      *
-      * @param idTH        identifier of the Treasure Hunt
-      * @param idOrganizer identifier of the Organizer
-      * @param description event description (optional parameter)
-      */
-    override def organizerCloseTreasureHunt(idTH: Int, idOrganizer: Int, description: String): Unit = {
-        val eventType = 9
+        val eventType = 6
         organizerOperation(idTH, idOrganizer, description, eventType)
     }
 
