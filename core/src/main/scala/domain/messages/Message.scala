@@ -20,6 +20,7 @@ object msgType extends Enumeration {
     val Login = Value("LoginMsg")
     val Registration = Value("RegistrationMsg")
     val Unsubscription = Value("UnsubscriptionMsg")
+    val Win = Value("WinMsg")
 
     implicit val enumReads: Reads[msgType] = EnumUtils.enumReads(msgType)
 
@@ -68,6 +69,7 @@ object Message {
         case msgType.Login => LoginMsgImpl(sender, entity)
         case msgType.Registration => RegistrationMsgImpl(sender, entity)
         case msgType.Unsubscription => UnsubscriptionMsgImpl(sender, entity)
+        case msgType.Win => WinMsgImpl(sender, entity)
         case _ => throw NoMsgDefinedException(s"No message defined for $entity class")
     }
 
