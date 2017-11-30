@@ -80,7 +80,7 @@ function on_connect() {
         var team = message.sender;
         if (th == thID) {
             if (team == loggedTeam) {
-                showWinPage(true);
+                showWinPage(true, team);
             } else {
                 showWinPage(false, team);
             }
