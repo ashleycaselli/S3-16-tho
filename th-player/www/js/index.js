@@ -74,15 +74,15 @@ function connect() {
 }
 
 function on_connect() {
-    client.subscribe('/topic/win', function (d) {
-        var p = JSON.parse(d.body);
-        var th = p.th;
-        var team = p.team;
+    client.subscribe('/exchange/winExchange', function (m) {
+        var message = JSON.parse(m.body);
+        var th = message.payload;
+        var team = message.sender;
         if (th == thID) {
             if (team == loggedTeam) {
-                alert("hai vinto");
+                showWinPage(true);
             } else {
-                alert("Qualcuno ha vinto. Non tu.");
+                showWinPage(false, team);
             }
         }
     });
@@ -133,7 +133,7 @@ var onReceive = function (m) {
 }
 
 function handlePoiMsg(m, payload, sender) {
-    //var poiID = payload.ID;
+    closeClue(); //chiudo eventuali clue aperti
     var poiName = payload.name;
     var treasureHuntID = payload.treasureHuntID;
     var position = JSON.parse(payload.position);
@@ -280,7 +280,6 @@ function resumeTreasureHunt() {
 }
 
 function leaveTreasureHunt() {
-    unsubscribeTreasureHunt();
     //clean variables
     currentHunt = "";
     currentHuntName = "";
@@ -290,6 +289,7 @@ function leaveTreasureHunt() {
     currentQuiz = "";
     currentQuizAnswer = "";
     thID = 0;
+    poiFound = 0;
     //clean saved data
     localStorage.removeItem('thID');
     localStorage.removeItem('currentHunt');
@@ -299,6 +299,7 @@ function leaveTreasureHunt() {
     localStorage.removeItem('latitudeToReach');
     localStorage.removeItem('currentQuiz');
     localStorage.removeItem('currentQuizAnswer');
+    localStorage.removeItem('poiFound');
     //go to available treasure hunt list
     showSelectTreasureHuntContainer();
     requireTHlist();
@@ -326,7 +327,7 @@ function mapLoadedCallback() {
     getLocation(function (firstLatitude, firstLongitude) {
         var mapProp = {
             center: new google.maps.LatLng(firstLatitude, firstLongitude),
-            zoom: 15,
+            zoom: 17
         };
         var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
         var marker = new google.maps.Marker({
@@ -336,9 +337,9 @@ function mapLoadedCallback() {
         });
         setInterval(function () {
             getLocation(function (latitude, longitude) {
-                //map.setCenter(new google.maps.LatLng(latitude, longitude));
+                map.setCenter(new google.maps.LatLng(latitude, longitude));
                 marker.setPosition({lat: latitude, lng: longitude});
-                var error = 0.0002;
+                var error = 0.0003;
                 if (latitudeToReach != "" && longitudeToReach != "") {
                     if (latitude * 1 >= latitudeToReach * 1 - error * 1 && latitude * 1 <= latitudeToReach * 1 + error * 1) {
                         if (longitude * 1 >= longitudeToReach * 1 - error * 1 && longitude * 1 <= longitudeToReach * 1 + error * 1) {
@@ -555,11 +556,32 @@ function logoutTeam() {
         clueID = 0;
         localStorage.removeItem('clueID');
         showNotLoggedUser();
+        poiFound = 0;
+        localStorage.removeItem('poiFound');
     }
 }
 
 function unsubscribeTreasureHunt() {
     send('{"messageType":"UnsubscriptionMsg","sender":"' + loggedTeamID + '","payload":"' + thID + '"}');
     console.log('Unsubscription from "' + currentHuntName + '" done!')
+}
+
+function showWinPage(win, team) {
+    var winPage = document.getElementById("winPage");
+    var path = "";
+    if (win) {
+        path = "win.png"
+    } else {
+        path = "lose.png"
+    }
+    winPage.innerHTML = "<p class='winner-name'>Squadra Vincitrice:<br><b>" + team + "</b></p>"
+    winPage.innerHTML += "<img src='img/" + path + "'>";
+    winPage.style.display = "block";
+    leaveTreasureHunt();
+    exitFromMap();
+}
+
+function hideWinPage() {
+    document.getElementById("winPage").style.display = "none";
 }
 

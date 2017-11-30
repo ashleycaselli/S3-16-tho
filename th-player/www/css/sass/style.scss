@@ -403,6 +403,39 @@ label {
     background-color: rgba(255, 255, 255, 0.5);
 }
 
+/*-------Win Page---*/
+
+.win-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: black;
+    display: none;
+    text-align: center;
+}
+
+.win-page img {
+    position: absolute;
+    top: 50%;
+    height: 200px;
+    width: auto;
+    margin: -100px 0 0 -100px;
+}
+
+.winner-name {
+    display: block;
+    color: greenyellow;
+    margin: 35px auto;
+    font-size: 25px;
+    border: 1px solid greenyellow;
+    padding: 15px;
+    padding-top: 21px;
+    width: 60%;
+}
+
 /*-------Footer-----*/
 
 .user-info {

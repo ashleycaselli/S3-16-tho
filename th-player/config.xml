@@ -11,6 +11,7 @@
     <access origin="*" />
     <access origin="http://*/*" />
     <access origin="https://*/*" />
+    <allow-intent href="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
