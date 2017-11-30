@@ -65,7 +65,7 @@ case class TeamDBImpl() extends TeamDB {
         while (rs.next) {
             idTeam = rs.getInt(1)
         }
-        query = s"INSERT INTO team_in_treasure_hunt (id_treasure_hunt, id_team) VALUES (${idTH},${idTeam})"
+        query = s"INSERT IGNORE INTO team_in_treasure_hunt (id_treasure_hunt, id_team) VALUES (${idTH},${idTeam})"
         statement.executeUpdate(query)
         connection.close()
         idTeam

@@ -114,32 +114,11 @@ public class MainView extends JFrame implements OrganizerView {
             this.loadButton.setFocusPainted(false);
             buttonPanel.add(this.loadButton, c1);
 
-            this.deleteButton = new JButton(Strings.DELETE_BUTTON);
-            this.deleteButton.setBackground(Color.red);
-            this.deleteButton.setForeground(Color.white);
-            this.deleteButton.setOpaque(true);
-            this.deleteButton.setBorderPainted(false);
-            this.deleteButton.setFocusPainted(false);
-            c1.gridx++;
-            buttonPanel.add(this.deleteButton, c1);
-
             this.c.gridy++;
             this.add(buttonPanel, this.c);
-
-            this.deleteButton.setFont(Resources.DEFAULT_FONT);
             this.loadButton.setFont(Resources.DEFAULT_FONT);
 
             this.loadButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> new MapView(this.selectedTH, this.controller)));
-            //this.deleteButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() ->)));
-
-            /*
-                this.existingPOIList = new JList(convertList(controller.getPois()).toArray());
-                existingPOIList.addListSelectionListener(arg -> {
-                    if (!arg.getValueIsAdjusting()) {
-                        this.selectedPOI = (POI) existingPOIList.getSelectedValue();
-                    }
-                });
-            */
         }
     }
 

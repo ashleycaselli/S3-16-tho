@@ -40,7 +40,7 @@ public class MapView extends JFrame implements OrganizerView {
         this.currentTreasureHunt = currentTreasureHunt;
         this.controller = controller;
         this.googleMapsController = new GoogleMapsFXMLController(currentTreasureHunt);
-        controller.setTHRunning(currentTreasureHunt.ID());
+        this.controller.setTHRunning(currentTreasureHunt.ID());
         init();
     }
 
@@ -87,21 +87,6 @@ public class MapView extends JFrame implements OrganizerView {
         }));
         this.buttonList.add(startHuntButton);
 
-        /*
-            JButton stopHuntButton = new JButton(Strings.STOP_HUNT_BUTTON);
-            stopHuntButton.setPreferredSize(new Dimension(400, 45));
-            stopHuntButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
-                if (controller.isTHRunning()) {
-                    controller.stopHunt();
-                    JFrame dialog = new JFrame();
-                    JOptionPane.showMessageDialog(dialog, "Treasure Hunt stopped.");
-                } else {
-                    JFrame dialog = new JFrame();
-                    JOptionPane.showMessageDialog(dialog, "Already stopped.");
-                }
-            }));
-            this.buttonList.add(stopHuntButton);
-        */
         c.anchor = GridBagConstraints.LINE_START;
         this.buttonList.forEach(button -> {
             button.setFont(Resources.DEFAULT_FONT);

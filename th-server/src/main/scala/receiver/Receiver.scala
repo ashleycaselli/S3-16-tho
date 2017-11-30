@@ -2,7 +2,7 @@ package receiver
 
 import java.io.IOException
 
-import com.rabbitmq.client.{AMQP, ConnectionFactory, DefaultConsumer, Envelope}
+import com.rabbitmq.client._
 import dboperation._
 import domain._
 import domain.messages._
@@ -19,15 +19,20 @@ trait Receiver {
 class ReceiverImpl extends Receiver {
 
     private var lastMessage: String = _
+    private var factory: ConnectionFactory = _
+    private var connection: Connection = _
+    private var winChannel: Channel = _
 
     @throws[Exception]
     override def startRecv(): Unit = {
         println("Receiver started")
-        val factory = new ConnectionFactory
+        factory = new ConnectionFactory
         factory setHost RabbitInfo.HOST
         factory setUsername RabbitInfo.USERNAME
         factory setPassword RabbitInfo.PASSWORD
-        val connection = factory.newConnection
+        connection = factory.newConnection
+
+        startWinChannel()
         val channel = connection.createChannel
         channel.queueDeclare(RabbitInfo.QUEUE_NAME, false, false, false, null)
         val organizerConsumer = new DefaultConsumer(channel) {
@@ -144,7 +149,7 @@ class ReceiverImpl extends Receiver {
                             val eventDB: EventDB = EventDBImpl()
                             eventDB.teamStartTreasureHunt(poi.treasureHuntID, idTeam)
                             //il player riceve il quiz
-                            eventDB.teamReceiveQuiz(nextPoi.treasureHuntID, idTeam, nextPoi.quiz.ID, "Primo POI")
+                            eventDB.teamReceiveQuiz(nextPoi.treasureHuntID, idTeam, nextPoi.quiz.ID, " Quiz del Primo POI")
 
                             val message: String = PoiMsgImpl(idTeam.toString, nextPoi.defaultRepresentation).defaultRepresentation
                             channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes())
@@ -156,10 +161,13 @@ class ReceiverImpl extends Receiver {
                                 val message: String = PoiMsgImpl(sender, nextPoi.defaultRepresentation).defaultRepresentation
                                 channel.basicPublish("", properties.getReplyTo, new AMQP.BasicProperties.Builder().correlationId(properties.getCorrelationId).build, message.getBytes())
                                 val eventDB: EventDB = EventDBImpl()
-                                eventDB.teamReceiveQuiz(nextPoi.treasureHuntID, sender.toInt, nextPoi.quiz.ID, "POI Generico")
+                                eventDB.teamReachPOI(poi.treasureHuntID, sender.toInt, poi.ID, "Raggiunto un POI")
+                                eventDB.teamReceiveQuiz(nextPoi.treasureHuntID, sender.toInt, nextPoi.quiz.ID, "Quiz di un POI Generico")
                             } else {
+                                val eventDB: EventDB = EventDBImpl()
+                                eventDB.teamReachPOI(poi.treasureHuntID, sender.toInt, poi.ID, "Raggiunto l'ultimo POI")
                                 //avviso tutti i giocatore che c'è stato un vincitore
-                                //TODO send a publish message or a topic
+                                win(sender.toInt, poi.treasureHuntID)
                             }
                         }
                     }
@@ -226,5 +234,19 @@ class ReceiverImpl extends Receiver {
     }
 
     override def getLastMessage: String = lastMessage
+
+    private def win(teamID: Int, treasureHuntID: Int): Unit = {
+        val eventDB: EventDB = EventDBImpl()
+        val teamName = eventDB.teamFinishTreasureHunt(treasureHuntID, teamID, "Win")
+        val message = WinMsgImpl(teamName, treasureHuntID.toString).defaultRepresentation
+        winChannel.basicPublish("winExchange", "", null, message.getBytes)
+    }
+
+    private def startWinChannel() = {
+        winChannel = connection.createChannel
+        winChannel.exchangeDeclare("winExchange", "direct", true)
+        winChannel.queueDeclare("winQueue", true, false, false, null)
+        winChannel.queueBind("winQueue", "winExchange", "")
+    }
 
 }

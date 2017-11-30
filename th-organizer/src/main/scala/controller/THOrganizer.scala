@@ -32,8 +32,6 @@ sealed trait THOrganizer {
 
     def setTHRunning(ID: Int): Unit
 
-    def stopHunt(): Unit
-
     def model: THModel
 
     def getTreasureHunts: List[TreasureHunt]
@@ -87,8 +85,6 @@ class THOrganizerImpl(_model: THModel) extends THOrganizer {
     override def model: THModel = _model
 
     override def startHunt(): Unit = _model startHunt()
-
-    override def stopHunt(): Unit = _model stopHunt()
 
     override def isTHRunning(): Boolean = _model isTHRunning()
 

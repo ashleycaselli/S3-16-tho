@@ -65,8 +65,9 @@ trait EventDB {
       * @param idTH        identifier of the Treasure Hunt
       * @param idTeam      identifier of the team
       * @param description event description (optional parameter)
+      * @return a string containing the winning team name
       */
-    def teamFinishTreasureHunt(idTH: Int, idTeam: Int, description: String = "No description provided"): Unit
+    def teamFinishTreasureHunt(idTH: Int, idTeam: Int, description: String = "No description provided"): String
 
     /**
       * Method to do the organizer operation
@@ -133,7 +134,7 @@ case class EventDBImpl() extends EventDB {
       * @param idTeam      identifier of the team
       * @param description event description (optional parameter)
       */
-    override def teamStartTreasureHunt(idTH: Int, idTeam: Int, description: String): Unit = {
+    override def teamStartTreasureHunt(idTH: Int, idTeam: Int, description: String = "Team Start a Tresure Hunt"): Unit = {
         val eventType = 1
         teamOperation(idTH, idTeam, description, ID_POI_NULL, ID_QUIZ_NULL, ID_CLUE_NULL, eventType)
     }
@@ -146,7 +147,7 @@ case class EventDBImpl() extends EventDB {
       * @param idPoi       identifier of the POI reached
       * @param description event description (optional parameter)
       */
-    override def teamReachPOI(idTH: Int, idTeam: Int, idPoi: Int, description: String): Unit = {
+    override def teamReachPOI(idTH: Int, idTeam: Int, idPoi: Int, description: String = "Team Reach a POI"): Unit = {
         val eventType = 2
         teamOperation(idTH, idTeam, description, idPoi, ID_QUIZ_NULL, ID_CLUE_NULL, eventType)
     }
@@ -159,7 +160,7 @@ case class EventDBImpl() extends EventDB {
       * @param idQuiz      identifier of the sent Quiz
       * @param description event description (optional parameter)
       */
-    override def teamReceiveQuiz(idTH: Int, idTeam: Int, idQuiz: Int, description: String): Unit = {
+    override def teamReceiveQuiz(idTH: Int, idTeam: Int, idQuiz: Int, description: String = "Team Receive a Quiz"): Unit = {
         val eventType = 3
         teamOperation(idTH, idTeam, description, ID_POI_NULL, idQuiz, ID_CLUE_NULL, eventType)
     }
@@ -172,7 +173,7 @@ case class EventDBImpl() extends EventDB {
       * @param idClue      identifier of the Clue Received
       * @param description event description (optional parameter)
       */
-    override def teamReceiveClue(idTH: Int, idTeam: Int, idClue: Int, description: String): Unit = {
+    override def teamReceiveClue(idTH: Int, idTeam: Int, idClue: Int, description: String = "Team Receive a Clue"): Unit = {
         val eventType = 4
         teamOperation(idTH, idTeam, description, ID_POI_NULL, ID_QUIZ_NULL, idClue, eventType)
     }
@@ -183,10 +184,23 @@ case class EventDBImpl() extends EventDB {
       * @param idTH        identifier of the Treasure Hunt
       * @param idTeam      identifier of the team
       * @param description event description (optional parameter)
+      * @return a string containing the winning team name
       */
-    override def teamFinishTreasureHunt(idTH: Int, idTeam: Int, description: String): Unit = {
+    def teamFinishTreasureHunt(idTH: Int, idTeam: Int, description: String = "No description provided"): String = {
         val eventType = 5
         teamOperation(idTH, idTeam, description, ID_POI_NULL, ID_QUIZ_NULL, ID_CLUE_NULL, eventType)
+        //cerco il nome del team
+        val connectionManager: DBConnectionManager = new DBConnectionManagerImpl
+        val connection: Connection = connectionManager.establishConnection
+        val statement = connection.createStatement
+        val query = s"SELECT name FROM team WHERE id_team = ${idTeam}"
+        val rs = statement.executeQuery(query)
+        var teamName = ""
+        while (rs.next()) {
+            teamName = rs.getString(1)
+        }
+        connection.close
+        teamName
     }
 
     /**
@@ -213,7 +227,7 @@ case class EventDBImpl() extends EventDB {
       * @param idOrganizer identifier of the Organizer
       * @param description event description (optional parameter)
       */
-    override def organizerStartTreasureHunt(idTH: Int, idOrganizer: Int, description: String): Unit = {
+    override def organizerStartTreasureHunt(idTH: Int, idOrganizer: Int, description: String = "Organizer Start a Tresure Hunt"): Unit = {
         val eventType = 6
         organizerOperation(idTH, idOrganizer, description, eventType)
     }
@@ -229,4 +243,6 @@ case class EventDBImpl() extends EventDB {
         val correctTimestamp = timestamp.toLocalDate + " " + timestamp.getHourOfDay + ":" + timestamp.getMinuteOfHour + ":" + timestamp.getSecondOfMinute
         correctTimestamp
     }
+
+
 }

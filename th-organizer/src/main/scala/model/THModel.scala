@@ -4,6 +4,7 @@ import com.lynden.gmapsfx.javascript.`object`.Marker
 import core.Observable
 import domain._
 import domain.messages._
+import org.joda.time.DateTime
 import play.api.libs.json.Json
 
 import scala.collection.mutable
@@ -36,8 +37,6 @@ trait THModel extends Observable[String] {
 
     def startHunt(): Unit
 
-    def stopHunt(): Unit
-
     def isTHRunning(): Boolean
 
     def setRunningTH(ID: Int)
@@ -49,7 +48,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
 
     private val organizerID = "1"
     private var runningTH: TreasureHunt = null
-    private var THStarted = false //TODO ask to server
+    private var THStarted = true
     private var ths: List[TreasureHunt] = List empty
     private var pois: ListBuffer[POI] = ListBuffer empty
     private val markerList: mutable.HashMap[POI, Marker] = mutable.HashMap.empty
@@ -110,7 +109,7 @@ class THModelImpl(override var broker: Broker) extends THModel {
     }
 
     override def getPOIs: Seq[POI] = {
-        if (pois.isEmpty) {
+        if (pois.isEmpty || pois(0).treasureHuntID != runningTH.ID) {
             pois = getPOIsFromDB
         }
         pois
@@ -132,17 +131,16 @@ class THModelImpl(override var broker: Broker) extends THModel {
         THStarted = true
     }
 
-    override def stopHunt(): Unit = {
-        require(runningTH != null)
-        broker send (StateMsgImpl(organizerID, StateImpl(StateType.Stop, runningTH.ID).defaultRepresentation) defaultRepresentation)
-        THStarted = false
-    }
-
     override def setRunningTH(ID: Int): Unit = {
+        var newTH = true
         for (th <- ths) {
             if (th.ID == ID) {
                 runningTH = th
+                newTH = false
             }
+        }
+        if (newTH) {
+            runningTH = TreasureHuntImpl(0, "Empty", "EmptyCity", DateTime.now().toLocalDate().toString(), "18:00")
         }
     }
 
