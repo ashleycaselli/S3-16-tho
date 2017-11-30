@@ -81,9 +81,15 @@ public class MapView extends JFrame implements OrganizerView {
         JButton startHuntButton = new JButton(Strings.START_HUNT_BUTTON);
         startHuntButton.setPreferredSize(new Dimension(400, 45));
         startHuntButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> {
-            this.controller.startHunt();
-            JFrame dialog = new JFrame();
-            JOptionPane.showMessageDialog(dialog, "Treasure Hunt started.\nDon't forget to create a code.");
+            List<POI> poisList = scala.collection.JavaConversions.seqAsJavaList(controller.getPois());
+            if (poisList.size() != 0) {
+                this.controller.startHunt();
+                JFrame dialog = new JFrame();
+                JOptionPane.showMessageDialog(dialog, "Treasure Hunt started.\nDon't forget to create a code.");
+            } else {
+                JFrame dialog = new JFrame();
+                JOptionPane.showMessageDialog(dialog, "You can't start a TH without POI.\nPlease add one.");
+            }
         }));
         this.buttonList.add(startHuntButton);
 
