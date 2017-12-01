@@ -30,10 +30,7 @@ script:
 
 deploy:
   - provider: releases
-    api_key:
-      secure: "bn6BaOmvTSG/Js5S0iA64pCu2sUXlas8fdwRaA8goidBf62N5ABb6igU5p+IFmBuJrVbrMTR34GBtNpV3sWON+h0Luy4FOW+5sZIQhNlVCNZ9p2K/Y6XKaodLom/K2jnRfsJ3bm+m+F4Xp01oJOlROkN4FsvZTqQFMdmHgwEMBNJzkUF7hapb/aatvRgvznsPcGK0edEdD+XBGcqICThc5MYiQ8ojSuwVJFziR1mBGMuzMzw/SkJJDrDHh
-      QEE2JunwNpfb/r69k7KBIf56EwE45beGNiL19YFbfiwsC0JkBAt198DGhNm+O/YPv2ZSQrSIlo18I+zy0tyZHsd2oZomeI5aezbA4tIC0WWgdDCcmZGnntgO4r11qdVy5BOsVIGasPRleZkKQNbeQCcznocQjxEg5uctGq+HwFzAXNNM+bwpbXLL87fTuL3ZkmvnJhmriVLhPTCtnOmMkf75pLJdGzqTzoLpBgUnTAHelH3Aq6Ocy8ZrbJKFBPF5KmTxu
-      SGedkrnIYeBndXzDeD+djQK1XnuMeq0+DoFCqFWdTIc9R6Vcx3RgsDt1TpfJV6MBLtxFl1iKwUdMsc+WFiMZk87tkRHYCFPC0KCZ+dCDofnZYCLwpO0abID3f1cifh8zbOdIRFMaRMjXt6dUi9LEMnaW6FEJrzMBXhleGJ2Fj+BI="
+    api_key: $GITHUB_KEY
     file_glob: true
     file:
       - th-player/platforms/android/build/outputs/apk/debug/*.apk
