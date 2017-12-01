@@ -8,7 +8,7 @@ module.exports = function (ctx) {
         deferral = ctx.requireCordovaModule('q').defer();
 
     var platformRoot = path.join(ctx.opts.projectRoot, 'platforms/android');
-    var apkFileLocation = path.join(platformRoot, 'build/outputs/apk/');
+    var apkFileLocation = path.join(platformRoot, 'build/outputs/apk/debug/');
     var oldApk = "android-debug.apk";
     var newApk = "th-player.apk";
 
