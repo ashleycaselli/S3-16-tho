@@ -1,0 +1,26 @@
+plugins {
+    id "org.kravemir.gradle.sass" version "1.2.3"
+}
+
+project.description = 'TH Player Cordova Project'
+
+sass {
+    main {
+        srcDir = file("$projectDir/www/css/sass/loader")
+        outDir = file("$projectDir/www/css")
+        minify = true
+        outputs.upToDateWhen {
+            false
+        }
+    }
+}
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+task cordovaBuild(type: Exec) {
+    executable = 'cordova'
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        executable = 'cordova.cmd'
+    }
+    args = ['build', 'android']
+}

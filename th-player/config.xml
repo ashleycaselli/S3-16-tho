@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="it.unibo.tho" version="1.0.0" xmlns="http://www.unibo.it/it">
+    <name>THO</name>
+    <description>
+        Treasure hunt organizer
+    </description>
+    <author email="dev@cordova.apache.org" href="http://cordova.io">
+        THO Team
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+    <access origin="http://*/*" />
+    <access origin="https://*/*" />
+    <allow-intent href="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <allow-navigation href="http://*/*" />
+    <allow-navigation href="https://*/*" />
+    <allow-navigation href="*" />
+    <access launch-external="yes" origin="geo:*" />
+    <feature name="Geolocation">
+        <param name="android-package" value="org.apache.cordova.GeoBroker" />
+    </feature>
+    <platform name="android">
+        <allow-intent href="market:*" />
+        <hook src="hooks/afterBuild_apkRename.js" type="after_build" />
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
+    <preference name="Orientation" value="portrait" />
+    <preference name="Fullscreen" value="true" />
+    <engine name="android" spec="^6.2.3" />
+    <engine name="browser" spec="^5.0.1" />
+    <plugin name="phonegap-plugin-barcodescanner" spec="~6.0.8" />
+    <plugin name="cordova-plugin-whitelist" spec="1" />
+    <plugin name="cordova-plugin-geolocation" spec="^2.4.3" />
+</widget>

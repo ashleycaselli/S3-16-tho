@@ -1,14 +1,48 @@
 group 'S3-16'
 version '1.0'
 
-apply plugin: 'java'
+subprojects {
 
-sourceCompatibility = 1.8
+    apply plugin: 'java'
+    apply plugin: 'scala'
 
-repositories {
-    mavenCentral()
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile 'org.scala-lang:scala-library:2.12.2'
+    }
+
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+configure(subprojects.findAll()) {
+    if (it.name != 'th-player') {
+        dependencies {
+            testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: '3.0.1'
+            compile group: 'com.typesafe.play', name: 'play-json_2.12', version: '2.6.0'
+            compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
+            compile group: 'com.typesafe.scala-logging', name: 'scala-logging_2.12', version: '3.5.0'
+            compile files('../core/build/libs/core.jar')
+            compile 'com.rabbitmq:amqp-client:4.2.0'
+        }
+
+        task scalaTest(dependsOn: ['testClasses'], type: JavaExec) {
+            main = 'org.scalatest.tools.Runner'
+            args = ['-R', 'build/classes/test', '-o']
+            classpath = sourceSets.test.runtimeClasspath
+        }
+
+        sourceSets.main.scala.srcDir "src/main/java"
+        sourceSets.main.java.srcDirs = []
+
+        sourceSets.test.scala.srcDir "src/test/java"
+        sourceSets.test.java.srcDirs = []
+    }
 }
+
+defaultTasks(
+        'clean', 'build', 'scalaTest', 'mainSass', 'cordovaBuild', 'jar'
+)

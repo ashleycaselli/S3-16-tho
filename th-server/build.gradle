@@ -1,0 +1,13 @@
+project.description = 'Treasure Hunt Server'
+
+dependencies {
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.13'
+}
+
+jar {
+    archiveName = "${rootProject.name}-${this.name}-${rootProject.version}.jar"
+    manifest {
+        attributes 'Main-Class': 'ReceiverMain'
+    }
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {}
+}

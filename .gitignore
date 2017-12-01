@@ -1,21 +1,15 @@
-# IntelliJ
+### IntelliJ ###
 out
 target/
+*.iml
+.idea/
 
-# User-specific stuff:
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/dictionaries
-.idea/**/misc.xml
-
-.idea/**/uiDesigner.xml
-
-# macOS
+### macOS ###
 *.DS_Store
 .AppleDouble
 .LSOverride
 
-# Windows
+### Windows ###
 Thumbs.db
 Desktop.ini
 *.cab
@@ -23,8 +17,14 @@ Desktop.ini
 *.msm
 *.msp
 
-# Gradle:
-.idea/**/gradle.xml
-.idea/**/libraries
-.gradle
-/build/
+### Gradle ###
+.gradle/
+build/
+
+### Latex ###
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.pdf

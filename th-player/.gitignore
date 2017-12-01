@@ -1,0 +1,16 @@
+### Apache Cordova ###
+bin/*
+!/plugins
+!/plugins/android.json
+!/plugins/fetch.json
+plugins/*
+platforms/*
+package.json
+
+### Node.js ###
+node_modules/
+
+### Sass ###
+.sass-cache/
+*.css.map
+*.css

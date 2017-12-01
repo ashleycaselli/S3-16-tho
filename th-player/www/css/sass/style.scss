@@ -1,0 +1,450 @@
+@import "variables";
+@import "mixin";
+
+@include font-face($andrew-font-family, $andrew-font-fileName);
+
+* {
+    font-family: $andrew-font-family, sans-serif;
+}
+
+/*------------Generic CSS-------------*/
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background-color: $color-white;
+}
+
+h1 {
+    text-align: center;
+}
+
+p {
+    display: inline;
+}
+
+.generic-subtitle {
+    font-size: 200%;
+    text-align: center;
+}
+
+.subtitle1 {
+    @extend .generic-subtitle;
+    margin-top: 1%;
+}
+
+.subtitle2 {
+    @extend .generic-subtitle;
+    margin-top: 6%;
+}
+
+.logo {
+    margin: 30% auto 10%;
+    display: block;
+    width: 50%;
+    padding: 6%;
+}
+
+.half-button {
+    button {
+        width: 125px;
+    }
+}
+
+button {
+    font-size: 200%;
+    background-color: $color-white;
+    margin: 2% auto;
+    display: inline-block;
+    padding: $defaultPadding;
+    width: 250px;
+    @include border-radius(5px);
+    text-align: center;
+}
+
+label {
+    font-size: 85%;
+}
+
+.text-input {
+    margin: 2%;
+    padding: $defaultPadding;
+    height: 25px;
+    text-align: center;
+    font-size: 125%;
+    @include border-radius(5px);
+}
+
+/*-------------Gestione Visibilità Pagine--------------*/
+
+.select-treasure-hunt-page {
+    display: block;
+}
+
+.map-page {
+    display: none;
+}
+
+.insert-code-manually {
+    display: none;
+}
+
+.current-treasure-hunt {
+    display: none;
+}
+
+/*--------1st Page: notLoggedUser-----------*/
+
+.not-logged-user-page {
+    background: url($img-path + $img-backgroundRainbow) bottom center;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 100;
+    text-align: center;
+}
+
+/*---------2nd Page: CreateNewTeam or Login---------*/
+
+.create-team, .login-team {
+    display: none;
+    width: 290px;
+    margin: auto;
+    text-align: center;
+}
+
+.login-input {
+    width: 240px;
+}
+
+/*----------------3rd Page: Select Treasure Hunt (Insert Code or Qr Scan-------------------*/
+
+.select-treasure-hunt-page {
+    margin-top: 30%;
+}
+
+.select-hunt-label {
+    font-size: 20px;
+    text-align: center;
+    margin: 2% auto;
+    display: block;
+    padding: 15px 0 5px;
+    width: 244px;
+    border: 4px solid skyblue;
+    @include border-radius(5px);
+}
+
+.current-treasure-hunt {
+    margin-top: 5%;
+}
+
+.code-buttons {
+    display: none;
+}
+
+.button-container {
+    font-size: 80%;
+    text-align: center;
+}
+
+.insert-code-input {
+    display: block;
+    width: 240px;
+    margin: 2% auto;
+}
+
+.near-treasure-hunt {
+    ul {
+        border: 2px solid #cccccc;
+        border-radius: 5px;
+        margin: 35px;
+        font-size: 22px;
+    }
+}
+
+.near-treasure-hunt {
+    li {
+        padding: $defaultPadding;
+        border-bottom: 1px solid $color-gray;
+        text-align: center;
+    }
+}
+
+.near-treasure-hunt {
+    li {
+        &:nth-child(2n) {
+            background-color: #eee;
+        }
+    }
+}
+
+.near-treasure-hunt {
+    li {
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+}
+
+.available-hunts-label {
+    text-align: center;
+    margin: 4px 0;
+    width: 100%;
+    display: block;
+}
+
+.near-treasure-hunt ul {
+    margin: 0 35px;
+}
+
+.refresh-button {
+    margin: 25px auto;
+    text-align: center;
+}
+
+/*--------------------------4th Page: Map Page------------------------*/
+
+.reset-page {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.map-page, .map-page-map {
+    @extend .reset-page;
+}
+
+.map-page-menu {
+    position: fixed;
+    bottom: 9%;
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    text-transform: uppercase;
+}
+
+.map-page-menu-button-container {
+    flex: 0 0 50%;
+    @include box-sizing;
+    margin: 10px 0;
+}
+
+.map-page-menu-button-container {
+    span {
+        display: block;
+        width: 60%;
+        padding: 10% 11% 6%;
+        border: 2px solid skyblue;
+        background-color: rgba(255, 255, 255, 0.9);
+        font-size: 80%;
+    }
+}
+
+.map-page-title {
+    position: absolute;
+    top: 3%;
+    left: 22%;
+    width: 56%;
+    text-align: center;
+    font-size: 40px;
+    padding: 6% 1% 1%;
+    border: 2px black solid;
+    @include border-radius(5px);
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 10;
+    word-wrap: break-word;
+}
+
+.map-page-clue, .map-page-quiz {
+    display: none;
+    position: absolute;
+    top: 25%;
+    margin-left: 22%;
+    padding: 5px;
+    width: 56%;
+    border: solid 2px black;
+    font-size: 15px;
+    background-color: rgba(255, 255, 255, 0.9);
+    @include border-radius(5px);
+}
+
+.quiz-input {
+    border: 1px black solid;
+}
+
+.left-button {
+    span {
+        text-align: right;
+        border-radius: 0 5px 5px 0;
+        margin-left: 0;
+        border-left: none;
+    }
+}
+
+.right-button {
+    span {
+        border-radius: 5px 0 0 5px;
+        text-align: left;
+        border-right: none;
+        margin-left: calc(40% - 42px);
+    }
+}
+
+.close-clue-button, .close-quiz-button {
+    display: none;
+}
+
+.map-page-clue p, .map-page-quiz p {
+    padding: 15px;
+}
+
+.clue-quiz-button {
+    position: relative;
+    bottom: 10%;
+    left: 100%;
+    margin: 10px 0px 10px -80px;
+    background-color: #efefef;
+    width: 60px;
+    padding: 6% 1% 3%;
+    text-align: center;
+    @include border-radius(10px);
+}
+
+.insert {
+    margin-top: 10px;
+}
+
+.map-page-clue h1, .map-page-quiz h1 {
+    margin: 25px auto 10px;
+    text-align: center;
+    font-size: 32px;
+}
+
+.quiz-input {
+    width: 80%;
+    margin-left: 9%;
+    font-size: 20px;
+}
+
+.google-map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.map-page-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    z-index: 20;
+}
+
+.progress-bar {
+    width: 10px;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    height: 80%;
+    background-color: $color-gray;
+    overflow: hidden;
+    @include border-radius(5px);
+}
+
+.progress-bar-content {
+    position: relative;
+    top: -20%;
+    background-color: skyblue;
+    @include border-radius(5px);
+}
+
+.progress-percent {
+    font-size: 100px;
+    color: $color-white;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 20%;
+
+}
+
+.out-of-progress {
+    font-size: 50px;
+    color: $color-white;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 41%;
+}
+
+.close-progress {
+    position: absolute;
+    top: 30px;
+    right: 34px;
+    color: $color-white;
+    font-size: 35px;
+    padding: 5% 3% 1%;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/*-------Win Page---*/
+
+.win-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: black;
+    display: none;
+    text-align: center;
+}
+
+.win-page img {
+    position: absolute;
+    top: 50%;
+    height: 200px;
+    width: auto;
+    margin: -100px 0 0 -100px;
+}
+
+.winner-name {
+    display: block;
+    color: greenyellow;
+    margin: 35px auto;
+    font-size: 25px;
+    border: 1px solid greenyellow;
+    padding: 15px;
+    padding-top: 21px;
+    width: 60%;
+}
+
+/*-------Footer-----*/
+
+.user-info {
+    color: $color-white;
+    background-color: #444444;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    z-index: 15;
+    padding: 3% 0 1%;
+    text-align: center;
+}
