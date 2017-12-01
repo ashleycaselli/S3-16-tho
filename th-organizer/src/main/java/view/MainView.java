@@ -115,7 +115,8 @@ public class MainView extends JFrame implements OrganizerView {
 
             this.c.gridy++;
             this.add(buttonPanel, this.c);
-//            this.loadButton.setFont(Resources.DEFAULT_FONT);
+            Font font = new Font("Arial", Font.TRUETYPE_FONT, 25);
+            this.loadButton.setFont(font);
 
             this.loadButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> new MapView(this.selectedTH, this.controller)));
         }
