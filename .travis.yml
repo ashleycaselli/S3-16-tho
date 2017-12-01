@@ -34,6 +34,7 @@ deploy:
     file_glob: true
     file:
       - th-player/platforms/android/build/outputs/apk/debug/*.apk
+      - th-organizer/build/libs/*.jar
       - th-server/build/libs/*.jar
     skip_cleanup: true
     on:
