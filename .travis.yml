@@ -31,7 +31,10 @@ script:
 deploy:
   - provider: releases
     api_key: "072a767db621bbc5b85578c13b7195879092b8d0"
-    file: "th-player/platforms/android/build/outputs/apk/debug/th-player.apk"
+    file_glob: true
+    file:
+      - th-player/platforms/android/build/outputs/apk/debug/*.apk
+      - th-server/build/libs/*.jar
     skip_cleanup: true
     on:
       tags: true
