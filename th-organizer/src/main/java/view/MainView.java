@@ -8,7 +8,6 @@ import domain.messages.Message;
 import domain.messages.Message$;
 import domain.messages.msgType;
 import play.api.libs.json.Json;
-import utils.Resources;
 import utils.Strings;
 import view.component.LogoPanel;
 
@@ -62,7 +61,7 @@ public class MainView extends JFrame implements OrganizerView {
         this.add(this.logoPanel, this.c);
 
         this.newTHButton = new JButton(Strings.NEW_TREASURE_HUNT_BUTTON.toUpperCase());
-        this.newTHButton.setFont(Resources.DEFAULT_FONT);
+//        this.newTHButton.setFont(Resources.DEFAULT_FONT);
         this.newTHButton.setFocusPainted(false);
         this.c.gridy++;
         this.c.fill = GridBagConstraints.CENTER;
@@ -70,7 +69,7 @@ public class MainView extends JFrame implements OrganizerView {
         this.newTHButton.addActionListener(new NewTHButtonController());
 
         this.existingTHLabel = new JLabel(Strings.EXISTING_TH_LABEL);
-        this.existingTHLabel.setFont(Resources.DEFAULT_FONT);
+//        this.existingTHLabel.setFont(Resources.DEFAULT_FONT);
         this.c.anchor = GridBagConstraints.LINE_START;
         this.c.gridy++;
         this.add(this.existingTHLabel, this.c);
@@ -116,7 +115,7 @@ public class MainView extends JFrame implements OrganizerView {
 
             this.c.gridy++;
             this.add(buttonPanel, this.c);
-            this.loadButton.setFont(Resources.DEFAULT_FONT);
+//            this.loadButton.setFont(Resources.DEFAULT_FONT);
 
             this.loadButton.addActionListener((actionEvent) -> SwingUtilities.invokeLater(() -> new MapView(this.selectedTH, this.controller)));
         }
