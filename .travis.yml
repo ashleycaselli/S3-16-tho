@@ -30,7 +30,7 @@ script:
 
 deploy:
   - provider: releases
-    api_key: "072a767db621bbc5b85578c13b7195879092b8d0"
+    api_key: "9267cdd551743946f8ce6316272d6599f7e2fbf7"
     file_glob: true
     file:
       - th-player/platforms/android/build/outputs/apk/debug/*.apk
